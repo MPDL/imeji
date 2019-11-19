@@ -22,7 +22,6 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.rest.ImejiRestService;
 import de.mpg.imeji.rest.api.CollectionAPIService;
 import de.mpg.imeji.rest.api.ItemAPIService;
@@ -78,7 +77,7 @@ public class ImejiTestBase extends JerseyTest {
 
   @AfterClass
   public static void shutdown() throws IOException, URISyntaxException, InterruptedException {
-    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
+    ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
     app = null;

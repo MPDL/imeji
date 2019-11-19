@@ -12,7 +12,6 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -52,7 +51,7 @@ public class SuperServiceTest {
 
   @AfterClass
   public static void tearDown() throws Exception {
-    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
+    ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }

@@ -63,8 +63,8 @@ public class ContentServiceTest extends SuperServiceTest {
       new ItemService().create(item, collection, defaultUser);
       content = new ContentService().create(item, ImejiTestResources.getTest1Jpg(), defaultUser);
 
-      //Wait for content being completely created (by waiting for all Threads) -> ContentService().delete() leads to errors otherwise
-      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
+      //Wait for content being completely created -> ContentService().delete() leads to errors otherwise
+      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getCONTENT_EXTRACTION_EXECUTOR(), Imeji.getINTERNAL_STORAGE_EXECUTOR());
     } catch (ImejiException e) {
       LOGGER.error("Exception in setup of ContentServiceTest", e);
     }
@@ -151,8 +151,8 @@ public class ContentServiceTest extends SuperServiceTest {
       // Restore content
       content = (new ContentService()).create(item, ImejiTestResources.getTest1Jpg(), defaultUser);
 
-      //Wait for content being completely created (by waiting for all Threads) -> ContentService().delete() leads to errors otherwise
-      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
+      //Wait for content being completely created -> ContentService().delete() leads to errors otherwise
+      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getCONTENT_EXTRACTION_EXECUTOR(), Imeji.getINTERNAL_STORAGE_EXECUTOR());
 
       content = service.retrieve(content.getId().toString());
     } catch (ImejiException e) {

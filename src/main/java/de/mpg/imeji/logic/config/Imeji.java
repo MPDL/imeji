@@ -1,7 +1,5 @@
 package de.mpg.imeji.logic.config;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -62,12 +60,6 @@ public class Imeji {
   private static ThreadPoolExecutor INTERNAL_STORAGE_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
   /**
-   * List of all ThreadPoolExecutors (threads of SingleThreadExecutors NOT included). Used in
-   * Testing to wait for threads to finish.
-   */
-  private static final List<ThreadPoolExecutor> THREAD_POOL_EXECUTORS = Imeji.createThreadPoolList();
-
-  /**
    * private Constructor
    */
   private Imeji() {
@@ -79,9 +71,7 @@ public class Imeji {
    */
   public static ExecutorService getEXECUTOR() {
     if (EXECUTOR.isShutdown()) {
-      THREAD_POOL_EXECUTORS.remove(EXECUTOR);
       EXECUTOR = Executors.newCachedThreadPool();
-      THREAD_POOL_EXECUTORS.add((ThreadPoolExecutor) EXECUTOR);
     }
     return EXECUTOR;
   }
@@ -91,9 +81,7 @@ public class Imeji {
    */
   public static ThreadPoolExecutor getCONTENT_EXTRACTION_EXECUTOR() {
     if (CONTENT_EXTRACTION_EXECUTOR.isShutdown()) {
-      THREAD_POOL_EXECUTORS.remove(CONTENT_EXTRACTION_EXECUTOR);
-      CONTENT_EXTRACTION_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-      THREAD_POOL_EXECUTORS.add(CONTENT_EXTRACTION_EXECUTOR);
+      return CONTENT_EXTRACTION_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
     }
     return CONTENT_EXTRACTION_EXECUTOR;
   }
@@ -103,47 +91,9 @@ public class Imeji {
    */
   public static ThreadPoolExecutor getINTERNAL_STORAGE_EXECUTOR() {
     if (INTERNAL_STORAGE_EXECUTOR.isShutdown()) {
-      THREAD_POOL_EXECUTORS.remove(INTERNAL_STORAGE_EXECUTOR);
-      INTERNAL_STORAGE_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-      THREAD_POOL_EXECUTORS.add(INTERNAL_STORAGE_EXECUTOR);
+      return INTERNAL_STORAGE_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
     }
     return INTERNAL_STORAGE_EXECUTOR;
-  }
-
-  private static List<ThreadPoolExecutor> createThreadPoolList() {
-    List<ThreadPoolExecutor> threadPoolList = new ArrayList<>();
-    threadPoolList.add((ThreadPoolExecutor) EXECUTOR);
-    threadPoolList.add(CONTENT_EXTRACTION_EXECUTOR);
-    threadPoolList.add(INTERNAL_STORAGE_EXECUTOR);
-
-    return threadPoolList;
-  }
-
-  public static List<ThreadPoolExecutor> getThreadPoolExecutors() {
-    return THREAD_POOL_EXECUTORS;
-  }
-
-  /**
-   * Creates a new cached thread pool. Wrapper for {@link Executors#newCachedThreadPool()}. Adds the
-   * thread pool to the list of all thread pools {@link Imeji#THREAD_POOL_EXECUTORS}
-   * 
-   * @return the created {@link ExecutorService}
-   */
-  public static ExecutorService createNewCachedThreadPool() {
-    ExecutorService executerService = Executors.newCachedThreadPool();
-    THREAD_POOL_EXECUTORS.add((ThreadPoolExecutor) executerService);
-    return executerService;
-  }
-
-  /**
-   * Creates a new single thread executor. Wrapper for {@link Executors#newSingleThreadExecutor()}.
-   * 
-   * @return the created {@link ExecutorService}
-   */
-  public static ExecutorService createNewSingleThreadExecutor() {
-    ExecutorService executerService = Executors.newSingleThreadExecutor();
-    //No thread pool => not added to the list to thread pools (THREAD_POOL_EXECUTORS)
-    return executerService;
   }
 
 }

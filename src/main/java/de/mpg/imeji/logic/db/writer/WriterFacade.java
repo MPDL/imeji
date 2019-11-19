@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
@@ -47,7 +48,7 @@ public class WriterFacade {
   private final Writer writer;
   private final SearchIndexer indexer;
   private final WorkflowValidator workflowManager = new WorkflowValidator();
-  private final ExecutorService executor = Imeji.createNewCachedThreadPool();
+  private final ExecutorService executor = Executors.newCachedThreadPool();
 
   /**
    * Constructor without explicit model. Use when you want to write objects of multiple types within

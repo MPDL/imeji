@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import de.mpg.imeji.exceptions.ImejiException;
@@ -26,7 +27,7 @@ import de.mpg.imeji.logic.search.model.SortCriterion;
  */
 public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
   protected final Search search;
-  private final ExecutorService executor = Imeji.createNewCachedThreadPool();
+  private final ExecutorService executor = Executors.newCachedThreadPool();
 
   public SearchServiceAbstract(SearchObjectTypes type) {
     super();

@@ -44,7 +44,7 @@ public class HttpAuthenticationTest {
 
   @AfterClass
   public static void tearDown() throws Exception {
-    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
+    ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }

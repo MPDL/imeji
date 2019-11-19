@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -18,8 +19,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
@@ -114,7 +115,7 @@ public class ItemBean extends SuperBean {
    * @throws IOException @
    */
   public void init() {
-    rotationService = Imeji.createNewSingleThreadExecutor();
+    rotationService = Executors.newSingleThreadExecutor();
     try {
       if (item != null) {
         loadCollection(getSessionUser());

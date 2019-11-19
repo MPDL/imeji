@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.mpg.imeji.logic.config.Imeji;
+
 /**
  * Utility/Helper class for concurrency utilities.
  * 
@@ -45,12 +47,25 @@ public final class ConcurrencyUtil {
   }
 
   /**
-   * Wait for all threads of {@code ThreadPoolExecutor} to complete.
+   * Wait for all threads of the {@code ThreadPoolExecutors} to complete.
    * 
-   * @param threadPoolExecutor the {@code ThreadPoolExecutor} to wait for.
+   * @param threadPoolExecutors the {@code ThreadPoolExecutors} to wait for.
    */
-  public static void waitForThreadsToComplete(ThreadPoolExecutor threadPoolExecutor) {
-    await().until(() -> threadPoolExecutor.getTaskCount() == threadPoolExecutor.getCompletedTaskCount());
+  public static void waitForThreadsToComplete(ThreadPoolExecutor... threadPoolExecutors) {
+    LOGGER.info("Waiting for Threads of ThreadPoolExecutors to compelete...");
+    for (ThreadPoolExecutor threadPoolExecutor : threadPoolExecutors) {
+      await().until(() -> threadPoolExecutor.getTaskCount() == threadPoolExecutor.getCompletedTaskCount());
+    }
+    LOGGER.info("Threads compeleted.");
+  }
+
+  /**
+   * Wait for the imeji threads of the accessible threadpools to complete.
+   */
+  public static void waitForImejiThreadsToComplete() {
+    //TODO: Wait for further ThreadPools not added yet => Make ThreadPools (like WriterFacade.executor) accessible (public static), if functional possible!
+    ConcurrencyUtil.waitForThreadsToComplete((ThreadPoolExecutor) Imeji.getEXECUTOR(), Imeji.getCONTENT_EXTRACTION_EXECUTOR(),
+        Imeji.getINTERNAL_STORAGE_EXECUTOR());
   }
 
 }

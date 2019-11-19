@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.InactiveAuthenticationError;
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.authentication.Authentication;
@@ -35,7 +34,7 @@ public class DefaultAuthenticationTest {
 
   @AfterClass
   public static void tearDown() throws Exception {
-    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getThreadPoolExecutors());
+    ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }
