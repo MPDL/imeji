@@ -19,7 +19,7 @@ public class TempFileUtil {
 
   private static final Logger LOGGER = LogManager.getLogger(TempFileUtil.class);
   public static final String IMEJI_TEMP_FILE_PREFIX = "imeji";
-  private static File tempDir;
+  private static File tempDir = initTempDirectory();
 
   /**
    * Private Constructor
@@ -29,6 +29,20 @@ public class TempFileUtil {
    */
   private TempFileUtil() {
 
+  }
+
+  private static File initTempDirectory() {
+    try {
+      File f = new File(
+          PropertyReader.getProperty("imeji.storage.path") + StringHelper.fileSeparator + ".." + StringHelper.fileSeparator + "tmp");
+      if (!f.exists()) {
+        f.mkdirs();
+      }
+      return f;
+    } catch (IOException e) {
+      LOGGER.error("Error creating the temp directory.", e);
+      return null;
+    }
   }
 
   public static File getTempDirectory() {
@@ -41,18 +55,11 @@ public class TempFileUtil {
    * @return The temp directory
    */
   public static File getOrCreateTempDirectory() {
-    try {
-      File newTempDir = new File(
-          PropertyReader.getProperty("imeji.storage.path") + StringHelper.fileSeparator + ".." + StringHelper.fileSeparator + "tmp");
-      if (!newTempDir.exists()) {
-        newTempDir.mkdirs();
-        tempDir = newTempDir;
-      }
-      return tempDir;
-    } catch (IOException e) {
-      LOGGER.error("Error creating the temp directory.", e);
-      return null;
+    if (tempDir == null || !tempDir.exists()) {
+      tempDir = initTempDirectory();
     }
+
+    return tempDir;
   }
 
   /**
@@ -65,7 +72,6 @@ public class TempFileUtil {
    * @throws IOException
    */
   public static File createTempFile(String name, String extension) throws IOException {
-    File tempDir = getOrCreateTempDirectory();
     return File.createTempFile(IMEJI_TEMP_FILE_PREFIX + name, extension, tempDir);
   }
 

@@ -65,6 +65,9 @@ public class JenaUtil {
       SystemTDB.setFileMode(FileMode.direct);
       // Create new tdb
       ImejiInitializer.init(TDB_PATH);
+      // Create new temp directory
+      TempFileUtil.getOrCreateTempDirectory();
+
       initTestUser();
     } catch (Exception e) {
       throw new RuntimeException("Error initialiting Jena for testing: ", e);
