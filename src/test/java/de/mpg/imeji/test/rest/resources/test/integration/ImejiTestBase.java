@@ -30,6 +30,7 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
+import de.mpg.imeji.util.ConcurrencyUtil;
 import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
@@ -76,6 +77,7 @@ public class ImejiTestBase extends JerseyTest {
 
   @AfterClass
   public static void shutdown() throws IOException, URISyntaxException, InterruptedException {
+    ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
     app = null;

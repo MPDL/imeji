@@ -2,8 +2,14 @@ package de.mpg.imeji.test.logic.service;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -14,6 +20,7 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.CollectionFactory;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.util.ConcurrencyUtil;
 import de.mpg.imeji.util.ElasticsearchTestUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 import de.mpg.imeji.util.JenaUtil;
@@ -23,8 +30,18 @@ import de.mpg.imeji.util.JenaUtil;
  */
 public class SuperServiceTest {
 
+  private static final Logger LOGGER = LogManager.getLogger(SuperServiceTest.class);
+
   protected static CollectionImeji collectionBasic = null;
   protected static Item item = null;
+
+  @Rule
+  public TestRule watcher = new TestWatcher() {
+    @Override
+    protected void starting(Description description) {
+      LOGGER.info("Starting test: " + description.getClassName() + "." + description.getMethodName());
+    }
+  };
 
   @BeforeClass
   public static void setup() {
@@ -34,6 +51,7 @@ public class SuperServiceTest {
 
   @AfterClass
   public static void tearDown() throws Exception {
+    ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
   }

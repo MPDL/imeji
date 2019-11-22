@@ -42,6 +42,7 @@ import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
+import de.mpg.imeji.util.ConcurrencyUtil;
 import de.mpg.imeji.util.ImejiTestResources;
 
 /**
@@ -124,6 +125,9 @@ public class ItemServiceTest extends SuperServiceTest {
     collectionWithdrawn.setDiscardComment("Default discard comment");
     collectionService.withdraw(collectionWithdrawn, userAdmin);
     collectionWithdrawn = collectionService.retrieve(collectionWithdrawn.getId(), userAdmin);
+
+    //Wait for content being completely created -> ContentService().delete() leads to errors otherwise
+    ConcurrencyUtil.waitForThreadsToComplete(Imeji.getCONTENT_EXTRACTION_EXECUTOR(), Imeji.getINTERNAL_STORAGE_EXECUTOR());
   }
 
   /**
@@ -199,9 +203,6 @@ public class ItemServiceTest extends SuperServiceTest {
           if (!created && result != null) {
             Assert.fail(msg + ", Something was retrieved, even though the item should not habe been created");
           }
-          if (result.getStatus().equals(Status.PENDING)) {
-            service.delete(Arrays.asList(item), userAdmin);
-          }
         }
       } catch (ImejiException e) {
         if (!(e instanceof NotFoundException)) {
@@ -266,9 +267,6 @@ public class ItemServiceTest extends SuperServiceTest {
         Item result = service.retrieve(i.getId(), userAdmin);
         if (!created && result != null) {
           Assert.fail(msg + ", Something was retrieved, even though the item should not have been created");
-        }
-        if (result.getStatus().equals(Status.PENDING)) {
-          service.delete(Arrays.asList(i), userAdmin);
         }
       }
     } catch (ImejiException e) {
@@ -383,9 +381,6 @@ public class ItemServiceTest extends SuperServiceTest {
       retriveBatch_Test("User NoGrant, releasedCollection", new String[] {itemReleased.getId().toString()}, userNoGrant, null);
       retriveBatch_Test("User NoGrant, releasedCollection mixed with private Collection",
           new String[] {itemReleased.getId().toString(), itemPrivate2.getId().toString()}, userNoGrant, NotAllowedError.class);
-
-      service.delete(itemPrivate2.getIdString(), userAdmin);
-      (new CollectionService()).delete(collectionPrivate2, userAdmin);
 
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
@@ -569,6 +564,10 @@ public class ItemServiceTest extends SuperServiceTest {
     try {
       Item item = ImejiFactory.newItem(collectionPrivate);
       (new ItemService()).createWithFile(item, ImejiTestResources.getTest2Jpg(), "Test2.jpg", collectionPrivate, userAdmin);
+
+      //Wait for content being completely created -> ContentService().delete() leads to errors otherwise
+      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getCONTENT_EXTRACTION_EXECUTOR(), Imeji.getINTERNAL_STORAGE_EXECUTOR());
+
       delete_Test("private collection, no grant user", item, userNoGrant, NotAllowedError.class);
       delete_Test("released collection, admin user", itemReleased, userAdmin, WorkflowException.class);
       delete_Test("private collection, edit user", item, userEditGrant, null);
@@ -629,10 +628,6 @@ public class ItemServiceTest extends SuperServiceTest {
 
       release_Test("Admin grant user, not yet released item, no licence", Arrays.asList(itemToRelease, itemToRelease2), userAdmin,
           getDefaultLicense(), getDefaultLicense(), null);
-      itemToRelease = service.retrieve(itemToRelease.getId(), userAdmin);
-      itemToRelease2 = service.retrieve(itemToRelease2.getId(), userAdmin);
-      service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
-      service.withdraw(Arrays.asList(itemToRelease2), "standart comment", userAdmin);
 
       itemToRelease = ImejiFactory.newItem(collectionPrivate);
       License lic = getDefaultLicense();
@@ -641,8 +636,6 @@ public class ItemServiceTest extends SuperServiceTest {
       service.create(itemToRelease, collectionPrivate, userAdmin);
       release_Test("Edit grant user, not yet released item, item already has license", Arrays.asList(itemToRelease), userAdmin,
           getDefaultLicense(), lic, null);
-      itemToRelease = service.retrieve(itemToRelease.getId(), userAdmin);
-      service.withdraw(Arrays.asList(itemToRelease), "standart comment", userAdmin);
 
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
@@ -681,12 +674,20 @@ public class ItemServiceTest extends SuperServiceTest {
     try {
       Item withdrawReleased = ImejiFactory.newItem(collectionPrivate);
       service.createWithFile(withdrawReleased, ImejiTestResources.getTest2Jpg(), "Test2.jpg", collectionPrivate, userAdmin);
+
+      //Wait for content being completely created -> ContentService().delete() leads to errors otherwise
+      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getCONTENT_EXTRACTION_EXECUTOR(), Imeji.getINTERNAL_STORAGE_EXECUTOR());
+
       service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
       withdrawReleased = service.retrieve(withdrawReleased.getId(), userAdmin);
       withdraw_Test("released item, edit user", withdrawReleased, userEditGrant, NotAllowedError.class);
 
       withdrawReleased = ImejiFactory.newItem(collectionPrivate);
       service.createWithFile(withdrawReleased, ImejiTestResources.getTest7Jpg(), "Test7.jpg", collectionPrivate, userAdmin);
+
+      //Wait for content being completely created -> ContentService().delete() leads to errors otherwise
+      ConcurrencyUtil.waitForThreadsToComplete(Imeji.getCONTENT_EXTRACTION_EXECUTOR(), Imeji.getINTERNAL_STORAGE_EXECUTOR());
+
       service.releaseWithDefaultLicense(Arrays.asList(withdrawReleased), userAdmin);
       withdrawReleased = service.retrieve(withdrawReleased.getId(), userAdmin);
       withdraw_Test("released item, admin user", withdrawReleased, userAdmin, null);
@@ -743,7 +744,6 @@ public class ItemServiceTest extends SuperServiceTest {
       (new CollectionService()).create(col2, userAdmin);
       (new UserService()).create(user, USER_TYPE.DEFAULT);
       (new ItemService()).createWithFile(itemToMove, ImejiTestResources.getTest1Jpg(), "Test1.jpg", col1, userAdmin);
-      Thread.sleep(50);// Otherwise the item won't be completly created when we move it
 
       user.getGrants().add(new Grant(GrantType.EDIT, col1.getId().toString()).toGrantString());
       move_Test("only edit grant on col 1", itemToMove, col2, user, NotAllowedError.class);
@@ -762,7 +762,7 @@ public class ItemServiceTest extends SuperServiceTest {
       // Item should still be in old collection
       Item ret = service.retrieve(itemToMove.getId().toString(), userAdmin);
       Assert.assertEquals("Should be in old collection", ret.getCollection().toString(), col2.getId().toString());
-    } catch (ImejiException | InterruptedException e) {
+    } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }
   }

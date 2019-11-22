@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,6 +16,7 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
+import de.mpg.imeji.logic.security.sharing.ShareService.ShareRoles;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
@@ -31,7 +32,8 @@ public class UsergroupServiceTest extends SuperServiceTest {
 
   private static UserGroup userGroup;
 
-  private static final String FOO_GRANT = "fooGrantString";
+  //Grants must be of the form "ShareRoles_type" + "," + "collection_uri" to get parsed by ElasticUserGroup:
+  private static final String DUMMY_GRANT = ShareRoles.EDIT.name() + "," + "collection_uri";
 
   @BeforeClass
   public static void specificSetup() {
@@ -55,7 +57,7 @@ public class UsergroupServiceTest extends SuperServiceTest {
       userService.create(defaultUser1, USER_TYPE.DEFAULT);
       userService.create(defaultUser2, USER_TYPE.DEFAULT);
 
-      userGroup = ImejiFactory.newUserGroup().setName("UserGroup").addUsers(defaultUser1, defaultUser2).addGrants(FOO_GRANT).build();
+      userGroup = ImejiFactory.newUserGroup().setName("UserGroup").addUsers(defaultUser1, defaultUser2).addGrants(DUMMY_GRANT).build();
       (new UserGroupService()).create(userGroup, adminUser);
     } catch (ImejiException e) {
       LOGGER.error(e);
@@ -64,7 +66,7 @@ public class UsergroupServiceTest extends SuperServiceTest {
 
   @Test
   public void create() {
-    Assert.assertTrue("group should have grant", userGroup.getGrants().contains(FOO_GRANT));
+    Assert.assertTrue("group should have grant", userGroup.getGrants().contains(DUMMY_GRANT));
 
     // Check that defaultUser is not allowed to create user group
     UserGroup userGroup2 = ImejiFactory.newUserGroup().setName("UserGroup2").addUsers(defaultUser1, defaultUser2).build();
@@ -114,13 +116,14 @@ public class UsergroupServiceTest extends SuperServiceTest {
           .setPassword("password").setQuota(Long.MAX_VALUE).build();
       (new UserService()).create(defaultUser3, USER_TYPE.DEFAULT);
       userGroup.getUsers().add(defaultUser3.getId());
-      userGroup.getGrants().add("fooGrant2");
+      String dummyGrant2 = ShareRoles.ADMIN.name() + "," + "collection_uri_2";
+      userGroup.getGrants().add(dummyGrant2);
       userGroup.setName("changedName");
       (new UserGroupService()).update(userGroup, adminUser);
       try {
         UserGroup ret = (new UserGroupService()).retrieve(userGroup.getId().toString(), adminUser);
         Assert.assertEquals("The name should have changed", userGroup.getName(), ret.getName());
-        Assert.assertTrue("Group should have fooGrant2", ret.getGrants().contains("fooGrant2"));
+        Assert.assertTrue("Group should have " + dummyGrant2, ret.getGrants().contains(dummyGrant2));
       } finally {
         userGroup.getUsers().remove(defaultUser3);
         (new UserGroupService()).update(userGroup, adminUser);
@@ -141,7 +144,7 @@ public class UsergroupServiceTest extends SuperServiceTest {
       } catch (NotFoundException e) {
         // This is correct
       }
-      Assert.assertFalse("defaultUser1 should have lost his FOO grant", defaultUser1.getGrants().contains(FOO_GRANT));
+      Assert.assertFalse("defaultUser1 should have lost his grant: " + DUMMY_GRANT, defaultUser1.getGrants().contains(DUMMY_GRANT));
       // Recreate the usergroup
       service.create(userGroup, adminUser);
 
@@ -192,7 +195,7 @@ public class UsergroupServiceTest extends SuperServiceTest {
        */
       service.removeUserFromAllGroups(defaultUser2, adminUser);
       Assert.assertEquals("User2 should be in no user group", 0, service.searchByUser(defaultUser2, adminUser).size());
-      Assert.assertFalse("User2 should have lost his foo grant", defaultUser2.getGrants().contains(FOO_GRANT));
+      Assert.assertFalse("User2 should have lost his grant: " + DUMMY_GRANT, defaultUser2.getGrants().contains(DUMMY_GRANT));
     } catch (ImejiException e) {
       Assert.fail(e.getMessage());
     }

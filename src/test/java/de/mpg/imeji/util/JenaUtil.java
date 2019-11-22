@@ -57,17 +57,17 @@ public class JenaUtil {
       // Read tdb location
       TDB_PATH = PropertyReader.getProperty("imeji.tdb.path");
 
-      // Remove old Database- and File-Directories
-      //TODO: Move the deletion of the test-file-directories in an extra method.
+      // Delete the TDB before the test, because on windows the TDB directory does not get deleted completely after the tests.
       deleteTDBDirectory();
-      deleteTempDirectory();
-      deleteFilesDirectory();
 
       // Set Filemode: important to be able to delete TDB directory by
       // closing Jena
       SystemTDB.setFileMode(FileMode.direct);
       // Create new tdb
       ImejiInitializer.init(TDB_PATH);
+      // Create new temp directory
+      TempFileUtil.getOrCreateTempDirectory();
+
       initTestUser();
     } catch (Exception e) {
       throw new RuntimeException("Error initialiting Jena for testing: ", e);
@@ -92,6 +92,8 @@ public class JenaUtil {
     TDBMaker.reset();
     TDBMaker.releaseLocation(Location.create(TDB_PATH));
     LOGGER.info("TDB Location released!");
+
+    // Remove old Database- and File-Directories
     //TODO: Move the deletion of the test-file-directories in an extra method.
     deleteTDBDirectory();
     deleteTempDirectory();
@@ -160,6 +162,8 @@ public class JenaUtil {
 
     if (jenaDBDirectory.exists()) {
       try {
+        //On Windows: Deleting the TDB directory results in an error. 
+        //Probable Reason: Problem in mapDB -> The already closed DB (invitationStore) is still locked by Windows (no issue on Linux)
         FileUtils.deleteDirectory(jenaDBDirectory);
         LOGGER.info("Jena DB directory " + jenaDBDirectoryPath + " deleted.");
       } catch (IOException e) {
@@ -187,18 +191,20 @@ public class JenaUtil {
   }
 
   public static void deleteTempDirectory() {
-    File tempDirectory = TempFileUtil.TEMP_DIR;
-    String tempDirectoryPath = tempDirectory.getAbsolutePath();
+    File tempDirectory = TempFileUtil.getTempDirectory();
+    if (tempDirectory != null) {
+      String tempDirectoryPath = tempDirectory.getAbsolutePath();
 
-    if (tempDirectory.exists()) {
-      try {
-        FileUtils.deleteDirectory(tempDirectory);
-        LOGGER.info("Temp directory " + tempDirectoryPath + " deleted.");
-      } catch (IOException e) {
-        LOGGER.error("Temp directory " + tempDirectoryPath + " could not be deleted.", e);
+      if (tempDirectory.exists()) {
+        try {
+          FileUtils.deleteDirectory(tempDirectory);
+          LOGGER.info("Temp directory " + tempDirectoryPath + " deleted.");
+        } catch (IOException e) {
+          LOGGER.error("Temp directory " + tempDirectoryPath + " could not be deleted.", e);
+        }
+      } else {
+        LOGGER.info("Temp directory " + tempDirectoryPath + " does not exist.");
       }
-    } else {
-      LOGGER.info("Temp directory " + tempDirectoryPath + " does not exist.");
     }
   }
 

@@ -7,15 +7,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.logging.log4j.Logger;
-
-import de.mpg.imeji.exceptions.ImejiException;
-
-import org.apache.logging.log4j.LogManager;
-
 import org.apache.jena.Jena;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.tdb.TDBFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.mpg.imeji.exceptions.ImejiException;
 
 
 /**
