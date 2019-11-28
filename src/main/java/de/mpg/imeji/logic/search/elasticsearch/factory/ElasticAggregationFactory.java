@@ -105,9 +105,14 @@ public class ElasticAggregationFactory {
     List<AbstractAggregationBuilder> aggregations = new ArrayList<>();
     NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "info");
 
+    //use only subcollections
+    
+    FiltersAggregationBuilder systemAggregations =
+       AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all", QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()))));
+    /*
     FiltersAggregationBuilder systemAggregations =
         AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all", QueryBuilders.matchAllQuery()));
-
+     */
     aggregations.add(systemAggregations);
     aggregations.add(metadataAggregations);
     List<Facet> facets = new FacetService().retrieveAllFromCache();
@@ -116,9 +121,11 @@ public class ElasticAggregationFactory {
         if (SearchFields.author_organization_exact.getIndex().equals(facet.getIndex())) {
           systemAggregations.subAggregation(
               AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE).field(ElasticFields.AUTHOR_ORGANIZATION_EXACT.field()));
+
         } else if (SearchFields.author_completename_exact.getIndex().equals(facet.getIndex())) {
           systemAggregations.subAggregation(
               AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE).field(ElasticFields.AUTHOR_COMPLETENAME_EXACT.field()));
+
         } else if (SearchFields.collection_type.getIndex().equals(facet.getIndex())) {
           systemAggregations.subAggregation(
               AggregationBuilders.terms(facet.getIndex()).size(BUCKETS_MAX_SIZE).field(ElasticFields.COLLECTION_TYPE.field()));
