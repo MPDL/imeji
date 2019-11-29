@@ -128,7 +128,7 @@ public interface Search {
    * @return
    */
   public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
-      int from, int size);
+      int from, int size, boolean includeSubcollections);
 
   /**
    * Get the {@link SearchIndexer} for this {@link Search} implementation

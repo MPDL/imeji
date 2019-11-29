@@ -81,19 +81,19 @@ public class ElasticSearch implements Search {
 
     List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
     sortCriteria.add(sortCri);
-    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, false);
+    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, false, true);
   }
 
   @Override
   public SearchResult searchWithMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
       int from, int size) {
-    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, false);
+    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, false, true);
   }
 
   @Override
   public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
-      int from, int size) {
-    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true);
+      int from, int size, boolean includeSubcollections) {
+    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true, includeSubcollections);
   }
 
   @Override
@@ -101,11 +101,11 @@ public class ElasticSearch implements Search {
 
     List<SortCriterion> sortCriteria = new ArrayList<SortCriterion>(1);
     sortCriteria.add(sortCri);
-    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true);
+    return searchElasticSearch(query, sortCriteria, user, folderUri, from, size, true, true);
   }
 
   private SearchResult searchElasticSearch(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri, int from,
-      int size, boolean addFacets) {
+      int size, boolean addFacets, boolean includeSubcollections) {
 
     // magic number "-1" for unlimited size is spread all over the code:
     if (size != GET_ALL_RESULTS && size < 0) {
@@ -115,6 +115,7 @@ public class ElasticSearch implements Search {
 
     // construct request
     final ElasticQueryFactory factory = new ElasticQueryFactory(query, this.indices).folderUri(folderUri).user(user);
+    factory.setIncludeSubcollections(includeSubcollections);
     final QueryBuilder q = factory.build();
     final QueryBuilder f = factory.buildBaseQuery();
     /*

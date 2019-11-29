@@ -328,8 +328,9 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    * @return
    */
   public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery searchQuery, List<SortCriterion> sortCriteria, User user, int size,
-      int offset) {
-    SearchResult facetSearchResult = search.searchWithFacetsAndMultiLevelSorting(searchQuery, sortCriteria, user, null, offset, size);
+      int offset, boolean includeSubcollections) {
+    SearchResult facetSearchResult =
+        search.searchWithFacetsAndMultiLevelSorting(searchQuery, sortCriteria, user, null, offset, size, includeSubcollections);
     return facetSearchResult;
   }
 

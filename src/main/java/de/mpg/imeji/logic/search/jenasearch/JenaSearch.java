@@ -101,7 +101,7 @@ public class JenaSearch implements Search {
 
   @Override
   public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery query, List<SortCriterion> sortCriteria, User user, String folderUri,
-      int from, int size) {
+      int from, int size, boolean includeSubcollections) {
     // currently there is no implementation for search in Jena with multiple sort
     // criteria
     return null;

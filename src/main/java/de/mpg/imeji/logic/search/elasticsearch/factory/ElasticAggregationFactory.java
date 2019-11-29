@@ -106,9 +106,9 @@ public class ElasticAggregationFactory {
     NestedAggregationBuilder metadataAggregations = AggregationBuilders.nested("metadata", "info");
 
     //use only subcollections
-    
-    FiltersAggregationBuilder systemAggregations =
-       AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all", QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()))));
+
+    FiltersAggregationBuilder systemAggregations = AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all",
+        QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()))));
     /*
     FiltersAggregationBuilder systemAggregations =
         AggregationBuilders.filters("system", new FiltersAggregator.KeyedFilter("all", QueryBuilders.matchAllQuery()));

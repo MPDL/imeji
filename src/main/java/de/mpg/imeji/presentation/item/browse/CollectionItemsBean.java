@@ -148,7 +148,7 @@ public class CollectionItemsBean extends ItemsBean {
   @Override
   public SearchResult search(SearchQuery searchQuery, List<SortCriterion> sortCriteria, int offset, int limit) {
     final SearchAndRetrieveFacade facade = new SearchAndRetrieveFacade();
-    return facade.searchWithFacetsAndMultiLevelSorting(searchQuery, collection, getSessionUser(), sortCriteria, limit, offset);
+    return facade.searchWithFacetsAndMultiLevelSorting(searchQuery, collection, getSessionUser(), sortCriteria, limit, offset, true);
   }
 
   @Override

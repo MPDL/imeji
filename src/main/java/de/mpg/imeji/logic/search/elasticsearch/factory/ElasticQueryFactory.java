@@ -51,6 +51,7 @@ import de.mpg.imeji.util.DateFormatter;
 public class ElasticQueryFactory {
   private final Logger LOGGER = LogManager.getLogger(ElasticQueryFactory.class);
   private final boolean searchForCollection;
+  private boolean includeSubcollections;
   private final boolean searchForUsers;
   private final boolean emptyQuery;
   private String folderUri = null;
@@ -102,7 +103,7 @@ public class ElasticQueryFactory {
     if (!isMatchAll(filterQuery)) {
       booleanQuery.must(filterQuery);
     }
-    if (emptyQuery && searchForCollection) {
+    if ((emptyQuery && searchForCollection) || !includeSubcollections) {
       booleanQuery.mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()));
     }
     if (!searchForUsers && !isMatchAll(statusQuery)) {
@@ -825,5 +826,13 @@ public class ElasticQueryFactory {
       status = Status.WITHDRAWN.name();
     }
     return status.toUpperCase();
+  }
+
+  public boolean isIncludeSubcollections() {
+    return includeSubcollections;
+  }
+
+  public void setIncludeSubcollections(boolean includeSubcollections) {
+    this.includeSubcollections = includeSubcollections;
   }
 }

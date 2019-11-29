@@ -71,8 +71,9 @@ public class SearchAndRetrieveFacade implements Serializable {
    * @return
    */
   public SearchResult searchWithFacetsAndMultiLevelSorting(SearchQuery q, CollectionImeji collection, User user,
-      List<SortCriterion> sortCriteria, int size, int offset) {
-    return search.searchWithFacetsAndMultiLevelSorting(q, sortCriteria, user, collection.getId().toString(), offset, size);
+      List<SortCriterion> sortCriteria, int size, int offset, boolean includeSubcollections) {
+    return search.searchWithFacetsAndMultiLevelSorting(q, sortCriteria, user, collection.getId().toString(), offset, size,
+        includeSubcollections);
   }
 
   /**

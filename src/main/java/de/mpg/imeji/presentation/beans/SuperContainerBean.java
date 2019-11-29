@@ -209,7 +209,8 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
     int myOffset = offset;
     final SortCriterion sortCriterion =
         new SortCriterion(SearchFields.valueOfIndex(getSelectedSortCriterion()), SortOrder.valueOf(getSelectedSortOrder()));
-    searchResult = search(searchQuery, sortCriterion, myOffset, limit);
+    boolean includeSubcollections = facetQueryString == null || facetQueryString.isEmpty();
+    searchResult = search(searchQuery, sortCriterion, myOffset, limit, includeSubcollections);
     setSearchQuery(searchQuery);
     searchResult.setQuery(getQuery());
     searchResult.setSort(sortCriterion);
@@ -224,7 +225,8 @@ public abstract class SuperContainerBean<T> extends SuperPaginatorBean<T> {
    * @param sortCriterion
    * @return
    */
-  public abstract SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset, int limit);
+  public abstract SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset, int limit,
+      boolean includeSubcollections);
 
   /*
    * (non-Javadoc)

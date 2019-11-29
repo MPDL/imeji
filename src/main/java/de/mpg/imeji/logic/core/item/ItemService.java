@@ -486,7 +486,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
       User user, int size, int offset) {
 
     SearchResult facetSearchResult = search.searchWithFacetsAndMultiLevelSorting(searchQuery, sortCriteria, user,
-        containerUri != null ? containerUri.toString() : null, offset, size);
+        containerUri != null ? containerUri.toString() : null, offset, size, true);
     return facetSearchResult;
   }
 

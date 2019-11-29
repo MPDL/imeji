@@ -100,11 +100,11 @@ public class CollectionsBean extends SuperContainerBean<CollectionListItem> {
   }
 
   @Override
-  public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset, int limit) {
+  public SearchResult search(SearchQuery searchQuery, SortCriterion sortCriterion, int offset, int limit, boolean includeSubcollections) {
     final CollectionService controller = new CollectionService();
     List<SortCriterion> scList = new ArrayList<SortCriterion>();
     scList.add(sortCriterion);
-    return controller.searchWithFacetsAndMultiLevelSorting(searchQuery, scList, getSessionUser(), limit, offset);
+    return controller.searchWithFacetsAndMultiLevelSorting(searchQuery, scList, getSessionUser(), limit, offset, includeSubcollections);
   }
 
   public String getTypeLabel() {
