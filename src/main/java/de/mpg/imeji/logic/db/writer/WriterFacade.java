@@ -1,7 +1,9 @@
 package de.mpg.imeji.logic.db.writer;
 
+import java.io.IOException;
 import java.net.URI;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +15,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
+import de.mpg.imeji.exceptions.SearchIndexBulkFailureException;
+import de.mpg.imeji.exceptions.SearchIndexFailureException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.indexretry.RetryIndex;
+import de.mpg.imeji.logic.db.indexretry.model.RetryBaseRequest;
+import de.mpg.imeji.logic.db.indexretry.model.RetryDeleteFromIndexRequest;
+import de.mpg.imeji.logic.db.indexretry.model.RetryIndexRequest;
+import de.mpg.imeji.logic.db.indexretry.queue.RetryQueue;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties;
@@ -45,6 +57,8 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
  * @version $Revision$ $LastChangedDate$
  */
 public class WriterFacade {
+
+  private static final Logger LOGGER = LogManager.getLogger(WriterFacade.class);
   private final Writer writer;
   private final SearchIndexer indexer;
   private final WorkflowValidator workflowManager = new WorkflowValidator();
@@ -102,20 +116,9 @@ public class WriterFacade {
     checkWorkflow(objects, "create");
     checkSecurity(objects, user, true);
     validate(objects, Validator.Method.CREATE);
-    try {
-      List<Object> createdObjectsInJena = executor.submit(new CreateTask(objects, user)).get();
-      executor.submit(new IndexTask(createdObjectsInJena)).get();
-      return createdObjectsInJena;
-    } catch (ExecutionException | InterruptedException | CancellationException  execExept) {
-      if (execExept.getCause() instanceof ImejiException) {
-        throw (ImejiException) execExept.getCause();
-      } else {
-        throw new ImejiException(execExept.getMessage());
-      }
-    }
-    catch(Exception e) {
-    	throw new ImejiException(e.getMessage());
-    }
+    List<Object> createdObjects = writeAndIndex(new CreateTask(objects, user), new IndexTask());
+    return createdObjects;
+
   }
 
   /*
@@ -131,19 +134,8 @@ public class WriterFacade {
     checkWorkflow(objects, "delete");
     checkSecurity(objects, user, false);
     validate(objects, Validator.Method.DELETE);
-    try {
-      executor.submit(new DeleteIndexTask(objects)).get();
-      executor.submit(new DeleteTask(objects, user)).get();
-    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
-      if (execExept.getCause() instanceof ImejiException) {
-        throw (ImejiException) execExept.getCause();
-      } else {
-        throw new ImejiException(execExept.getMessage());
-      }
-    }
-    catch(Exception e) {
-    	throw new ImejiException(e.getMessage());
-    }
+    writeAndIndex(new DeleteTask(objects, user), new DeleteIndexTask());
+
   }
 
   /*
@@ -161,20 +153,8 @@ public class WriterFacade {
       checkSecurity(objects, user, false);
     }
     validate(objects, Validator.Method.UPDATE);
-    try {
-      List<Object> updatedObjectsInJena = executor.submit(new UpdateTask(objects, user)).get();
-      executor.submit(new IndexTask(updatedObjectsInJena)).get();
-      return updatedObjectsInJena;
-    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
-      if (execExept.getCause() instanceof ImejiException) {
-        throw (ImejiException) execExept.getCause();
-      } else {
-        throw new ImejiException(execExept.getMessage());
-      }
-    }
-    catch(Exception e) {
-    	throw new ImejiException(e.getMessage());
-    }
+    List<Object> updatedObjects = writeAndIndex(new UpdateTask(objects, user), new IndexTask());
+    return updatedObjects;
   }
 
   /**
@@ -190,26 +170,14 @@ public class WriterFacade {
     }
     throwAuthorizationException(user != null, SecurityUtil.authorization().administrate(user, Imeji.PROPERTIES.getBaseURI()),
         "Only admin can use update wihout validation");
-    try {
-      List<Object> objectsInJena = executor.submit(new UpdateTask(imejiDataObjects, user)).get();
-      executor.submit(new IndexTask(objectsInJena)).get();
-      return objectsInJena;
-    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
-      if (execExept.getCause() instanceof ImejiException) {
-        throw (ImejiException) execExept.getCause();
-      } else {
-        throw new ImejiException(execExept.getMessage());
-      }
-    }
-    catch(Exception e) {
-    	throw new ImejiException(e.getMessage());
-    }
+    List<Object> updatedObjects = writeAndIndex(new UpdateTask(imejiDataObjects, user), new IndexTask());
+    return updatedObjects;
   }
 
 
   /**
    * Use this function to change the value (add/edit/delete) of a specific field of a data object in
-   * database and index without changing any other field of that object.
+   * database and search index without changing any other field of that object.
    * 
    * @param changeMember
    * @param user
@@ -228,26 +196,15 @@ public class WriterFacade {
     Object valueToSet = changeMember.getValue();
     validate(valueToSet, Validator.Method.UPDATE);
 
-    try {
-      Object dataObjectFromStore = executor.submit(new ChangeMemberTask(changeMember)).get();
-      executor.submit(new IndexTask(Arrays.asList(dataObjectFromStore))).get();
-      return dataObjectFromStore;
-    } catch (ExecutionException | InterruptedException | CancellationException execExept) {
-      if (execExept.getCause() instanceof ImejiException) {
-        throw (ImejiException) execExept.getCause();
-      } else {
-        throw new ImejiException(execExept.getMessage());
-      }
-    }
-    catch(Exception e) {
-    	throw new ImejiException(e.getMessage());
-    }
+    List<Object> updatedObjects = writeAndIndex(new EditElementsTask(changeMember), new IndexTask());
+    return updatedObjects.get(0);
+
   }
 
   /**
    * Use this function to change the value (add/edit/delete) of a specific field of list of data
-   * objects in database and index. All "change value of this field of this data object" requests
-   * will be processed within a single transaction.
+   * objects in database and search index. All "change value of this field of this data object"
+   * requests will be processed within a single transaction.
    * 
    * @param changeElements
    * @param user
@@ -265,19 +222,93 @@ public class WriterFacade {
       validate(valueToSet, Validator.Method.UPDATE);
     }
 
+    List<Object> dataObjectsChangedInStore = writeToDatabase(new EditElementsTask(changeElements));
+
+    // copy latest object version of object in Jena to ElasticSearch:
+    Map<Class<?>, List<Object>> typedObjectMap = ObjectsHelper.createTypedObjectMap(dataObjectsChangedInStore);
+    Set<Class<?>> dataTypes = typedObjectMap.keySet();
+    for (Class<?> dataType : dataTypes) {
+      List<Object> objectsToIndex = typedObjectMap.get(dataType);
+      SearchObjectTypes typeToIndex = SearchObjectTypes.getFromDataType(dataType);
+      SearchIndexer myIndexer = SearchFactory.create(typeToIndex, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
+      IndexTask indexTask = new IndexTask();
+      indexTask.setIndexer(myIndexer);
+      indexInSearchIndexWithRetry(objectsToIndex, indexTask);
+    }
+    return dataObjectsChangedInStore;
+
+  }
+
+  /**
+   * Write an object/document to search index. Throws exception if not successful.
+   * 
+   * @param objectToIndex
+   * @param retry
+   * @throws Exception
+   */
+  public void indexObject(Object objectToIndex) throws Exception {
+
+    SearchObjectTypes typeToIndex = SearchObjectTypes.getFromDataType(objectToIndex.getClass());
+    SearchIndexer myIndexer = SearchFactory.create(typeToIndex, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
+    IndexTask indexTask = new IndexTask();
+    indexTask.setIndexer(myIndexer);
+    indexInSearchIndex(Arrays.asList(objectToIndex), indexTask);
+
+  }
+
+  /**
+   * Delete an object/document from search index. Throws exception if not successful.
+   * 
+   * @param objectToDeleteFromIndex
+   * @throws Exception
+   */
+  public void deleteObjectFromIndex(Object objectToDeleteFromIndex) throws Exception {
+
+    SearchObjectTypes typeToIndex = SearchObjectTypes.getFromDataType(objectToDeleteFromIndex.getClass());
+    SearchIndexer myIndexer = SearchFactory.create(typeToIndex, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
+    DeleteIndexTask deleteTask = new DeleteIndexTask();
+    deleteTask.setIndexer(myIndexer);
+    indexInSearchIndex(Arrays.asList(objectToDeleteFromIndex), deleteTask);
+  }
+
+
+  /**
+   * Write a list of objects first to database then to search index or delete an object first from
+   * database and then from search index. Throws exception if writing to database fails.
+   * 
+   * @param databaseTask a create/delete/update task for objects in database
+   * @param indexTask an index or delete task for indexing objects or deleting objects from search
+   *        index
+   * @return list of written/deleted objects
+   * @throws ImejiException
+   */
+  private List<Object> writeAndIndex(Callable<List<Object>> databaseTask, SearchIndexTask indexTask) throws ImejiException {
+
+    // 1. Write to database
+    List<Object> objectsChangedInDatabase = writeToDatabase(databaseTask);
+
+    // 2. If writing to database was successful and we got a result from database
+    // (latest version of the written objects), index the objects (copy them) in search index 	  
+    indexInSearchIndexWithRetry(objectsChangedInDatabase, indexTask);
+
+    // finally return written objects
+    return objectsChangedInDatabase;
+  }
+
+  /**
+   * Write a list of objects to database or delete a list of objects from database.
+   * 
+   * @param databaseTask
+   * @return list of objects currently (after writing) in database
+   * @throws ImejiException
+   */
+  private List<Object> writeToDatabase(Callable<List<Object>> databaseTask) throws ImejiException {
+
+    List<Object> objectsInDatabase = new ArrayList<>(0);
+
+    // 1. Write to database
     try {
-      // write list of changes to Jena and get latest object version:
-      List<Object> dataObjectsFromStore = (List<Object>) executor.submit(new EditElementsTask(changeElements)).get();
-      // copy latest object version of object in Jena to ElasticSearch:
-      Map<Class<?>, List<Object>> typedObjectMap = ObjectsHelper.createTypedObjectMap(dataObjectsFromStore);
-      Set<Class<?>> dataTypes = typedObjectMap.keySet();
-      for (Class<?> dataType : dataTypes) {
-        List<Object> objectsToIndex = typedObjectMap.get(dataType);
-        SearchObjectTypes typeToIndex = SearchObjectTypes.getFromDataType(dataType);
-        SearchIndexer myIndexer = SearchFactory.create(typeToIndex, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
-        myIndexer.updateIndexBatch(objectsToIndex);
-      }
-      return dataObjectsFromStore;
+      objectsInDatabase = executor.submit(databaseTask).get();
     } catch (ExecutionException | InterruptedException | CancellationException execExept) {
       if (execExept.getCause() instanceof ImejiException) {
         throw (ImejiException) execExept.getCause();
@@ -285,11 +316,73 @@ public class WriterFacade {
         throw new ImejiException(execExept.getMessage());
       }
     }
-    catch(Exception e) {
-    	throw new ImejiException(e.getMessage());
+
+    return objectsInDatabase;
+  }
+
+
+  /**
+   * Access search index and index or delete documents. In case of failure, save documents in a
+   * retry queue in order to retry indexing/deleting later on.
+   * 
+   * @param objectsToIndex
+   * @param indexTask either IndexTask oder DeleteIndexTask
+   */
+  private void indexInSearchIndexWithRetry(List<Object> objectsToIndex, SearchIndexTask indexTask) {
+
+    // 2. If writing to database was successful and we got a result from database
+    // (latest version of the written objects), index the objects in (copy them to) search index 	  
+    if (!objectsToIndex.isEmpty()) {
+      indexTask.setObjects(objectsToIndex);
+
+      try {
+        executor.submit(indexTask).get();
+      } catch (ExecutionException executionException) {
+        Throwable taskException = executionException.getCause();
+        if (taskException instanceof IOException) {
+          // SearchIndex is down, connection timed out
+          List<RetryBaseRequest> retryIndexList = indexTask.getRetryRequests();
+          RetryQueue.getInstance().addRetryIndexRequests(retryIndexList);
+        } else if (taskException instanceof SearchIndexFailureException) {
+          // single operation failed
+          SearchIndexFailureException failedException = (SearchIndexFailureException) taskException;
+          RetryBaseRequest retryRequest = failedException.getRetryRequest(objectsToIndex);
+          RetryQueue.getInstance().addRetryIndexRequests(Arrays.asList(retryRequest));
+        } else if (taskException instanceof SearchIndexBulkFailureException) {
+          // in a bulk request one or more operations failed
+          SearchIndexBulkFailureException failedException = (SearchIndexBulkFailureException) taskException;
+          List<RetryBaseRequest> retryRequests = failedException.getRetryRequests(objectsToIndex);
+          RetryQueue.getInstance().addRetryIndexRequests(retryRequests);
+        } else if (taskException instanceof UnprocessableError) {
+          // there were problems transforming an object to a json representation, development error
+          LOGGER.error("Could not parse data object to json representation", taskException);
+        }
+
+      } catch (InterruptedException | CancellationException interruptedOrCanceled) {
+        // thread was interrupted before executing: retry all objects
+        List<RetryBaseRequest> retryIndexList = indexTask.getRetryRequests();
+        RetryQueue.getInstance().addRetryIndexRequests(retryIndexList);
+
+      }
+
     }
   }
 
+
+  /**
+   * Index a list of objects in search index. In case of failure exception is thrown.
+   * 
+   * @param objectsToIndex
+   * @param indexTask
+   * @throws Exception
+   */
+  private void indexInSearchIndex(List<Object> objectsToIndex, SearchIndexTask indexTask) throws Exception {
+    if (!objectsToIndex.isEmpty()) {
+      indexTask.setObjects(objectsToIndex);
+      executor.submit(indexTask).get();
+    }
+
+  }
 
 
   // /*
@@ -329,13 +422,13 @@ public class WriterFacade {
 
 
   private void validate(Object object, Validator.Method method) throws UnprocessableError {
-	  
+
     final Validator<Object> validator = (Validator<Object>) ValidatorFactory.newValidator(object, method);
     validator.validate(object, method);
   }
 
   private void checkWorkflow(List<Object> objects, String operation) throws WorkflowException {
-	  
+
     for (final Object o : objects) {
       if (o instanceof Properties) {
         switch (operation) {
@@ -363,7 +456,7 @@ public class WriterFacade {
    * @throws AuthenticationError
    */
   private void checkSecurity(List<Object> list, final User user, boolean create) throws NotAllowedError, AuthenticationError {
-	  
+
     String message = user != null ? user.getEmail() : "";
     for (final Object o : list) {
       message += " not allowed to " + (create ? "create " : "edit ") + extractID(o);
@@ -374,6 +467,8 @@ public class WriterFacade {
       }
     }
   }
+
+
 
   /**
    * Extract the id (as {@link URI}) of an imeji {@link Object},
@@ -449,7 +544,7 @@ public class WriterFacade {
   }
 
   /**
-   * Task to update objects
+   * Task to update objects in database
    * 
    * @author saquet
    *
@@ -471,12 +566,12 @@ public class WriterFacade {
   }
 
   /**
-   * Task to delete objects
+   * Task to delete objects in database
    * 
    * @author saquet
    *
    */
-  private class DeleteTask implements Callable<Integer> {
+  private class DeleteTask implements Callable<List<Object>> {
     private final List<Object> objects;
     private final User user;
 
@@ -486,80 +581,98 @@ public class WriterFacade {
     }
 
     @Override
-    public Integer call() throws ImejiException {
+    public List<Object> call() throws ImejiException {
       writer.delete(objects, user);
-      return 1;
-    }
-  }
-
-  /**
-   * Task to index objects
-   * 
-   * @author saquet
-   *
-   */
-  private class IndexTask implements Callable<Object> {
-    private final List<Object> objects;
-
-    public IndexTask(List<Object> objects) {
-      this.objects = objects;
-    }
-
-    @Override
-    public Object call() throws ImejiException {
-      indexer.indexBatch(objects);
       return null;
     }
   }
 
   /**
-   * Task to index objects
+   * Base class for all search index tasks.
+   * 
+   * @author breddin
+   *
+   */
+  private abstract class SearchIndexTask implements Callable<Integer>, RetryIndex {
+
+    protected List<Object> objects;
+    protected SearchIndexer taskIndexer = indexer; // default is indexer of WriterFacade
+
+    public void setObjects(List<Object> objects) {
+      this.objects = objects;
+    }
+
+    public void setIndexer(SearchIndexer myIndexer) {
+      this.taskIndexer = myIndexer;
+    }
+  }
+
+
+  /**
+   * Task to index objects.
    * 
    * @author saquet
    *
    */
-  private class DeleteIndexTask implements Callable<Integer> {
-    private final List<Object> objects;
-
-    public DeleteIndexTask(List<Object> objects) {
-      this.objects = objects;
-    }
+  private class IndexTask extends SearchIndexTask {
 
     @Override
-    public Integer call() throws ImejiException {
-      indexer.deleteBatch(objects);
+    public Integer call() throws Exception {
+      taskIndexer.indexBatch(this.objects);
       return 1;
     }
-  }
-
-
-  private class ChangeMemberTask implements Callable<Object> {
-
-    private ChangeMember changeMember;
-
-    public ChangeMemberTask(ChangeMember changeMember) {
-      this.changeMember = changeMember;
-    }
-
 
     @Override
-    public Object call() throws Exception {
-      Object resultObject = writer.changeElement(this.changeMember);
-      return resultObject;
+    public List<RetryBaseRequest> getRetryRequests() {
+      return RetryIndexRequest.getRetryIndexRequests(this.objects);
+    }
+  }
+
+  /**
+   * Task to delete objects from index.
+   * 
+   * @author saquet
+   *
+   */
+  private class DeleteIndexTask extends SearchIndexTask {
+
+    @Override
+    public Integer call() throws Exception {
+
+      taskIndexer.deleteBatch(this.objects);
+      return 1;
+    }
+
+    @Override
+    public List<RetryBaseRequest> getRetryRequests() {
+      return RetryDeleteFromIndexRequest.getRetryDeleteFromIndexRequests(this.objects);
     }
 
   }
 
-  private class EditElementsTask implements Callable<Object> {
+
+  /**
+   * Task to write a list of changes/updates to a list of objects in database.
+   * 
+   * @author breddin
+   *
+   */
+  private class EditElementsTask implements Callable<List<Object>> {
 
     private final List<ChangeMember> changeElements;
+
+    public EditElementsTask(ChangeMember changeMember) {
+      this.changeElements = new ArrayList<ChangeMember>(1);
+      this.changeElements.add(changeMember);
+    }
+
 
     public EditElementsTask(List<ChangeMember> changeElements) {
       this.changeElements = changeElements;
     }
 
     @Override
-    public Object call() throws Exception {
+    public List<Object> call() throws Exception {
       List<Object> resultObjects = writer.editElements(changeElements);
       return resultObjects;
     }

@@ -342,7 +342,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
    * @param index
    * @throws ImejiException
    */
-  public void reindex(String index) throws ImejiException {
+  public void reindex(String index) throws Exception {
     LOGGER.info("Indexing Content...");
     final ElasticIndexer indexer = new ElasticIndexer(index);
     final SearchServiceAbstract<ContentVO>.RetrieveIterator iterator = iterateAll(50);

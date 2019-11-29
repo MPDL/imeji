@@ -8,8 +8,10 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -17,16 +19,17 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.VersionType;
+import org.elasticsearch.rest.RestStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.mpg.imeji.exceptions.SearchIndexBulkFailureException;
+import de.mpg.imeji.exceptions.SearchIndexFailureException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
@@ -86,29 +89,30 @@ public class ElasticIndexer implements SearchIndexer {
    * version plus a configurable number of replicas is created
    * 
    * @param obj the object that will be added to the index
+   * @throws UnprocessableError
+   * @throws IOException
+   * @throws SearchIndexFailureException
    */
   @Override
-  public void index(Object obj) {
-    try {
-      if (obj instanceof ResourceLastModified) {
-        long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
-        indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj), timestamp);
-      } else {
-        indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj));
-      }
-      commit();
-    } catch (final Exception e) {
-      LOGGER.error("Error indexing object ", e);
+  public void index(Object obj) throws UnprocessableError, IOException, SearchIndexFailureException {
+
+    if (obj instanceof ResourceLastModified) {
+      long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
+      indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj), timestamp);
+    } else {
+      indexJSON(getId(obj), toJson(obj, dataType, indexName), getParent(obj));
     }
+    commit();
+
   }
 
   @Override
-  public void indexBatch(List<?> l) {
+  public void indexBatch(List<?> l) throws UnprocessableError, IOException, SearchIndexBulkFailureException {
     updateIndexBatch(l);
   }
 
   @Override
-  public void updateIndexBatch(List<?> l) {
+  public void updateIndexBatch(List<?> l) throws UnprocessableError, IOException, SearchIndexBulkFailureException {
     if (l.isEmpty()) {
       return;
     }
@@ -117,38 +121,30 @@ public class ElasticIndexer implements SearchIndexer {
 
     for (final Object obj : l) {
 
-      try {
-        LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
-        final IndexRequest indexRequest;
-        if (obj instanceof ResourceLastModified) {
-          long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
-          indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType, timestamp);
-        } else {
-          indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType);
-        }
-        bulkRequest.add(indexRequest);
-      } catch (Exception e) {
-        LOGGER.error("Error adding object to bulk index list", e);
+      LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
+      final IndexRequest indexRequest;
+      if (obj instanceof ResourceLastModified) {
+        long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
+        indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType, timestamp);
+      } else {
+        indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType);
       }
-
+      bulkRequest.add(indexRequest);
     }
 
-    try {
-      if (bulkRequest.numberOfActions() > 0) {
-        BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-        if (resp.hasFailures()) {
-          LOGGER.error("Indexing failed!: " + resp.buildFailureMessage());
-        }
-
+    if (bulkRequest.numberOfActions() > 0) {
+      BulkResponse bulkResponse = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+      if (bulkResponse.hasFailures()) {
+        throw getSearchIndexBulkFailureException(bulkResponse);
       }
-    } catch (final Exception e) {
-      LOGGER.error("Error while bulk indexing", e);
     }
+
     if (!(l.get(0) instanceof ContentVO)) {
       commit();
     }
     updateIndexBatchPostProcessing(l);
   }
+
 
   /**
    * 
@@ -167,21 +163,18 @@ public class ElasticIndexer implements SearchIndexer {
   }
 
   @Override
-  public void delete(Object obj) {
+  public void delete(Object obj) throws IOException, SearchIndexFailureException {
     final String id = getId(obj);
     if (id != null) {
       DeleteRequest deleteRequest = getDeleteRequest(id, getParent(obj));
-      try {
-        DeleteResponse resp = ElasticService.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
-      } catch (Exception e) {
-        LOGGER.error("error deleting " + id, e);
-      }
+      DeleteResponse deleteResponse = ElasticService.getClient().delete(deleteRequest, RequestOptions.DEFAULT);
+      checkIfOperationWasSuccessful(deleteResponse);
       commit();
     }
   }
 
   @Override
-  public void deleteBatch(List<?> l) {
+  public void deleteBatch(List<?> l) throws IOException, SearchIndexBulkFailureException {
     if (l.isEmpty()) {
       return;
     }
@@ -193,10 +186,9 @@ public class ElasticIndexer implements SearchIndexer {
       }
     }
     if (bulkRequest.numberOfActions() > 0) {
-      try {
-        BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-      } catch (Exception e) {
-        LOGGER.error("ERROR during bulk delete", e);
+      BulkResponse bulkResponse = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+      if (bulkResponse.hasFailures()) {
+        throw getSearchIndexBulkFailureException(bulkResponse);
       }
     }
     if (!(l.get(0) instanceof ContentVO)) {
@@ -305,15 +297,14 @@ public class ElasticIndexer implements SearchIndexer {
    *
    * @param id
    * @param json
+   * @throws IOException
+   * @throws SearchIndexFailureException
    */
-  public void indexJSON(String id, String json, String parent, long timestamp) {
+  public void indexJSON(String id, String json, String parent, long timestamp) throws IOException, SearchIndexFailureException {
     if (id != null) {
       IndexRequest req = getIndexRequest(id, json, parent, dataType, timestamp);
-      try {
-        IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
-      } catch (Exception e) {
-        LOGGER.error("error indexing ", e);
-      }
+      IndexResponse indexResponse = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
+      checkIfOperationWasSuccessful(indexResponse);
     }
   }
 
@@ -322,15 +313,14 @@ public class ElasticIndexer implements SearchIndexer {
    *
    * @param id
    * @param json
+   * @throws IOException
+   * @throws SearchIndexFailureException
    */
-  public void indexJSON(String id, String json, String parent) {
+  public void indexJSON(String id, String json, String parent) throws IOException, SearchIndexFailureException {
     if (id != null) {
       IndexRequest req = getIndexRequest(id, json, parent, dataType);
-      try {
-        IndexResponse resp = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
-      } catch (Exception e) {
-        LOGGER.error("error indexing ", e);
-      }
+      IndexResponse indexResponse = ElasticService.getClient().index(req, RequestOptions.DEFAULT);
+      checkIfOperationWasSuccessful(indexResponse);
     }
   }
 
@@ -341,7 +331,8 @@ public class ElasticIndexer implements SearchIndexer {
    * immediately available for other tasks
    */
 
-  public void commit() { // Check if refresh is needed: cost is very high
+  public void commit() {
+    // Check if refresh is needed: cost is very high
     RefreshRequest rr = new RefreshRequest(indexName);
     try {
       ElasticService.getClient().indices().refresh(rr, RequestOptions.DEFAULT);
@@ -349,6 +340,79 @@ public class ElasticIndexer implements SearchIndexer {
       LOGGER.error("error refreshing index ", e);
     }
   }
+
+
+
+  /**
+   * If one or more requests (indexing/updating/deleting a document) have failed in a bulk request
+   * to Elastic Search, process the response object and create a SearchIndexBulkFailureException.
+   * 
+   * @param bulkResponse
+   * @return
+   */
+  private SearchIndexBulkFailureException getSearchIndexBulkFailureException(BulkResponse bulkResponse) {
+
+    SearchIndexBulkFailureException failureException = new SearchIndexBulkFailureException();
+    for (BulkItemResponse bulkItemResponse : bulkResponse) {
+
+      if (bulkItemResponse.isFailed()) {
+
+        BulkItemResponse.Failure failure = bulkItemResponse.getFailure();
+        String idOfDocument = failure.getId();
+        Exception rootProblem = failure.getCause();
+        RestStatus status = failure.getStatus();
+        DocWriteResponse itemResponse = bulkItemResponse.getResponse();
+
+        // Elastic Search has already indicated that it sees the operation as failed
+        // additionally we do our own check (i.e. a delete operation that could not find the document is not a problem)
+        if (!elasticSearchResponseReportsSuccess(itemResponse)) {
+          failureException.addFailure(idOfDocument, itemResponse, status, rootProblem);
+        }
+      }
+    }
+    return failureException;
+  }
+
+
+  /**
+   * Checks whether an operation (indexing/updating/deleting a document) in Elastic Search has been
+   * successful. Throws Exception if status codes indicate error/failure of the operation.
+   * 
+   * @param response Response object (DocWrite)
+   * @throws SearchIndexFailureException
+   */
+  private void checkIfOperationWasSuccessful(DocWriteResponse response) throws SearchIndexFailureException {
+
+    if (!elasticSearchResponseReportsSuccess(response)) {
+      throw new SearchIndexFailureException(response);
+    }
+
+  }
+
+
+  private boolean elasticSearchResponseReportsSuccess(DocWriteResponse response) {
+
+    RestStatus restStatus = response.status();
+    DocWriteResponse.Result operationResult = response.getResult();
+
+    if (restStatus == RestStatus.OK) {
+      return true;
+    } else {
+      if (response instanceof IndexResponse) {
+        // in case of index we can get created ins
+        if (restStatus == RestStatus.CREATED) {
+          return true;
+        }
+      } else if (response instanceof DeleteResponse) {
+        // if we want to delete a resource that does not exist, this is not a problem
+        if (operationResult == DocWriteResponse.Result.NOT_FOUND) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
 
 
   /**
@@ -452,48 +516,6 @@ public class ElasticIndexer implements SearchIndexer {
       AcknowledgedResponse putMappingResponse = ElasticService.getClient().indices().putMapping(request, RequestOptions.DEFAULT);
     } catch (final Exception e) {
       LOGGER.error("Error initializing the Elastic Search Mapping " + mappingFile, e);
-    }
-  }
-
-  @Override
-  public void updatePartial(String id, Object obj) {
-    if (id != null) {
-      UpdateRequest updateRequest = new UpdateRequest();
-      try {
-        updateRequest.index(indexName).type("_doc").id(id).doc(toJson(obj, id, indexName), XContentType.JSON);
-
-        UpdateResponse resp = ElasticService.getClient().update(updateRequest, RequestOptions.DEFAULT);
-      } catch (IOException | UnprocessableError e) {
-        LOGGER.error("error updating " + id, e);
-      }
-    }
-  }
-
-  /**
-   * Bulk Partial update
-   * 
-   * @param l
-   */
-  public void partialUpdateIndexBatch(List<?> l) {
-    if (l.isEmpty()) {
-      return;
-    }
-    try {
-      final BulkRequest bulkRequest = new BulkRequest();
-      for (final Object obj : l) {
-        UpdateRequest updateRequest = new UpdateRequest();
-        updateRequest.index(indexName).type("_doc").id(getId(obj)).doc(toJson(obj, dataType, indexName), XContentType.JSON);
-        bulkRequest.add(updateRequest);
-      }
-      BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-      if (resp.hasFailures()) {
-        LOGGER.error("Indexing failed!: " + resp.buildFailureMessage());
-      }
-      if (!(l.get(0) instanceof ContentVO)) {
-        commit();
-      }
-    } catch (final Exception e) {
-      LOGGER.error("error indexing object ", e);
     }
   }
 

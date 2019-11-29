@@ -82,6 +82,7 @@ public class ElasticQueryFactory {
    * @return
    */
   public QueryBuilder build() {
+
     final BoolQueryBuilder booleanQuery = QueryBuilders.boolQuery();
     final QueryBuilder searchQuery = buildSearchQuery(query, user);
     final QueryBuilder containerQuery = buildContainerFilter(folderUri, !emptyQuery);

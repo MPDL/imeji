@@ -582,7 +582,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @param index
    * @throws ImejiException
    */
-  public void reindex(String index) throws ImejiException {
+  public void reindex(String index) throws Exception {
     LOGGER.info("Indexing Items...");
     final ElasticIndexer indexer = new ElasticIndexer(ElasticIndices.items.name());
     LOGGER.info("Retrieving Items...");

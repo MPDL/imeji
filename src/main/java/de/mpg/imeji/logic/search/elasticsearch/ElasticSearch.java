@@ -223,7 +223,7 @@ public class ElasticSearch implements Search {
    * or all documents that exist within ElasticSeach database for a given query
    *
    * @param query ElasticSearch search query
-   * @param sortCriteria Criteria by which the results are be sorted
+   * @param sortCriteria Criteria by which the results are sorted
    * @param user User
    * @param folderUri
    * @param from Search from this result number (within all results for the given query)

@@ -75,7 +75,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    *
    * @throws ImejiException
    */
-  private void reindexFolders(String index) throws ImejiException {
+  private void reindexFolders(String index) throws Exception {
     final CollectionService c = new CollectionService();
     c.reindex(index);
   }
@@ -86,7 +86,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    *
    */
-  private void reindexItems(String index) throws ImejiException {
+  private void reindexItems(String index) throws Exception {
     final ItemService controller = new ItemService();
     controller.reindex(index);
   }
@@ -97,7 +97,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @throws ImejiException
    *
    */
-  private void reindexContents(String index) throws ImejiException {
+  private void reindexContents(String index) throws Exception {
     new ContentService().reindex(index);
   }
 
@@ -107,7 +107,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @param index
    * @throws ImejiException
    */
-  private void reindexUsers(String index) throws ImejiException {
+  private void reindexUsers(String index) throws Exception {
     new UserService().reindex(index);
   }
 
@@ -117,7 +117,7 @@ public class ElasticReIndexJob implements Callable<Integer> {
    * @param index
    * @throws ImejiException
    */
-  private void reindexUserGroups(String index) throws ImejiException {
+  private void reindexUserGroups(String index) throws Exception {
     new UserGroupService().reindex(index);
   }
 

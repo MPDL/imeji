@@ -88,8 +88,10 @@ public class CollectionPostIndexScript {
    * @return
    * @throws InterruptedException
    * @throws ExecutionException
+   * @throws IOException
    */
-  private static List<String> getCollectionItemIds(CollectionImeji c) throws InterruptedException, ExecutionException {
+  private static List<String> getCollectionItemIds(CollectionImeji c) throws InterruptedException, ExecutionException, IOException {
+
     TermQueryBuilder q = QueryBuilders.termQuery(ElasticFields.FOLDER.field(), c.getId().toString());
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -97,16 +99,15 @@ public class CollectionPostIndexScript {
     searchSourceBuilder.query(q);
     searchRequest.indices(ElasticIndices.items.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
     SearchResponse resp = null;
-    List<String> ids = null;
-    try {
-      resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
-      ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits().value));
-      for (final SearchHit hit : resp.getHits()) {
-        ids.add(hit.getId());
-      }
-    } catch (Exception e1) {
-      LOGGER.error("error during search", e1);
+    List<String> ids = new ArrayList<String>(0);
+
+
+    resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
+    ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits().value));
+    for (final SearchHit hit : resp.getHits()) {
+      ids.add(hit.getId());
     }
+
     while (true) {
       String scrollId = resp.getScrollId();
       SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
@@ -125,11 +126,8 @@ public class CollectionPostIndexScript {
     }
     ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
     clearScrollRequest.addScrollId(resp.getScrollId());
-    try {
-      ClearScrollResponse response = ElasticService.getClient().clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
-    } catch (IOException e) {
-      LOGGER.error("error during clear scroll", e);
-    }
+    ClearScrollResponse response = ElasticService.getClient().clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+
     return ids;
   }
 

@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.search;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public interface SearchIndexer {
    *
    * @param obj
    */
-  public void index(Object obj);
+  public void index(Object obj) throws Exception;
 
   /**
    * Index a list of Object. This method might be faster for multiple objects, than using the index
@@ -25,7 +26,7 @@ public interface SearchIndexer {
    *
    * @param l
    */
-  public void indexBatch(List<?> l);
+  public void indexBatch(List<?> l) throws Exception;
 
   /**
    * Update a list of Object. This method might be faster for multiple objects, than using the index
@@ -35,27 +36,21 @@ public interface SearchIndexer {
    *
    * @param l
    */
-  public void updateIndexBatch(List<?> l);
+  public void updateIndexBatch(List<?> l) throws Exception;
 
   /**
    * Delete an object from the Index
    *
    * @param obj
    */
-  public void delete(Object obj);
+  public void delete(Object obj) throws Exception;
 
   /**
    * Delete many objects from the index
    *
    * @param l
    */
-  public void deleteBatch(List<?> l);
+  public void deleteBatch(List<?> l) throws Exception;
 
-  /**
-   * Do a partial update of the object
-   *
-   * @param obj
-   */
-  public void updatePartial(String id, Object obj);
 
 }

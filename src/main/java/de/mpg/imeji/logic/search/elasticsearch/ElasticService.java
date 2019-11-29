@@ -1,8 +1,11 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
-import org.elasticsearch.client.Client;
+
+import java.net.URI;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.node.Node;
 
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 
@@ -16,7 +19,7 @@ public class ElasticService {
   private static RestHighLevelClient client;
 
   static final String SETTINGS_DEFAULT = "elasticsearch/Settings.json";
-
+  private static final Logger LOGGER = LogManager.getLogger(ElasticService.class);
 
   /**
    * The Index where all data are indexed
@@ -57,7 +60,47 @@ public class ElasticService {
           return ElasticIndices.items;
       }
     }
+
+
+    /**
+     * 
+     * @param documentId
+     * @return
+     */
+    public static ElasticIndices uriToElasticIndex(URI documentId) {
+
+      // format of id: http://imeji.org/terms/userGroup/idXY
+      // extract text in between the last and second but last slash in the id
+      String objectType = "";
+      String idString = documentId.toString();
+
+      int indexOfLastSlash = idString.lastIndexOf("/");
+      if (indexOfLastSlash != -1) {
+        String withoutId = idString.substring(0, indexOfLastSlash);
+        int indexOfSecondButLastSlash = withoutId.lastIndexOf("/");
+        if (indexOfSecondButLastSlash != -1) {
+          objectType = withoutId.substring(indexOfSecondButLastSlash + 1, withoutId.length());
+        }
+      }
+
+      switch (objectType) {
+        case "item":
+          return ElasticIndices.items;
+        case "collection":
+          return ElasticIndices.folders;
+        case "user":
+          return ElasticIndices.users;
+        case "usergroup":
+          return ElasticIndices.usergroups;
+        case "content":
+          return ElasticIndices.items;
+        default:
+          return ElasticIndices.items;
+      }
+    }
   }
+
+
 
   public enum ElasticAnalysers {
     standard,

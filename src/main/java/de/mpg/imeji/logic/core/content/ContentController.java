@@ -22,6 +22,7 @@ import de.mpg.imeji.logic.util.ObjectHelper;
  *
  */
 class ContentController extends ImejiControllerAbstract<ContentVO> {
+
   private static final ReaderFacade READER = new ReaderFacade(Imeji.contentModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.contentModel);
 

@@ -385,7 +385,16 @@ public class UserService {
    * @return
    */
   public List<User> searchAndRetrieveLazy(SearchQuery q, SortCriterion sort, User user, int offset, int size) {
-    return retrieveBatchLazy(search.search(q, sort, user, null, offset, size).getResults(), size);
+
+    List<User> foundUsers = new ArrayList<User>(0);
+    SearchResult searchResult = search.search(q, sort, user, null, offset, size);
+    if (searchResult != null) {
+      List<String> foundUris = searchResult.getResults();
+      if (foundUris != null) {
+        foundUsers = retrieveBatchLazy(foundUris, size);
+      }
+    }
+    return foundUsers;
   }
 
   /**
@@ -548,7 +557,7 @@ public class UserService {
     return retrieveBatchLazy(uris, Search.GET_ALL_RESULTS);
   }
 
-  public void reindex(String index) throws ImejiException {
+  public void reindex(String index) throws Exception {
     LOGGER.info("Indexing users...");
     final ElasticIndexer indexer = new ElasticIndexer(ElasticIndices.users.name());
     final List<User> users = retrieveAll();

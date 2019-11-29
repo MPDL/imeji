@@ -326,7 +326,7 @@ public class UserGroupService {
    * @param index
    * @throws ImejiException
    */
-  public void reindex(String index) throws ImejiException {
+  public void reindex(String index) throws Exception {
     LOGGER.info("Indexing users...");
     final ElasticIndexer indexer = new ElasticIndexer(index);
     final List<UserGroup> groups = (List<UserGroup>) retrieveAll();
