@@ -583,7 +583,7 @@ public class WriterFacade {
     @Override
     public List<Object> call() throws ImejiException {
       writer.delete(objects, user);
-      return null;
+      return objects;
     }
   }
 
