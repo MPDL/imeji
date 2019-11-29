@@ -40,6 +40,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.StatementType;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.search.Search;
@@ -247,6 +248,23 @@ public class ImejiInitializer {
   public static String getModelName(Class<?> voClass) {
     final j2jModel j2jModel = voClass.getAnnotation(j2jModel.class);
     return "http://imeji.org/" + j2jModel.value();
+  }
+  
+  
+  /**
+   * Return the name of the model associated with the object class with respect to Jena models.
+   * In particular UserGroup is stored in the user model.
+   *  
+   * @param voClass class of the object whose 
+   */
+  public static String getJenaModelName(Class<?> voClass) {
+	  
+	  if(voClass.equals(UserGroup.class)) {
+		  voClass = User.class;
+	  }
+	  final j2jModel j2jModel = voClass.getAnnotation(j2jModel.class);
+	  return "http://imeji.org/" + j2jModel.value();
+	  
   }
 
   /**

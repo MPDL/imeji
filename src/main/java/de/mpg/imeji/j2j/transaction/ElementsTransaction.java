@@ -80,7 +80,7 @@ public class ElementsTransaction extends Transaction {
       throws NotFoundException, AlreadyExistsException, UnprocessableError, ReloadBeforeSaveException {
 
     // find model of object
-    String modelName = ImejiInitializer.getModelName(changeMember.getImejiDataObject().getClass());
+    String modelName = ImejiInitializer.getJenaModelName(changeMember.getImejiDataObject().getClass());
     this.setModel(modelName);
 
     ResourceElementController resourceController = new ResourceElementController(getModel(ds));

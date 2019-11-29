@@ -566,7 +566,7 @@ public class WriterFacade {
   }
 
   /**
-   * Task to delete objects in database
+   * Task to delete objects in database.
    * 
    * @author saquet
    *

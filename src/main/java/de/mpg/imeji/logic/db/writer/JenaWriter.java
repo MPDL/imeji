@@ -106,15 +106,6 @@ public class JenaWriter implements Writer {
   }
 
   @Override
-  public Object changeElement(ChangeMember changeMember) throws ImejiException {
-    final ElementTransaction listElementTransaction = new ElementTransaction(modelURI, changeMember);
-    ThreadedTransaction.run(new ThreadedTransaction(listElementTransaction, Imeji.tdbPath), WRITE_EXECUTOR);
-    return listElementTransaction.getResult();
-  }
-
-
-
-  @Override
   public List<Object> editElements(List<ChangeMember> changeElements) throws ImejiException {
     final ElementsTransaction multitypesTransaction = new ElementsTransaction(changeElements);
     ThreadedTransaction.run(new ThreadedTransaction(multitypesTransaction, Imeji.tdbPath), WRITE_EXECUTOR);

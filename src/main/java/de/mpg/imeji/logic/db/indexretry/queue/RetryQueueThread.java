@@ -194,7 +194,7 @@ public class RetryQueueThread implements Runnable {
       Class clazz = retryRequest.getObjectClass();
       Constructor defaultConstructor = clazz.getConstructor();
       objectToRead = defaultConstructor.newInstance();
-      String modelName = ImejiInitializer.getModelName(retryRequest.getObjectClass());
+      String modelName = ImejiInitializer.getJenaModelName(retryRequest.getObjectClass());
       Reader databaseReader = ReaderFactory.create(modelName);
       Object objectInDatabase = databaseReader.read(retryRequest.getUri().toString(), Imeji.adminUser, objectToRead);
       // copy to search index
