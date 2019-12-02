@@ -2,7 +2,9 @@ package de.mpg.imeji.presentation.item.browse;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.faces.event.ValueChangeEvent;
@@ -104,8 +106,12 @@ public class ThumbnailBean implements Serializable {
     private final String value;
 
     public SimpleMetadata(Metadata metadata) {
+      NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+      nf.setMinimumFractionDigits(0);
+      nf.setMaximumFractionDigits(999999999);
+      nf.setGroupingUsed(false);
       this.name = metadata.getIndex();
-      this.value = metadata.getText() + metadata.getName() + (!Double.isNaN(metadata.getNumber()) ? metadata.getNumber() : "")
+      this.value = metadata.getText() + metadata.getName() + (!Double.isNaN(metadata.getNumber()) ? nf.format(metadata.getNumber()) : "")
           + metadata.getDate() + (metadata.getPerson() != null ? metadata.getPerson().getCompleteNameWithOrga() : "")
           + (StringHelper.isNullOrEmptyTrim(metadata.getUrl()) ? metadata.getTitle() : metadata.getUrl())
           + (!Double.isNaN(metadata.getLongitude()) ? " (" + metadata.getLongitude() + "/" + metadata.getLatitude() + ")" : "");
