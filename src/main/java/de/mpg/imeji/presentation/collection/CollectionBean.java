@@ -2,7 +2,6 @@ package de.mpg.imeji.presentation.collection;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -411,21 +410,26 @@ public abstract class CollectionBean extends SuperBean {
 
   private void retrieveInternalCollectionsToLink() {
 
-    try {
-      final CollectionService collectionService = new CollectionService();
-
-      //Search for all public collections which are no subcollections
-      SearchFactory searchFactory = new SearchFactory();
-      searchFactory.addElement(new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false), LOGICAL_RELATIONS.AND);
-      searchFactory.addElement(new SearchPair(SearchFields.folder, SearchOperators.EQUALS, "*", true), LOGICAL_RELATIONS.AND);
-
-      this.internalCollectionsToLinkAvailable =
-          collectionService.searchAndRetrieve(searchFactory.build(), new SortCriterion(SearchFields.collection_title, SortOrder.DESCENDING),
-              getSessionUser(), 1, Search.SEARCH_FROM_START_INDEX).size() > 0;
-    } catch (ImejiException e) {
-      // not a severe problem
+    if (Imeji.CONFIG.getPrivateModus()) {
+      // In private Modus no public collections (should) exist => no internal collections should be linkable
       this.internalCollectionsToLinkAvailable = false;
-      LOGGER.error("Error loading internal Collections-To-Link list.", e);
+    } else {
+      try {
+        final CollectionService collectionService = new CollectionService();
+
+        //Search for all public collections which are no subcollections
+        SearchFactory searchFactory = new SearchFactory();
+        searchFactory.addElement(new SearchPair(SearchFields.status, SearchOperators.EQUALS, "public", false), LOGICAL_RELATIONS.AND);
+        searchFactory.addElement(new SearchPair(SearchFields.folder, SearchOperators.EQUALS, "*", true), LOGICAL_RELATIONS.AND);
+
+        this.internalCollectionsToLinkAvailable = collectionService.searchAndRetrieve(searchFactory.build(),
+            new SortCriterion(SearchFields.collection_title, SortOrder.DESCENDING), getSessionUser(), 1, Search.SEARCH_FROM_START_INDEX)
+            .size() > 0;
+      } catch (ImejiException e) {
+        // not a severe problem
+        this.internalCollectionsToLinkAvailable = false;
+        LOGGER.error("Error loading internal Collections-To-Link list.", e);
+      }
     }
 
   }
