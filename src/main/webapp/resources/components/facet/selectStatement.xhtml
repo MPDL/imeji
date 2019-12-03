@@ -14,8 +14,6 @@
 		</div>
 
 
-
-<!-- TODO!!! -->
 		<h:panelGroup layout="block" id="collectionStatementList">
 			<ui:fragment rendered="#{not empty Configuration.collectionMetadataSuggestionsPreselectAsList}">
 				<div class="imj_headline" style="width: 100%;">
@@ -27,15 +25,12 @@
 
 			<ui:repeat var="label" value="#{Configuration.collectionMetadataSuggestionsComplete}" varStatus="statusVar">
 				<p>
-					<ui:remove>
-						<ui:fragment rendered="#{cc.attrs.bean.isUsed(index.searchIndex)}">
-							<span class="fa fa-lock" />
-							<span> #{lbl.facet_used}: </span>
-						</ui:fragment>
-					</ui:remove>
-
+					<ui:fragment rendered="#{cc.attrs.bean.isUsed(cc.attrs.bean.labelToIndex(label))}">
+						<span class="fa fa-lock" />
+						<span> #{lbl.facet_used}: </span>
+					</ui:fragment>
 					<h:commandLink value="#{label}" action="#{cc.attrs.bean.initCollectionFacet(label)}"
-						onclick="closeDialog('selectStatementDialog');">
+						onclick="closeDialog('selectStatementDialog');" disabled="#{cc.attrs.bean.isUsed(cc.attrs.bean.labelToIndex(label))}">
 						<f:ajax execute="@form" render="@form" />
 					</h:commandLink>
 				</p>

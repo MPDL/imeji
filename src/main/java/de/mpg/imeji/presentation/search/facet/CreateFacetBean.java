@@ -9,8 +9,8 @@ import java.util.stream.Stream;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
@@ -100,6 +100,15 @@ public class CreateFacetBean extends SuperBean {
     this.objecttype = Facet.OBJECTTYPE_COLLECTION;
   }
 
+  /**
+   * Get the index name of the given collection-metadata label
+   * 
+   * @param label of a collection-metadata
+   * @return The index name
+   */
+  public String labelToIndex(String label) {
+    return SearchCollectionMetadata.labelToIndex(label);
+  }
 
 
   /**
