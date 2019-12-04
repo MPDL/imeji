@@ -5,6 +5,8 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
+import de.mpg.imeji.logic.util.TempFileUtil;
+
 /**
  * Resources used for the imeji tests
  * 
@@ -118,10 +120,9 @@ public class ImejiTestResources {
 
   private static synchronized File copyFile(File f) {
     try {
-      File tmp = File.createTempFile(f.getName().replace(".", ""), "." + FilenameUtils.getExtension(f.getName()));
-      // File copyWithSameName = new File(tmp.getAbsolutePath().replace(tmp.getName(),
-      // f.getName()));
-      // FileUtils.copyFile(f, copyWithSameName);
+      // Use the imeji Temp Directory to store the test files
+      File tmp =
+          File.createTempFile(f.getName().replace(".", ""), "." + FilenameUtils.getExtension(f.getName()), TempFileUtil.getTempDirectory());
       FileUtils.copyFile(f, tmp);
       return tmp;
     } catch (Exception e) {

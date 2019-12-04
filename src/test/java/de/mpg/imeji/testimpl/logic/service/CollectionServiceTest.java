@@ -40,6 +40,7 @@ import de.mpg.imeji.logic.security.user.UserService.USER_TYPE;
 import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.StringHelper;
+import de.mpg.imeji.logic.util.TempFileUtil;
 import de.mpg.imeji.test.logic.service.SuperServiceTest;
 import de.mpg.imeji.util.ImejiTestResources;
 
@@ -526,7 +527,7 @@ public class CollectionServiceTest extends SuperServiceTest {
 
   private String getLogoChecksum(CollectionImeji c) throws IOException, ImejiException {
     StorageController sController = new StorageController();
-    File storedFile = File.createTempFile("testFile", null);
+    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getTempDirectory());
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(c.getLogoUrl().toString(), fos, true);
     return StorageUtils.calculateChecksum(storedFile);
