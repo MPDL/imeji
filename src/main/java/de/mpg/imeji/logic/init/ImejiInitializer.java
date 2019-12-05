@@ -249,22 +249,22 @@ public class ImejiInitializer {
     final j2jModel j2jModel = voClass.getAnnotation(j2jModel.class);
     return "http://imeji.org/" + j2jModel.value();
   }
-  
-  
+
+
   /**
-   * Return the name of the model associated with the object class with respect to Jena models.
-   * In particular UserGroup is stored in the user model.
-   *  
-   * @param voClass class of the object whose 
+   * Return the name of the model associated with the object class with respect to Jena models. In
+   * particular UserGroup is stored in the user model.
+   * 
+   * @param voClass class of the object whose
    */
   public static String getJenaModelName(Class<?> voClass) {
-	  
-	  if(voClass.equals(UserGroup.class)) {
-		  voClass = User.class;
-	  }
-	  final j2jModel j2jModel = voClass.getAnnotation(j2jModel.class);
-	  return "http://imeji.org/" + j2jModel.value();
-	  
+
+    if (voClass.equals(UserGroup.class)) {
+      voClass = User.class;
+    }
+    final j2jModel j2jModel = voClass.getAnnotation(j2jModel.class);
+    return "http://imeji.org/" + j2jModel.value();
+
   }
 
   /**

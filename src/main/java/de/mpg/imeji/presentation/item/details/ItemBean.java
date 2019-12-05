@@ -298,12 +298,17 @@ public class ItemBean extends SuperBean {
     } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving item metadata", e);
+      editor.updateMetadataEntries();
     } catch (ReloadBeforeSaveException reloadBeforeSave) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + ": " + reloadBeforeSave.getMessage());
+      editor.updateMetadataEntries();
     } catch (ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + ": " + e.getMessage());
       LOGGER.error("Error saving item metadata", e);
+      editor.updateMetadataEntries();
     }
+
+
   }
 
   /**
