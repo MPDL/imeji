@@ -164,7 +164,7 @@ public class ContentServiceTest extends SuperServiceTest {
 
   private String getChecksum(String url) throws NotFoundException, ImejiException, IOException {
     StorageController sController = new StorageController();
-    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getTempDirectory());
+    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getOrCreateTempDirectory());
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(url, fos, true);
     return StorageUtils.calculateChecksum(storedFile);
