@@ -794,7 +794,7 @@ public class ItemServiceTest extends SuperServiceTest {
 
   private String getOriginalChecksum(Item i) throws NotFoundException, ImejiException, IOException {
     StorageController sController = new StorageController();
-    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getTempDirectory());
+    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getOrCreateTempDirectory());
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(getOriginalUrl(i), fos, true);
     return StorageUtils.calculateChecksum(storedFile);

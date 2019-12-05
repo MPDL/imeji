@@ -527,7 +527,7 @@ public class CollectionServiceTest extends SuperServiceTest {
 
   private String getLogoChecksum(CollectionImeji c) throws IOException, ImejiException {
     StorageController sController = new StorageController();
-    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getTempDirectory());
+    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getOrCreateTempDirectory());
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(c.getLogoUrl().toString(), fos, true);
     return StorageUtils.calculateChecksum(storedFile);

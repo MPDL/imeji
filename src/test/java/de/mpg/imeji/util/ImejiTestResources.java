@@ -121,8 +121,8 @@ public class ImejiTestResources {
   private static synchronized File copyFile(File f) {
     try {
       // Use the imeji Temp Directory to store the test files
-      File tmp =
-          File.createTempFile(f.getName().replace(".", ""), "." + FilenameUtils.getExtension(f.getName()), TempFileUtil.getTempDirectory());
+      File tmp = File.createTempFile(f.getName().replace(".", ""), "." + FilenameUtils.getExtension(f.getName()),
+          TempFileUtil.getOrCreateTempDirectory());
       FileUtils.copyFile(f, tmp);
       return tmp;
     } catch (Exception e) {
