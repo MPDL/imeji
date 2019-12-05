@@ -126,7 +126,7 @@ public class ImejiTestResources {
       FileUtils.copyFile(f, tmp);
       return tmp;
     } catch (Exception e) {
-      throw new RuntimeException("Error copying file", e);
+      throw new RuntimeException("Error copying file: " + e.getMessage(), e);
     }
   }
 }
