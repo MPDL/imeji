@@ -122,7 +122,7 @@ public class ImejiTestResources {
     try {
       // Use the imeji Temp Directory to store the test files
       File tmp = File.createTempFile(f.getName().replace(".", ""), "." + FilenameUtils.getExtension(f.getName()),
-          TempFileUtil.getOrCreateTempDirectory());
+          new File(TempFileUtil.getOrCreateTempDirectory().getCanonicalPath()));
       FileUtils.copyFile(f, tmp);
       return tmp;
     } catch (Exception e) {

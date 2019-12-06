@@ -115,9 +115,9 @@ public class ItemServiceTest extends SuperServiceTest {
     itemPrivate = ImejiFactory.newItem(collectionPrivate);
     itemService.createWithFile(itemPrivate, ImejiTestResources.getTestJpg(), "Test.jpg", collectionPrivate, userAdmin);
     itemReleased = ImejiFactory.newItem(collectionReleased);
-    itemService.createWithFile(itemReleased, ImejiTestResources.getTestJpg(), "Test.jpg", collectionReleased, userAdmin);
+    itemService.createWithFile(itemReleased, ImejiTestResources.getTest1Jpg(), "Test1.jpg", collectionReleased, userAdmin);
     itemWithdrawn = ImejiFactory.newItem(collectionWithdrawn);
-    itemService.createWithFile(itemWithdrawn, ImejiTestResources.getTestJpg(), "Test.jpg", collectionWithdrawn, userAdmin);
+    itemService.createWithFile(itemWithdrawn, ImejiTestResources.getTest2Jpg(), "Test2.jpg", collectionWithdrawn, userAdmin);
 
     collectionService.releaseWithDefaultLicense(collectionReleased, userAdmin);
     collectionReleased = collectionService.retrieve(collectionReleased.getId(), userAdmin);
@@ -794,7 +794,7 @@ public class ItemServiceTest extends SuperServiceTest {
 
   private String getOriginalChecksum(Item i) throws NotFoundException, ImejiException, IOException {
     StorageController sController = new StorageController();
-    File storedFile = File.createTempFile("testFile", null, TempFileUtil.getOrCreateTempDirectory());
+    File storedFile = File.createTempFile("testFile", null, new File(TempFileUtil.getOrCreateTempDirectory().getCanonicalPath()));
     FileOutputStream fos = new FileOutputStream(storedFile);
     sController.read(getOriginalUrl(i), fos, true);
     return StorageUtils.calculateChecksum(storedFile);
