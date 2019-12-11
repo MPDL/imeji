@@ -43,13 +43,14 @@ public class UnshareListener extends Listener {
       List<User> allUsers = userService.retrieveAll();
       // (2) Find all users that have a grant to the deleted collection
       Map<String, User> usersToNotify = new HashMap<>();
-      String uriOfRemovedCollection = getMessage().getObjectId();
-      usersToNotify = unshare(allUsers, uriOfRemovedCollection, usersToNotify);
+      String idOfRemovedCollection = getMessage().getObjectId();
+      String uriOfRemovedCollection = ObjectHelper.getURI(CollectionImeji.class, idOfRemovedCollection).toString();
+      usersToNotify = unshare(allUsers, idOfRemovedCollection, usersToNotify);
       // (3) delete the grants in the user objects in database
       for (User deleteGrantFromThisUser : usersToNotify.values()) {
         userService.removeGrantsFromUser(Imeji.adminUser, deleteGrantFromThisUser, new Grant(null, uriOfRemovedCollection));
       }
-      unshareUserGroup(getMessage().getObjectId());
+      unshareUserGroup(idOfRemovedCollection, uriOfRemovedCollection);
     } catch (Exception e) {
       LOGGER.error("Error unsubscribing users", e);
     }
@@ -62,12 +63,12 @@ public class UnshareListener extends Listener {
    * @param collectionId
    * @throws ImejiException
    */
-  private void unshareUserGroup(String collectionId) throws ImejiException {
+  private void unshareUserGroup(String collectionId, String uriOfRemovedCollection) throws ImejiException {
     UserGroupService userGroupService = new UserGroupService();
     List<UserGroup> groups = (List<UserGroup>) userGroupService.retrieveAll();
     for (UserGroup group : groups) {
       if (hasGrantFor((List<String>) group.getGrants(), collectionId)) {
-        userGroupService.removeGrantFromGroup(Imeji.adminUser, group, new Grant(null, collectionId));
+        userGroupService.removeGrantFromGroup(Imeji.adminUser, group, new Grant(null, uriOfRemovedCollection));
       }
     }
   }
