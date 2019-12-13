@@ -1,7 +1,12 @@
 package de.mpg.imeji.logic.db.indexretry.model;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Calendar;
+
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,8 +25,15 @@ import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
  * @author breddin
  *
  */
-public abstract class RetryBaseRequest {
+@XmlRootElement(name = "RetryRequest")
+@XmlAccessorType(XmlAccessType.FIELD)
+public abstract class RetryBaseRequest implements Serializable {
 
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 3904763389591479583L;
 
   /**
    * The uri of the resource that shall be copied to the index
@@ -34,7 +46,6 @@ public abstract class RetryBaseRequest {
   private Calendar failTime;
 
   private static final Logger LOGGER = LogManager.getLogger(RetryBaseRequest.class);
-
 
   /**
    * Constructor for RetryBaseRequest
@@ -52,10 +63,17 @@ public abstract class RetryBaseRequest {
     return this.objectUri;
   }
 
+  public void setObjectUri(URI objectUri) {
+    this.objectUri = objectUri;
+  }
 
 
   public Calendar getFailTime() {
     return this.failTime;
+  }
+
+  public void setFailTime(Calendar calendar) {
+    this.failTime = calendar;
   }
 
   /**
@@ -63,7 +81,7 @@ public abstract class RetryBaseRequest {
    * 
    * @param object
    */
-  private void setFailTime(Object object) {
+  public void setFailTime(Object object) {
 
     this.failTime = Calendar.getInstance();
     if (object instanceof ResourceLastModified) {
@@ -73,6 +91,7 @@ public abstract class RetryBaseRequest {
     }
 
   }
+
 
   /**
    * Given an object to index and a response from ElasticSearch that indicates a failure, constructs

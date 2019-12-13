@@ -32,6 +32,7 @@ import de.mpg.imeji.logic.db.indexretry.model.RetryDeleteFromIndexRequest;
 import de.mpg.imeji.logic.db.indexretry.model.RetryIndexRequest;
 import de.mpg.imeji.logic.db.indexretry.queue.RetryQueue;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Subscription;
@@ -246,7 +247,7 @@ public class WriterFacade {
    * @param retry
    * @throws Exception
    */
-  public void indexObject(Object objectToIndex) throws Exception {
+  public void indexObject(Object objectToIndex) throws ExecutionException, InterruptedException {
 
     SearchObjectTypes typeToIndex = SearchObjectTypes.getFromDataType(objectToIndex.getClass());
     SearchIndexer myIndexer = SearchFactory.create(typeToIndex, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
@@ -262,7 +263,7 @@ public class WriterFacade {
    * @param objectToDeleteFromIndex
    * @throws Exception
    */
-  public void deleteObjectFromIndex(Object objectToDeleteFromIndex) throws Exception {
+  public void deleteObjectFromIndex(Object objectToDeleteFromIndex) throws ExecutionException, InterruptedException {
 
     SearchObjectTypes typeToIndex = SearchObjectTypes.getFromDataType(objectToDeleteFromIndex.getClass());
     SearchIndexer myIndexer = SearchFactory.create(typeToIndex, SEARCH_IMPLEMENTATIONS.ELASTIC).getIndexer();
@@ -376,7 +377,7 @@ public class WriterFacade {
    * @param indexTask
    * @throws Exception
    */
-  private void indexInSearchIndex(List<Object> objectsToIndex, SearchIndexTask indexTask) throws Exception {
+  private void indexInSearchIndex(List<Object> objectsToIndex, SearchIndexTask indexTask) throws ExecutionException, InterruptedException {
     if (!objectsToIndex.isEmpty()) {
       indexTask.setObjects(objectsToIndex);
       executor.submit(indexTask).get();
@@ -481,6 +482,8 @@ public class WriterFacade {
       return ((Item) o).getId();
     } else if (o instanceof CollectionImeji) {
       return ((CollectionImeji) o).getId();
+    } else if (o instanceof ContentVO) {
+      return ((ContentVO) o).getId();
     } else if (o instanceof User) {
       return ((User) o).getId();
     } else if (o instanceof UserGroup) {

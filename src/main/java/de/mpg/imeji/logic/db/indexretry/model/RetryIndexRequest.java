@@ -21,6 +21,11 @@ import de.mpg.imeji.logic.db.writer.WriterFacade;
 public class RetryIndexRequest extends RetryBaseRequest {
 
   /**
+   * 
+   */
+  private static final long serialVersionUID = 1451561364128569344L;
+
+  /**
    * The class of the resource that shall be copied to the index
    */
   private Class objectClass;

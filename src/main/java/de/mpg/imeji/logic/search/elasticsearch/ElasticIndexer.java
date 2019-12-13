@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -107,19 +108,21 @@ public class ElasticIndexer implements SearchIndexer {
   }
 
   @Override
-  public void indexBatch(List<?> l) throws UnprocessableError, IOException, SearchIndexBulkFailureException {
+  public void indexBatch(List<?> l)
+      throws UnprocessableError, IOException, SearchIndexBulkFailureException, InterruptedException, ExecutionException {
     updateIndexBatch(l);
   }
 
   @Override
-  public void updateIndexBatch(List<?> l) throws UnprocessableError, IOException, SearchIndexBulkFailureException {
-    if (l.isEmpty()) {
+  public void updateIndexBatch(List<?> objectList)
+      throws UnprocessableError, IOException, SearchIndexBulkFailureException, InterruptedException, ExecutionException {
+    if (objectList.isEmpty()) {
       return;
     }
 
     final BulkRequest bulkRequest = new BulkRequest();
 
-    for (final Object obj : l) {
+    for (final Object obj : objectList) {
 
       LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
       final IndexRequest indexRequest;
@@ -139,28 +142,34 @@ public class ElasticIndexer implements SearchIndexer {
       }
     }
 
-    if (!(l.get(0) instanceof ContentVO)) {
+    if (!(objectList.get(0) instanceof ContentVO)) {
       commit();
     }
-    updateIndexBatchPostProcessing(l);
+    updateIndexBatchPostProcessing(objectList);
   }
 
 
   /**
    * 
-   * @param l
+   * @param objectList
+   * @throws ExecutionException
+   * @throws InterruptedException
+   * @throws IOException
+   * @throws SearchIndexBulkFailureException
    */
-  private void updateIndexBatchPostProcessing(List<?> l) {
-    if (l.isEmpty()) {
+  private void updateIndexBatchPostProcessing(List<?> objectList)
+      throws SearchIndexBulkFailureException, IOException, InterruptedException, ExecutionException {
+    if (objectList.isEmpty()) {
       return;
     }
-    ItemPostIndexScript.run(l, indexName);
-    for (Object o : l) {
+    ItemPostIndexScript.run(objectList, indexName);
+    for (Object o : objectList) {
       if (o instanceof CollectionImeji) {
         CollectionPostIndexScript.run((CollectionImeji) o, "items");
       }
     }
   }
+
 
   @Override
   public void delete(Object obj) throws IOException, SearchIndexFailureException {
@@ -350,7 +359,7 @@ public class ElasticIndexer implements SearchIndexer {
    * @param bulkResponse
    * @return
    */
-  private SearchIndexBulkFailureException getSearchIndexBulkFailureException(BulkResponse bulkResponse) {
+  public static SearchIndexBulkFailureException getSearchIndexBulkFailureException(BulkResponse bulkResponse) {
 
     SearchIndexBulkFailureException failureException = new SearchIndexBulkFailureException();
     for (BulkItemResponse bulkItemResponse : bulkResponse) {
@@ -390,7 +399,7 @@ public class ElasticIndexer implements SearchIndexer {
   }
 
 
-  private boolean elasticSearchResponseReportsSuccess(DocWriteResponse response) {
+  private static boolean elasticSearchResponseReportsSuccess(DocWriteResponse response) {
 
     RestStatus restStatus = response.status();
     DocWriteResponse.Result operationResult = response.getResult();

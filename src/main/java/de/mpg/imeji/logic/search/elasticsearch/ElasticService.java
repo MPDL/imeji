@@ -80,6 +80,7 @@ public class ElasticService {
         int indexOfSecondButLastSlash = withoutId.lastIndexOf("/");
         if (indexOfSecondButLastSlash != -1) {
           objectType = withoutId.substring(indexOfSecondButLastSlash + 1, withoutId.length());
+          objectType = objectType.toLowerCase();
         }
       }
 

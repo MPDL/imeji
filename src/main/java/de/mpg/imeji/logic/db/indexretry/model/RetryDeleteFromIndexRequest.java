@@ -19,6 +19,11 @@ import de.mpg.imeji.logic.db.writer.WriterFacade;
 public class RetryDeleteFromIndexRequest extends RetryBaseRequest {
 
   /**
+   * 
+   */
+  private static final long serialVersionUID = 6358482095258311000L;
+
+  /**
    * The object that shall be deleted
    */
   private Object objectToDelete;

@@ -1,5 +1,6 @@
 package de.mpg.imeji.logic.search.elasticsearch.script;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,9 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 
+import de.mpg.imeji.exceptions.SearchIndexBulkFailureException;
 import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
@@ -27,37 +30,33 @@ import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
  *
  */
 public class ItemPostIndexScript {
+
   private static final Logger LOGGER = LogManager.getLogger(ItemPostIndexScript.class);
 
-  public static void run(List<?> list, String index) {
+  public static void run(List<?> list, String index) throws IOException, SearchIndexBulkFailureException {
+
     List<Item> items = (List<Item>) list.stream().filter(o -> o instanceof Item).collect(Collectors.toList());
     final BulkRequest bulkRequest = new BulkRequest();
 
     for (final Item item : items) {
-      try {
-        CollectionFields fields = retrieveCollectionFields(item, index);
-        if (fields != null) {
-          final XContentBuilder json = fields.toXContentBuilder();
-          UpdateRequest updateRequest = new UpdateRequest();
-          updateRequest.index(ElasticIndices.items.name()).type("_doc").id(item.getId().toString()).doc(json);
-          bulkRequest.add(updateRequest);
-        }
-      } catch (Exception e) {
-        LOGGER.error("Error indexing item with collection fields", e);
+      CollectionFields fields = retrieveCollectionFields(item, index);
+      if (fields != null) {
+        final XContentBuilder json = fields.toXContentBuilder();
+        UpdateRequest updateRequest = new UpdateRequest();
+        updateRequest.index(ElasticIndices.items.name()).type("_doc").id(item.getId().toString()).doc(json);
+        bulkRequest.add(updateRequest);
       }
-
     }
     if (bulkRequest.numberOfActions() > 0) {
-      BulkResponse resp;
-      try {
-        resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-      } catch (Exception e) {
-        LOGGER.error("error during bulk", e);
+      BulkResponse resp = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+      if (resp.hasFailures()) {
+        throw ElasticIndexer.getSearchIndexBulkFailureException(resp);
       }
     }
   }
 
   private static CollectionFields retrieveCollectionFields(Item item, String index) {
+
     GetRequest getRequest = new GetRequest();
     String[] includes = new String[] {ElasticFields.AUTHOR_COMPLETENAME.field(), ElasticFields.AUTHOR_ORGANIZATION.field(),
         ElasticFields.ID.field(), ElasticFields.NAME.field()};
@@ -76,9 +75,8 @@ public class ItemPostIndexScript {
          */
         return new CollectionFields(resp.getSourceAsBytes());
       }
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (IOException e) {
+      LOGGER.error("Could not retrieve collection fields");
     }
     return null;
   }
