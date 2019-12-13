@@ -25,10 +25,8 @@ import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
  * @author breddin
  *
  */
-@XmlRootElement(name = "RetryRequest")
-@XmlAccessorType(XmlAccessType.FIELD)
-public abstract class RetryBaseRequest implements Serializable {
 
+public abstract class RetryBaseRequest implements Serializable {
 
   /**
    * 
