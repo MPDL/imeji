@@ -17,7 +17,7 @@
 			<h:form id="uploadForm">
 				<ui:fragment rendered="#{cc.attrs.bean.collection.status == 'RELEASED'}">
 					#{lbl.move_collection_released}<br/><br/>
-					<license:licenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":uploadDialog:uploadForm" render=":uploader:licenseVariables"/>
+					<license:reactiveLicenseEditor licenseEditor="#{cc.attrs.bean.licenseEditor}" containerId=":uploadDialog:uploadForm" render=":uploader:licenseVariables"/>
 				</ui:fragment>
 	           <h:commandButton id="updateItems" value="update" action="#{cc.attrs.bean.refresh}" style="display:none" onclick="closeUploader();">
 	           		<f:ajax execute="@this" render=":ajaxWrapper :additonalFooterScripts :actions :collectionAbout"/>
@@ -27,6 +27,7 @@
 				<a href="#" id="closeUploadDialog" onclick="stopUploader();" class="imj_cancelButton">
 					#{lbl.cancel}
 				</a>
+				<!--  button id "select files" is handed to upload.xhtml where java script functionality is added -->
 				<button id="selectFiles" class="imj_submitButton" style="position: initial !important">
 					#{lbl.select_files}
 				</button>
