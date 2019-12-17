@@ -1,6 +1,9 @@
 package de.mpg.imeji.logic.validation.impl;
 
+import java.util.Locale;
+
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.validation.Validation;
 
@@ -29,7 +32,8 @@ public class LicenseValidator extends ObjectValidator implements Validator<Licen
 
   private void checkLicenseURLFormat(String licenseURL) throws UnprocessableError {
     if (!Validation.validateURLFormat(licenseURL)) {
-      throw new UnprocessableError("error_full_web_url_license");
+      String message = Imeji.RESOURCE_BUNDLE.getMessage("error_full_web_url_license", Locale.ENGLISH);
+      throw new UnprocessableError(message);
     }
   }
 
