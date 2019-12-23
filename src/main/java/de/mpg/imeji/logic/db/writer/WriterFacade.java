@@ -24,7 +24,6 @@ import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.SearchIndexBulkFailureException;
 import de.mpg.imeji.exceptions.SearchIndexFailureException;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.indexretry.RetryIndex;
 import de.mpg.imeji.logic.db.indexretry.model.RetryBaseRequest;
@@ -34,7 +33,6 @@ import de.mpg.imeji.logic.db.indexretry.queue.RetryQueue;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Item;
-import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
@@ -48,7 +46,6 @@ import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.util.ObjectsHelper;
 import de.mpg.imeji.logic.validation.ValidatorFactory;
 import de.mpg.imeji.logic.validation.impl.Validator;
-import de.mpg.imeji.logic.workflow.WorkflowValidator;
 
 /**
  * Facade implementing Writer {@link Authorization}
@@ -62,7 +59,6 @@ public class WriterFacade {
   private static final Logger LOGGER = LogManager.getLogger(WriterFacade.class);
   private final Writer writer;
   private final SearchIndexer indexer;
-  private final WorkflowValidator workflowManager = new WorkflowValidator();
   private final ExecutorService executor = Executors.newCachedThreadPool();
 
   /**
@@ -114,7 +110,6 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return objects;
     }
-    checkWorkflow(objects, "create");
     checkSecurity(objects, user, true);
     validate(objects, Validator.Method.CREATE);
     List<Object> createdObjects = writeAndIndex(new CreateTask(objects, user), new IndexTask());
@@ -132,7 +127,6 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return;
     }
-    checkWorkflow(objects, "delete");
     checkSecurity(objects, user, false);
     validate(objects, Validator.Method.DELETE);
     writeAndIndex(new DeleteTask(objects, user), new DeleteIndexTask());
@@ -149,7 +143,6 @@ public class WriterFacade {
     if (objects.isEmpty()) {
       return objects;
     }
-    checkWorkflow(objects, "update");
     if (doCheckSecurity) {
       checkSecurity(objects, user, false);
     }
@@ -192,7 +185,6 @@ public class WriterFacade {
     }
 
     List<Object> imejiDataObjectList = Arrays.asList(changeMember.getImejiDataObject());
-    checkWorkflow(imejiDataObjectList, "update");
     checkSecurity(imejiDataObjectList, user, true);
     Object valueToSet = changeMember.getValue();
     validate(valueToSet, Validator.Method.UPDATE);
@@ -216,7 +208,6 @@ public class WriterFacade {
 
     List<Object> imejiDataObjectList =
         changeElements.stream().map(dataObject -> dataObject.getImejiDataObject()).collect(Collectors.toList());
-    checkWorkflow(imejiDataObjectList, "update");
     checkSecurity(imejiDataObjectList, user, true);
     for (ChangeMember changeMember : changeElements) {
       Object valueToSet = changeMember.getValue();
@@ -317,7 +308,6 @@ public class WriterFacade {
         throw new ImejiException(execExept.getMessage());
       }
     }
-
     return objectsInDatabase;
   }
 
@@ -426,25 +416,6 @@ public class WriterFacade {
 
     final Validator<Object> validator = (Validator<Object>) ValidatorFactory.newValidator(object, method);
     validator.validate(object, method);
-  }
-
-  private void checkWorkflow(List<Object> objects, String operation) throws WorkflowException {
-
-    for (final Object o : objects) {
-      if (o instanceof Properties) {
-        switch (operation) {
-          case "create":
-            workflowManager.isCreateAllowed((Properties) o);
-            break;
-          case "delete":
-            workflowManager.isDeleteAllowed((Properties) o);
-            break;
-          case "update":
-            workflowManager.isUpdateAllowed((Properties) o);
-            break;
-        }
-      }
-    }
   }
 
   /**
