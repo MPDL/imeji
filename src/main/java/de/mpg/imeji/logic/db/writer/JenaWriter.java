@@ -11,7 +11,6 @@ import org.apache.jena.rdf.model.Model;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
-import de.mpg.imeji.j2j.transaction.ElementTransaction;
 import de.mpg.imeji.j2j.transaction.ElementsTransaction;
 import de.mpg.imeji.j2j.transaction.ThreadedTransaction;
 import de.mpg.imeji.j2j.transaction.Transaction;

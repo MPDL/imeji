@@ -169,34 +169,6 @@ public abstract class ImejiControllerAbstract<T> {
   }
 
   /**
-   * Add the {@link Properties} to an imeji object when it is released
-   *
-   * @param properties
-   * @param user
-   * @throws WorkflowException
-   * @throws NotSupportedMethodException
-   */
-  protected void prepareRelease(Properties properties, User user) throws WorkflowException, NotSupportedMethodException {
-    WORKFLOW_MANAGER.prepareRelease(properties);
-  }
-
-  /**
-   * Add the {@link Properties} to an imeji object when it is withdrawn
-   *
-   * @param properties
-   * @param comment
-   * @throws WorkflowException
-   * @throws NotSupportedMethodException
-   * @throws UnprocessableError
-   */
-  protected void prepareWithdraw(Properties properties, String comment) throws WorkflowException, NotSupportedMethodException {
-    if (comment != null && !"".equals(comment)) {
-      properties.setDiscardComment(comment);
-    }
-    WORKFLOW_MANAGER.prepareWithdraw(properties);
-  }
-
-  /**
    * True if at least one {@link Item} is locked by another {@link User}
    *
    * @param uris
