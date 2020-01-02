@@ -76,7 +76,7 @@ public class WorkflowManager {
   public void prepareWithdraw(Properties p) throws WorkflowException, NotSupportedMethodException {
     workflowValidator.isWithdrawAllowed(p);
     if (p.getDiscardComment() == null || "".equals(p.getDiscardComment())) {
-      throw new WorkflowException("Discard error: A Discard comment is needed");
+      throw new WorkflowException("Discard error: A Discard comment is needed", "error_withdraw_comment");
     }
     p.setStatus(Status.WITHDRAWN);
   }

@@ -91,7 +91,7 @@ public final class DoiService {
       throw new NotAllowedError("You are not allowed to add a DOI to this collection");
     }
     if (!Status.RELEASED.equals(coll.getStatus())) {
-      throw new WorkflowException("Collection has to be released to create a DOI");
+      throw new WorkflowException("Collection has to be released to create a DOI", "error_doi_creation");
     }
   }
 

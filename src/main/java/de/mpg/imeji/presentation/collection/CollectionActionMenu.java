@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
@@ -140,7 +141,13 @@ public class CollectionActionMenu implements Serializable {
       if (imejiException instanceof UnprocessableError) {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
         LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
-      } else {
+      } 
+      else if( imejiException instanceof ImejiExceptionWithUserMessage) {
+    	  ImejiExceptionWithUserMessage exceptionWithUserMessage = (ImejiExceptionWithUserMessage) imejiException;
+    	  BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale));
+          LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale));
+      } 
+      else {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale));
         LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + imejiException.getMessage());
       }
@@ -161,7 +168,12 @@ public class CollectionActionMenu implements Serializable {
     } catch (final UnprocessableError e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
       LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
-    } catch (final ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithUserMessage) {
+    	BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale));
+    	LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale) + " " + exceptionWithUserMessage.getMessage());
+    }
+    catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale));
       LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + e.getMessage());
     }

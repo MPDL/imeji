@@ -78,14 +78,16 @@ public class CRUDTransaction extends Transaction {
 
     if (object instanceof Properties) {
 
-      if (this.type == CRUDTransactionType.CREATE || this.type == CRUDTransactionType.UPDATE || this.type == CRUDTransactionType.DELETE) {
-        // check status of database object and not client object
+      WorkflowValidator workflowManager = new WorkflowValidator();
+
+      // create: check client object
+      if (this.type == CRUDTransactionType.CREATE) {
+        workflowManager.isCreateAllowed((Properties) object);
+      }
+      // update, delete: check database object (and not client object)
+      else if (this.type == CRUDTransactionType.UPDATE || this.type == CRUDTransactionType.DELETE) {
         Object databaseObject = getCorrespondingObjectInDatabase(object, resourceController);
-        WorkflowValidator workflowManager = new WorkflowValidator();
         switch (this.type) {
-          case CREATE:
-            workflowManager.isCreateAllowed((Properties) databaseObject);
-            break;
           case DELETE:
             workflowManager.isDeleteAllowed((Properties) databaseObject);
             break;

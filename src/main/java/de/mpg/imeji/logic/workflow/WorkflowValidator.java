@@ -6,6 +6,7 @@ import de.mpg.imeji.exceptions.NotSupportedMethodException;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
 
@@ -28,7 +29,8 @@ public class WorkflowValidator implements Serializable {
   public void isDeleteAllowed(Properties p) throws WorkflowException {
     if (p.getStatus() != Status.PENDING) {
       throw new WorkflowException(
-          "Workflow operation not allowed: " + p.getId() + " can not be deleted (current status: " + p.getStatus() + ")");
+          "Workflow operation not allowed: " + p.getId() + " can not be deleted (current status: " + p.getStatus() + ")",
+          "collection_or_item_is_not_pending");
     }
   }
 
@@ -41,10 +43,10 @@ public class WorkflowValidator implements Serializable {
    */
   public void isCreateAllowed(Properties p) throws WorkflowException {
     if (p.getStatus() == Status.WITHDRAWN) {
-      throw new WorkflowException("Can not create discarded object");
+      throw new WorkflowException("Can not create discarded object", null);
     }
     if (Imeji.CONFIG.getPrivateModus() && p.getStatus() != Status.PENDING) {
-      throw new WorkflowException("Object publication is disabled!");
+      throw new WorkflowException("Object publication is disabled!", "publication_disabled");
     }
   }
 
@@ -57,7 +59,14 @@ public class WorkflowValidator implements Serializable {
    */
   public void isUpdateAllowed(Properties p) throws WorkflowException {
     if (p.getStatus() == Status.WITHDRAWN) {
-      throw new WorkflowException("Can not update discarded object");
+    	String userErrorMessageLabel = null;
+    	if(p instanceof CollectionImeji) {
+    		userErrorMessageLabel = "error_update_withdrawn_collection";
+    	}
+    	else if(p instanceof Item) {
+    		userErrorMessageLabel = "error_update_withdrawn_item";
+    	}
+      throw new WorkflowException("Can not update discarded object", userErrorMessageLabel);
     }
   }
 
@@ -71,10 +80,10 @@ public class WorkflowValidator implements Serializable {
 
   public void isCreateDOIAllowed(Properties p) throws WorkflowException {
     if (Imeji.CONFIG.getPrivateModus() && !isSubcollection(p)) {
-      throw new WorkflowException("DOI is not allowed in private mode");
+      throw new WorkflowException("DOI is not allowed in private mode", null);
     }
     if (p.getStatus() != Status.RELEASED) {
-      throw new WorkflowException("DOI is only allowed for released items");
+      throw new WorkflowException("DOI is only allowed for released items", null);
     }
 
   }
@@ -93,8 +102,12 @@ public class WorkflowValidator implements Serializable {
     if (Imeji.CONFIG.getPrivateModus() && !isSubcollection(p)) {
       throw new NotSupportedMethodException("Object publication is disabled!");
     }
-    if (p.getStatus() != Status.PENDING) {
-      throw new WorkflowException("Only PENDING objects can be released");
+    
+    if (p.getStatus() == Status.RELEASED) {
+      throw new WorkflowException("Only PENDING objects can be released", "error_release_released_collection");
+    }
+    else if(p.getStatus() == Status.WITHDRAWN) {
+    	throw new WorkflowException("Only PENDING objects can be released", "error_release_withdrawn_collection");
     }
   }
 
@@ -107,8 +120,11 @@ public class WorkflowValidator implements Serializable {
    * @throws NotSupportedMethodException
    */
   public void isWithdrawAllowed(Properties p) throws WorkflowException, NotSupportedMethodException {
-    if (p.getStatus() != Status.RELEASED) {
-      throw new WorkflowException("Only RELEASED objects can be withdrawn");
+    if (p.getStatus() == Status.PENDING) {
+      throw new WorkflowException("Only RELEASED objects can be withdrawn", null);
+    }
+    else if(p.getStatus() == Status.WITHDRAWN) {
+    	throw new WorkflowException("Only RELEASED objects can be withdrawn", "error_withdraw_withdrawn_object");
     }
   }
 

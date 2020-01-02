@@ -1,15 +1,21 @@
 package de.mpg.imeji.exceptions;
 
 /**
- * Exception when ann non valid workflow operation is done (for instance: release, discard)
+ * Exception is thrown when a non-valid workflow operation is detected (for instance: release, discard)
  *
  * @author bastiens
  *
  */
-public class WorkflowException extends ImejiException {
+public class WorkflowException extends ImejiExceptionWithUserMessage {
   private static final long serialVersionUID = -5279563970035349584L;
 
-  public WorkflowException(String message) {
-    super(message);
+  /**
+   * Creates a new WorkflowException
+   * 
+   * @param internalMessage The internal error message that is logged
+   * @param userMessageLabel An error message label for showing a meaningful user message in GUI 
+   */
+  public WorkflowException(String internalMessage, String userMessageLabel) {
+    super(internalMessage, userMessageLabel);
   }
 }
