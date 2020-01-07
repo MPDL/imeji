@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.logic.model.Statement;
@@ -71,7 +72,17 @@ public class StatementsBean extends SuperBean {
       removeFromDefaultStatements(s.getUri().toString());
       BeanHelper.info("Statement successfully deleted");
       redirect(getNavigation().getApplicationUrl() + "statements");
-    } catch (Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (Exception e) {
       LOGGER.error("Error deleting statement", e);
       BeanHelper.error("Error deleting statement: " + e.getMessage());
     }

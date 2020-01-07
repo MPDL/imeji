@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
@@ -48,7 +50,17 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
           .setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(), getSessionUser());
       BeanHelper.info("Subcollection created");
       redirect(getNavigation().getCollectionUrl() + subcollection.getIdString());
-    } catch (ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ImejiException e) {
       BeanHelper.error("Error creating Subcollection: " + e.getMessage());
       LOGGER.error("Error creating Subcollection", e);
     }
@@ -66,7 +78,17 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
           .setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(), getSessionUser());
       BeanHelper.info("Subcollection created");
       redirect(getNavigation().getCollectionUrl() + subcollection.getIdString() + "?showUpload=1");
-    } catch (ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ImejiException e) {
       BeanHelper.error("Error creating Subcollection: " + e.getMessage());
       LOGGER.error("Error creating Subcollection", e);
     }

@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
@@ -28,7 +30,16 @@ public class StatementCreateBean extends SuperBean {
     try {
       service.create(statementForm.asStatement(), getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "statements");
-    } catch (final ImejiException | IOException e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }     
+    catch (final ImejiException | IOException e) {
       BeanHelper.error("Error creating statement: " + e.getMessage());
       LOGGER.error("Error creating statement", e);
     }

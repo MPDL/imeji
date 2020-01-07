@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.jena.sparql.pfunction.library.container;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.Grant;
@@ -68,7 +69,17 @@ public class UserGroupBean extends SuperBean implements Serializable {
             .sorted((u1, u2) -> u1.getPerson().getCompleteName().compareTo(u2.getPerson().getCompleteName())).collect(Collectors.toList());
         this.roles = ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
 
-      } catch (final ImejiException e) {
+      } 
+      catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+          String userMessage = "Error reading user group: " +  Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          BeanHelper.error(userMessage);
+          if (exceptionWithMessage.getMessage() != null) {
+            LOGGER.error("Error reading user group: " +  exceptionWithMessage.getMessage(), exceptionWithMessage);
+          } else {
+            LOGGER.error(userMessage, exceptionWithMessage);
+          }
+        }
+      catch (final ImejiException e) {
         BeanHelper.error("Error reading user group " + groupId);
         LOGGER.error("Error initializing UserGroupBean", e);
       }
@@ -111,7 +122,17 @@ public class UserGroupBean extends SuperBean implements Serializable {
     try {
       this.userGroup = userGroupService.removeUserFromGroup(getSessionUser(), this.userGroup, removeThisUser);
       reload();
-    } catch (UnprocessableError ue) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Could not update user group : " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Could not update user group : " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (UnprocessableError ue) {
       BeanHelper.error(ue, getLocale());
       LOGGER.error("Error updating user group", ue);
     } catch (ImejiException e) {
@@ -163,7 +184,17 @@ public class UserGroupBean extends SuperBean implements Serializable {
     try {
       c.create(userGroup, getSessionUser());
       reload();
-    } catch (final UnprocessableError e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error creating user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error creating user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error creating user group", e);
     } catch (final Exception e) {
@@ -182,7 +213,17 @@ public class UserGroupBean extends SuperBean implements Serializable {
     final UserGroupService c = new UserGroupService();
     try {
       c.update(userGroup, getSessionUser());
-    } catch (final UnprocessableError e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error updating user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error updating user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error updating user group", e);
     } catch (final Exception e) {
@@ -283,7 +324,17 @@ public class UserGroupBean extends SuperBean implements Serializable {
     try {
       this.userGroup = userGroupService.addUserToGroup(getSessionUser(), this.userGroup, user);
       reload();
-    } catch (UnprocessableError ue) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error updating user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error updating user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (UnprocessableError ue) {
       BeanHelper.error(ue, getLocale());
       LOGGER.error("Error updating user group", ue);
     } catch (ImejiException e) {

@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.presentation.beans.SuperBean;
@@ -46,7 +48,17 @@ public class FacetsBean extends SuperBean {
         }
       }
       setPosition();
-    } catch (ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ImejiException e) {
       BeanHelper.error("Error retrieving facets: " + e.getMessage());
       LOGGER.error("Error retrieving facets ", e);
     }
@@ -76,7 +88,17 @@ public class FacetsBean extends SuperBean {
       facetService.delete(f, getSessionUser());
       BeanHelper.info("Facet " + f.getName() + " successfully deleted");
       reload();
-    } catch (ImejiException | IOException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ImejiException | IOException e) {
       BeanHelper.error("Error deleting facet: " + e.getMessage());
       LOGGER.error("Error deleting facet: ", e);
     }

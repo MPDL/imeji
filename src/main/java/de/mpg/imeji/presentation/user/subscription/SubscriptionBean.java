@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -55,7 +56,17 @@ public class SubscriptionBean extends SuperBean {
   public void construct() {
     try {
       initUser();
-    } catch (ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ImejiException e) {
       BeanHelper.error("You are not allowed to view the subscriptions for this user, or the user doesn't exists");
       LOGGER.error("Error retrieving user", e);
     }
@@ -67,7 +78,17 @@ public class SubscriptionBean extends SuperBean {
   public void init() {
     try {
       initGroups(retrieveCollections());
-    } catch (ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ImejiException e) {
       LOGGER.error("Error initializing SubscriptionBean", e);
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }
@@ -186,7 +207,17 @@ public class SubscriptionBean extends SuperBean {
       new SubscriptionService().subscribe(
           ImejiFactory.newSubscription().setObjectId(collection).setType(Type.DEFAULT).setUserId(user).build(), getSessionUser());
       reload();
-    } catch (Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error subscribing to collection: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (Exception e) {
       LOGGER.error("Error subscribing to collection", e);
       BeanHelper.error("Error subscribing to the collection");
     }
@@ -205,9 +236,19 @@ public class SubscriptionBean extends SuperBean {
           .map(g -> g.getSubscriptionForUser(user)).findAny().get();
       new SubscriptionService().unSubscribe(s, user);
       reload();
-    } catch (Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error unsubscribing from collection " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error unsubscribing from collection " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (Exception e) {
       LOGGER.error("Error subscribing to collection", e);
-      BeanHelper.error("Error un-subscribing from collection");
+      BeanHelper.error("Error unsubscribing from collection");
     }
   }
 
@@ -258,8 +299,17 @@ public class SubscriptionBean extends SuperBean {
     try {
       new SubscriptionService().unSubscribe(subscription, getSessionUser());
       initGroups(retrieveCollections());
-    } catch (ImejiException e) {
-      LOGGER.error("Error subscribing to collection", e);
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error unsubscribing from collection: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }     
+    catch (ImejiException e) {
+      LOGGER.error("Error un-subscribing from collection", e);
       BeanHelper.error("Error un-subscribing from collection");
     }
   }

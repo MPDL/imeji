@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import com.ocpsoft.pretty.PrettyContext;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -100,7 +101,17 @@ public class ShareBean extends SuperBean implements Serializable {
             !StringHelper.isNullOrEmptyTrim(q) || !StringHelper.isNullOrEmptyTrim(fq) ? collectionUrl + q + "&fq=" + fq : null;
       }
       this.init();
-    } catch (final Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final Exception e) {
       LOGGER.error("Error initializing the share collection page", e);
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }

@@ -141,13 +141,16 @@ public class CollectionActionMenu implements Serializable {
       if (imejiException instanceof UnprocessableError) {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
         LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
-      } 
-      else if( imejiException instanceof ImejiExceptionWithUserMessage) {
-    	  ImejiExceptionWithUserMessage exceptionWithUserMessage = (ImejiExceptionWithUserMessage) imejiException;
-    	  BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale));
-          LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale));
-      } 
-      else {
+      } else if (imejiException instanceof ImejiExceptionWithUserMessage) {
+        ImejiExceptionWithUserMessage exceptionWithMessage = (ImejiExceptionWithUserMessage) imejiException;
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), locale);
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      } else {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale));
         LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + imejiException.getMessage());
       }
@@ -168,12 +171,15 @@ public class CollectionActionMenu implements Serializable {
     } catch (final UnprocessableError e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
       LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithUserMessage) {
-    	BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale));
-    	LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithUserMessage.getMessageLabel(), locale) + " " + exceptionWithUserMessage.getMessage());
-    }
-    catch (final ImejiException e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), locale);
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+    } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale));
       LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + e.getMessage());
     }

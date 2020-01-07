@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
@@ -103,7 +104,17 @@ public class UserGroupsBean extends SuperBean {
         final UserGroupService controller = new UserGroupService();
         controller.delete(group, sessionUser);
       }
-    } catch (final Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error removing group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error removing group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final Exception e) {
       BeanHelper.error("Error removing group");
       LOGGER.error(e);
     }

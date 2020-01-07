@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.statement.StatementService;
@@ -76,7 +77,17 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       initHeaders(itemList);
       initRows(itemList);
       tableSize = rows.size() > tableSize ? tableSize : rows.size();
-    } catch (final ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final ImejiException e) {
       BeanHelper.error("Error initialiting page:" + e.getCause());
       LOGGER.error("Error initializing bean", e);
     }
@@ -99,7 +110,16 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       super.save();
       goBack();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
-    } catch (UnprocessableError e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }     
+    catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException e1) {
       LOGGER.error("Edit updating items", e1);

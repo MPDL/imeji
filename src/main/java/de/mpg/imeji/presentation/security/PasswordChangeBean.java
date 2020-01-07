@@ -87,7 +87,6 @@ public class PasswordChangeBean extends SuperBean {
       reload();
       return;
     }
-
     if (token != null) {
       this.setPasswordWithToken();
     } else {
@@ -98,7 +97,6 @@ public class PasswordChangeBean extends SuperBean {
   private void setPasswordForUser() throws ImejiException, IOException {
     if (user != null) {
       passwordresetService.resetPassword(user, newPassword);
-
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
       redirect(StringHelper.isNullOrEmptyTrim(getBackUrl()) ? getNavigation().getHomeUrl() : getBackUrl());
     } else {

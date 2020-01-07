@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
@@ -204,8 +205,16 @@ public class MoveItemsBean extends SuperBean {
             + (notMoved > 1 ? Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale()) : Imeji.RESOURCE_BUNDLE.getLabel("item", getLocale()))
             + " " + Imeji.RESOURCE_BUNDLE.getLabel("moved_error", getLocale()));
       }
-
-    } catch (Exception e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }   
+    catch (Exception e) {
       BeanHelper.error("Error moving items " + e.getMessage());
       LOGGER.error("Error moving items ", e);
     }
@@ -239,7 +248,17 @@ public class MoveItemsBean extends SuperBean {
         collectionItemsBean.refresh();
       }
 
-    } catch (ImejiException e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    
+    catch (ImejiException e) {
       BeanHelper.error("Error moving collection: " + e.getMessage());
       LOGGER.error("Error moving collection", e);
     }

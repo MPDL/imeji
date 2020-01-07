@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
@@ -69,7 +70,17 @@ public class RegistrationBean extends SuperBean {
       loginBean.getSessionBean().setUser(user);
       sendRegistrationNotification(user);
       redirect(getNavigation().getHomeUrl() + "/pwdreset?from=registration");
-    } catch (Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error activating user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error activating user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }    
+    catch (Exception e) {
       LOGGER.error("Error activating user", e);
       BeanHelper.error("Error during user activation");
     }
@@ -110,9 +121,19 @@ public class RegistrationBean extends SuperBean {
     try {
       passwordUrl = getNavigation().getRegistrationUrl() + "?token=" + registrationService.register(user).getToken();
       registration_success = true;
-    } catch (final UnprocessableError e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error registering user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error registering user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }    
+    catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
-      LOGGER.error("error registering user", e);
+      LOGGER.error("Error registering user", e);
     } catch (final AlreadyExistsException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_user_already_exists", getLocale()));
       LOGGER.error("error registering user", e);

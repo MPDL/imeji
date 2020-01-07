@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
@@ -90,7 +91,17 @@ public class ItemsEditLicenseBean extends SuperBean {
       save(items);
       BeanHelper.addMessage(getLicenseName() + " " + Imeji.RESOURCE_BUNDLE.getLabel("licenses_added_to", getLocale()) + " " + items.size()
           + " " + Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale()));
-    } catch (final ImejiException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error saving items", e);
     }

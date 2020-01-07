@@ -10,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.NotFoundException;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.search.facet.FacetService;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.util.UrlHelper;
@@ -33,7 +35,17 @@ public class EditFacetBean extends CreateFacetBean {
       setType(facet.getType());
       setIndex(facet.getIndex());
       setObjectType(facet.getObjectType());
-    } catch (NotFoundException e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+    }
+    catch (NotFoundException e) {
       LOGGER.error("Error initializing FacetBean", e);
       BeanHelper.error("Unknown facet: " + facetId);
     } catch (Exception e) {
@@ -50,8 +62,18 @@ public class EditFacetBean extends CreateFacetBean {
     try {
       new FacetService().update(facet, getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "facets");
-    } catch (ImejiException | IOException e) {
-      LOGGER.error("Error updateing Facet ", e);
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error saving facet: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error saving facet: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ImejiException | IOException e) {
+      LOGGER.error("Error updating Facet ", e);
       BeanHelper.error("Error saving Facet", e.getMessage());
     }
   }

@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
@@ -89,8 +90,18 @@ public class UsersBean extends SuperBean {
       final UserGroupService c = new UserGroupService();
       try {
         setGroup(c.retrieve(UrlHelper.getParameterValue("group"), getSessionUser()));
-      } catch (final Exception e) {
-        BeanHelper.error("error loading user group " + UrlHelper.getParameterValue("group"));
+      } 
+      catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+          String userMessage = "Error loading user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          BeanHelper.error(userMessage);
+          if (exceptionWithMessage.getMessage() != null) {
+            LOGGER.error("Error loading user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+          } else {
+            LOGGER.error(userMessage, exceptionWithMessage);
+          }
+        }
+      catch (final Exception e) {
+        BeanHelper.error("Error loading user group " + UrlHelper.getParameterValue("group"));
         LOGGER.error(e);
       }
     }
@@ -117,7 +128,17 @@ public class UsersBean extends SuperBean {
       controller.update(user, getSessionUser());
       sendEmail(email, newPassword, user.getPerson().getFirstnameLastname());
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
-    } catch (ReloadBeforeSaveException r) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error saving user's new password: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error saving user's new password: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ReloadBeforeSaveException r) {
       BeanHelper.error("Error saving user's new password. User has changed in store. Please reload user and try again.");
       LOGGER.error("Error saving user's new password. User has changed in store. Please reload user and try again. ", r);
     } catch (final Exception e) {
@@ -158,9 +179,18 @@ public class UsersBean extends SuperBean {
     try {
       controller.delete(controller.retrieve(email, getSessionUser()));
       reload();
-    } catch (final Exception e) {
-      BeanHelper.error("Error Deleting user");
-      LOGGER.error("Error Deleting user", e);
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error deleting user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      } 
+    catch (final Exception e) {
+      BeanHelper.error("Error deleting user");
+      LOGGER.error("Error deleting user", e);
     }
     return "";
   }
@@ -176,7 +206,17 @@ public class UsersBean extends SuperBean {
       user.setUserStatus(UserStatus.REMOVED);
       service.update(user, getSessionUser());
       reload();
-    } catch (ReloadBeforeSaveException r) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error removing user. " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error("Error removing user. " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (ReloadBeforeSaveException r) {
       BeanHelper.error("Error removing user. Please reload and try again.");
       LOGGER.error("Error removing user. Please reload and try again. ", r);
     } catch (Exception e) {
@@ -195,7 +235,15 @@ public class UsersBean extends SuperBean {
       user.setUserStatus(UserStatus.ACTIVE);
       controller.update(user, getSessionUser());
       reload();
-    } catch (ReloadBeforeSaveException r) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error reactivating user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      } catch (ReloadBeforeSaveException r) {
       BeanHelper.error("Error reactivating user. User has changed in store. Please reload user and try again.");
       LOGGER.error("Error reactivating user. User has changed in store. Please reload user and try again. ", r);
     } catch (Exception e) {
@@ -224,7 +272,17 @@ public class UsersBean extends SuperBean {
     try {
       service.activate(service.retrieveByEmail(email));
       reload();
-    } catch (final Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final Exception e) {
       BeanHelper.error("Error Deleting registration");
       LOGGER.error("Error Deleting registration", e);
     }
@@ -243,7 +301,16 @@ public class UsersBean extends SuperBean {
       final UserGroupService userGroupService = new UserGroupService();
       this.group = userGroupService.addUserToGroup(getSessionUser(), this.group, userToAdd);
       FacesContext.getCurrentInstance().getExternalContext().redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
-    } catch (final Exception e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }     
+    catch (final Exception e) {
       BeanHelper.error(e.getMessage());
     }
     return "";
@@ -257,7 +324,17 @@ public class UsersBean extends SuperBean {
       final UserGroupService userGroupService = new UserGroupService();
       this.group = userGroupService.removeUserFromGroup(getSessionUser(), this.group, userToRemove);
       FacesContext.getCurrentInstance().getExternalContext().redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
-    } catch (final Exception e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error removing user from group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (final Exception e) {
       BeanHelper.error(e.getMessage());
     }
     return "";

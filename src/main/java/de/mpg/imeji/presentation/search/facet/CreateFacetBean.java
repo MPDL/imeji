@@ -13,7 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.statement.StatementService;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.model.Statement;
@@ -57,7 +59,17 @@ public class CreateFacetBean extends SuperBean {
     try {
       service.create(facet, getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "facets");
-    } catch (UnprocessableError e) {
+    } 
+    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }
+    catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException | IOException e) {
       LOGGER.error("Error creating facet", e);

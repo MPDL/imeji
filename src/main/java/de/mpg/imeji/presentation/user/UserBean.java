@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
@@ -67,7 +68,16 @@ public class UserBean extends SuperBean {
         this.setEdit(false);
         this.setQuota(new QuotaUICompoment(user, getLocale()));
       }
-    } catch (final Exception e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }    
+    catch (final Exception e) {
       LOGGER.error("Error initializing page", e);
       BeanHelper.error("Error initializing page");
     }
@@ -109,7 +119,17 @@ public class UserBean extends SuperBean {
       } catch (final JoseException e) {
         LOGGER.error("Error generating API Key ", e);
         BeanHelper.error("Error generating API Key");
-      } catch (final ReloadBeforeSaveException r) {
+      } 
+      catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+          String userMessage = "Error saving API key: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          BeanHelper.error(userMessage);
+          if (exceptionWithMessage.getMessage() != null) {
+            LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+          } else {
+            LOGGER.error(userMessage, exceptionWithMessage);
+          }
+        }
+      catch (final ReloadBeforeSaveException r) {
         LOGGER.error("Error saving API key. User has changed in store. Please reload user and generate key again ", r);
         BeanHelper.error("Error saving API key. User has changed in store. Please generate key one more time.");
         reloadPage();
@@ -195,7 +215,16 @@ public class UserBean extends SuperBean {
         user = userService.update(user, getSessionUser());
         BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_save", getLocale()));
         reloadPage();
-      } catch (final UnprocessableError e) {
+      } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+          String userMessage = "Error updating user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          BeanHelper.error(userMessage);
+          if (exceptionWithMessage.getMessage() != null) {
+            LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+          } else {
+            LOGGER.error(userMessage, exceptionWithMessage);
+          }
+        }      
+      catch (final UnprocessableError e) {
         BeanHelper.error(e, getLocale());
         LOGGER.error("Error updating user", e);
       } catch (final ReloadBeforeSaveException rbse) {

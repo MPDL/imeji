@@ -19,6 +19,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.config.Imeji;
@@ -156,7 +157,16 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
 
       return thumbnailBeans;
 
-    } catch (final ImejiException e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }    
+    catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error retrieving items", e);
     }
@@ -396,7 +406,16 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       discardComment = null;
       unselect(uris);
       BeanHelper.info(count + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_withdraw", getLocale()));
-    } catch (final ImejiException e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      }    
+    catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_withdraw_selected_items", getLocale()));
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error discarding items:", e);
@@ -417,10 +436,15 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       ic.delete((List<Item>) items, getSessionUser());
       BeanHelper.info(uris.size() + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_deleted", getLocale()));
       unselect(uris);
-    } catch (final WorkflowException e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_delete_items_public", getLocale()));
-      LOGGER.error("Error deleting items", e);
-    } catch (final ImejiException e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+      } catch (final ImejiException e) {
       LOGGER.error("Error deleting items", e);
       BeanHelper.error(e.getMessage());
     }
@@ -669,7 +693,17 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
           .filter(item -> authorization.delete(getSessionUser(), item)).filter(item -> (item.getStatus() == Status.PENDING))
           .collect(Collectors.toList());
       return deletableItems;
-    } catch (final ImejiException e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+        return new ArrayList<Item>();
+      }    
+    catch (final ImejiException e) {
       String errorMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_retrieve_selected_items", getLocale());
       LOGGER.error(errorMessage, e);
       BeanHelper.error(errorMessage);

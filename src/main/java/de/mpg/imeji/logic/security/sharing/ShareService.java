@@ -102,7 +102,7 @@ public class ShareService {
    * @param toUser - The user the object is shared to
    * @param sharedObjectUri - The uri of the shared object
    * @param profileUri - (only for collections) the uri of the profile of the collection
-   * @param roles - The roles given to the shared user, null if a grant is revoked
+   * @param role - The role given to the shared user, null if a grant is revoked
    * @throws ImejiException
    */
   public User shareToUser(User fromUser, User toUser, String sharedObjectUri, String role) throws ImejiException {
