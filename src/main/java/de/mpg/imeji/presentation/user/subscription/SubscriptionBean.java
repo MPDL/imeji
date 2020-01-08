@@ -58,7 +58,7 @@ public class SubscriptionBean extends SuperBean {
       initUser();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -80,7 +80,7 @@ public class SubscriptionBean extends SuperBean {
       initGroups(retrieveCollections());
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error initializing page: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -209,7 +209,7 @@ public class SubscriptionBean extends SuperBean {
       reload();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error subscribing to collection: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error subscribing to collection: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -238,7 +238,7 @@ public class SubscriptionBean extends SuperBean {
       reload();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error unsubscribing from collection " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error unsubscribing from collection " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error unsubscribing from collection " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -300,7 +300,7 @@ public class SubscriptionBean extends SuperBean {
       new SubscriptionService().unSubscribe(subscription, getSessionUser());
       initGroups(retrieveCollections());
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error unsubscribing from collection: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error unsubscribing from collection: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);

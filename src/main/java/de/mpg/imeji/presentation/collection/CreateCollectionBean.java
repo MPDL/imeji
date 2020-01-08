@@ -129,7 +129,9 @@ public class CreateCollectionBean extends CollectionBean {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error create collection", e);
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-      String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+      String userMessage = 
+    		  Imeji.RESOURCE_BUNDLE.getMessage("error_collection_create", getLocale()) + " " +
+    				  exceptionWithMessage.getUserMessage(getLocale());
       BeanHelper.error(userMessage);
       if (exceptionWithMessage.getMessage() != null) {
         LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);

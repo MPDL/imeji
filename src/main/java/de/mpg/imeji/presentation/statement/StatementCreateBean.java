@@ -31,7 +31,7 @@ public class StatementCreateBean extends SuperBean {
       service.create(statementForm.asStatement(), getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "statements");
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error creating statement: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);

@@ -79,7 +79,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       tableSize = rows.size() > tableSize ? tableSize : rows.size();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error initialiting page: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -111,7 +111,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       goBack();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error updating items: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -122,7 +122,7 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
     catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException e1) {
-      LOGGER.error("Edit updating items", e1);
+      LOGGER.error("Error updating items", e1);
       BeanHelper.error(e1.getMessage());
     } catch (IOException e) {
       LOGGER.error("Error redirect after save", e);

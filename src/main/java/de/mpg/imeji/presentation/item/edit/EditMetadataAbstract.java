@@ -53,7 +53,7 @@ public abstract class EditMetadataAbstract extends SuperBean {
       statementMenu = statementMap.keySet().stream().map(s -> new SelectItem(s)).collect(Collectors.toList());
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error retrieving statements. " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);

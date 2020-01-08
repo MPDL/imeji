@@ -137,13 +137,14 @@ public class CollectionActionMenu implements Serializable {
     } catch (final ImejiException imejiException) {
       // restore
       collection.setDoi(currentDOI);
-
+      // exception handling
       if (imejiException instanceof UnprocessableError) {
         BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
         LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(imejiException.getMessage(), locale));
       } else if (imejiException instanceof ImejiExceptionWithUserMessage) {
         ImejiExceptionWithUserMessage exceptionWithMessage = (ImejiExceptionWithUserMessage) imejiException;
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), locale);
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " +
+        		exceptionWithMessage.getUserMessage(locale);
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -172,7 +173,9 @@ public class CollectionActionMenu implements Serializable {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
       LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), locale);
+        String userMessage = 
+        		Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " +
+        		exceptionWithMessage.getUserMessage(locale);
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);

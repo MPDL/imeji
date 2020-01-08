@@ -106,7 +106,7 @@ public class UserGroupsBean extends SuperBean {
       }
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error removing group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error removing group: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error removing group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);

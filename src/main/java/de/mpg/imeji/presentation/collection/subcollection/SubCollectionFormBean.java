@@ -52,10 +52,10 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
       redirect(getNavigation().getCollectionUrl() + subcollection.getIdString());
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error creating Subcollection: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+          LOGGER.error("Error creating Subcollection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
         } else {
           LOGGER.error(userMessage, exceptionWithMessage);
         }
@@ -80,10 +80,10 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
       redirect(getNavigation().getCollectionUrl() + subcollection.getIdString() + "?showUpload=1");
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error creating Subcollection: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+          LOGGER.error("Error creating Subcollection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
         } else {
           LOGGER.error(userMessage, exceptionWithMessage);
         }

@@ -203,7 +203,7 @@ public class ItemBean extends SuperBean {
     try {
       collection = new CollectionService().retrieveLazy(item.getCollection(), user);
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -312,7 +312,9 @@ public class ItemBean extends SuperBean {
       editor.updateMetadataEntries();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = 
+        		Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + " " +
+        		exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -320,10 +322,6 @@ public class ItemBean extends SuperBean {
           LOGGER.error(userMessage, exceptionWithMessage);
         }
         editor.updateMetadataEntries();
-      }
-    catch (ReloadBeforeSaveException reloadBeforeSave) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + ": " + reloadBeforeSave.getMessage());
-      editor.updateMetadataEntries();
     } catch (ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + ": " + e.getMessage());
       LOGGER.error("Error saving item metadata", e);
@@ -362,7 +360,8 @@ public class ItemBean extends SuperBean {
       this.discardComment = null;
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_withdraw_image", getLocale()) + " " +
+        		exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);

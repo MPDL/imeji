@@ -37,7 +37,7 @@ public class EditFacetBean extends CreateFacetBean {
       setObjectType(facet.getObjectType());
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Unknown facet. " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -64,10 +64,10 @@ public class EditFacetBean extends CreateFacetBean {
       redirect(getNavigation().getApplicationUrl() + "facets");
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error saving facet: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error saving facet. " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error saving facet: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+          LOGGER.error("Error saving facet. " + exceptionWithMessage.getMessage(), exceptionWithMessage);
         } else {
           LOGGER.error(userMessage, exceptionWithMessage);
         }

@@ -69,7 +69,7 @@ public class UserBean extends SuperBean {
         this.setQuota(new QuotaUICompoment(user, getLocale()));
       }
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error initializing page. " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -121,19 +121,15 @@ public class UserBean extends SuperBean {
         BeanHelper.error("Error generating API Key");
       } 
       catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-          String userMessage = "Error saving API key: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          String userMessage = "Error saving API key. " + exceptionWithMessage.getUserMessage(getLocale());
           BeanHelper.error(userMessage);
           if (exceptionWithMessage.getMessage() != null) {
             LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
           } else {
             LOGGER.error(userMessage, exceptionWithMessage);
           }
-        }
-      catch (final ReloadBeforeSaveException r) {
-        LOGGER.error("Error saving API key. User has changed in store. Please reload user and generate key again ", r);
-        BeanHelper.error("Error saving API key. User has changed in store. Please generate key one more time.");
-        reloadPage();
-      } catch (ImejiException ie) {
+          reloadPage();
+        } catch (ImejiException ie) {
         LOGGER.error("Error generating API Key ", ie);
         BeanHelper.error("Error generating API Key");
       }
@@ -216,22 +212,19 @@ public class UserBean extends SuperBean {
         BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_save", getLocale()));
         reloadPage();
       } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-          String userMessage = "Error updating user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          String userMessage = "Error updating user: " + exceptionWithMessage.getUserMessage( getLocale());
           BeanHelper.error(userMessage);
           if (exceptionWithMessage.getMessage() != null) {
             LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
           } else {
             LOGGER.error(userMessage, exceptionWithMessage);
           }
+          reloadPage();
         }      
       catch (final UnprocessableError e) {
         BeanHelper.error(e, getLocale());
         LOGGER.error("Error updating user", e);
-      } catch (final ReloadBeforeSaveException rbse) {
-        BeanHelper.error("Error updating user. User object has been changed in database. Please try again.");
-        LOGGER.error("Error updating user. User object has been changed in database.", rbse);
-        reloadPage();
-      }
+      } 
     }
   }
 

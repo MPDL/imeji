@@ -71,7 +71,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
 
       } 
       catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-          String userMessage = "Error reading user group: " +  Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          String userMessage = "Error reading user group: " +  exceptionWithMessage.getUserMessage(getLocale());
           BeanHelper.error(userMessage);
           if (exceptionWithMessage.getMessage() != null) {
             LOGGER.error("Error reading user group: " +  exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -124,7 +124,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
       reload();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Could not update user group : " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Could not update user group : " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Could not update user group : " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -186,7 +186,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
       reload();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error creating user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error creating user group: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error creating user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -215,7 +215,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
       c.update(userGroup, getSessionUser());
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error updating user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error updating user group: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error updating user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -326,7 +326,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
       reload();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error updating user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error updating user group: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error updating user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);

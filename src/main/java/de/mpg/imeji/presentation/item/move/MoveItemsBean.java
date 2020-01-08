@@ -206,7 +206,7 @@ public class MoveItemsBean extends SuperBean {
             + " " + Imeji.RESOURCE_BUNDLE.getLabel("moved_error", getLocale()));
       }
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error moving items " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -247,18 +247,15 @@ public class MoveItemsBean extends SuperBean {
       if (collectionItemsBean != null) {
         collectionItemsBean.refresh();
       }
-
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error moving collection: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
         } else {
           LOGGER.error(userMessage, exceptionWithMessage);
         }
-      }
-    
-    catch (ImejiException e) {
+      } catch (ImejiException e) {
       BeanHelper.error("Error moving collection: " + e.getMessage());
       LOGGER.error("Error moving collection", e);
     }

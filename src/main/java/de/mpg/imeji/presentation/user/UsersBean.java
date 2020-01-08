@@ -92,7 +92,7 @@ public class UsersBean extends SuperBean {
         setGroup(c.retrieve(UrlHelper.getParameterValue("group"), getSessionUser()));
       } 
       catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-          String userMessage = "Error loading user group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+          String userMessage = "Error loading user group: " + exceptionWithMessage.getUserMessage(getLocale());
           BeanHelper.error(userMessage);
           if (exceptionWithMessage.getMessage() != null) {
             LOGGER.error("Error loading user group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -130,7 +130,7 @@ public class UsersBean extends SuperBean {
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_change_user_password", getLocale()));
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error saving user's new password: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error saving user's new password: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error saving user's new password: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -138,10 +138,7 @@ public class UsersBean extends SuperBean {
           LOGGER.error(userMessage, exceptionWithMessage);
         }
       }
-    catch (ReloadBeforeSaveException r) {
-      BeanHelper.error("Error saving user's new password. User has changed in store. Please reload user and try again.");
-      LOGGER.error("Error saving user's new password. User has changed in store. Please reload user and try again. ", r);
-    } catch (final Exception e) {
+    catch (final Exception e) {
       BeanHelper.error("Could not update or send new password!");
       LOGGER.error("Could not update or send new password", e);
     }
@@ -180,7 +177,7 @@ public class UsersBean extends SuperBean {
       controller.delete(controller.retrieve(email, getSessionUser()));
       reload();
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error deleting user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error deleting user: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -208,7 +205,7 @@ public class UsersBean extends SuperBean {
       reload();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error removing user. " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error removing user. " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error removing user. " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -216,10 +213,7 @@ public class UsersBean extends SuperBean {
           LOGGER.error(userMessage, exceptionWithMessage);
         }
       }
-    catch (ReloadBeforeSaveException r) {
-      BeanHelper.error("Error removing user. Please reload and try again.");
-      LOGGER.error("Error removing user. Please reload and try again. ", r);
-    } catch (Exception e) {
+    catch (Exception e) {
       LOGGER.error("Error removing user", e);
     }
   }
@@ -236,17 +230,14 @@ public class UsersBean extends SuperBean {
       controller.update(user, getSessionUser());
       reload();
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error reactivating user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error reactivating user: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
         } else {
           LOGGER.error(userMessage, exceptionWithMessage);
         }
-      } catch (ReloadBeforeSaveException r) {
-      BeanHelper.error("Error reactivating user. User has changed in store. Please reload user and try again.");
-      LOGGER.error("Error reactivating user. User has changed in store. Please reload user and try again. ", r);
-    } catch (Exception e) {
+      } catch (Exception e) {
       LOGGER.error("Error reactivating user", e);
     }
   }
@@ -274,7 +265,7 @@ public class UsersBean extends SuperBean {
       reload();
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error deleting registration. " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -283,8 +274,8 @@ public class UsersBean extends SuperBean {
         }
       }
     catch (final Exception e) {
-      BeanHelper.error("Error Deleting registration");
-      LOGGER.error("Error Deleting registration", e);
+      BeanHelper.error("Error deleting registration");
+      LOGGER.error("Error deleting registration", e);
     }
   }
 
@@ -302,7 +293,7 @@ public class UsersBean extends SuperBean {
       this.group = userGroupService.addUserToGroup(getSessionUser(), this.group, userToAdd);
       FacesContext.getCurrentInstance().getExternalContext().redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage =exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -326,7 +317,7 @@ public class UsersBean extends SuperBean {
       FacesContext.getCurrentInstance().getExternalContext().redirect(getNavigation().getApplicationUrl() + "users?group=" + group.getId());
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error removing user from group: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error removing user from group: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);

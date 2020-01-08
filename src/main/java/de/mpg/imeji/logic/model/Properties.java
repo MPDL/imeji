@@ -46,8 +46,6 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
 
   private static final Logger LOGGER = LogManager.getLogger(Properties.class);
 
-
-
   @XmlEnum(String.class)
   public enum Status {
     PENDING(new String(ImejiNamespaces.STATUS + "#PENDING")),

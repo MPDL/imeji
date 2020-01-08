@@ -1,5 +1,9 @@
 package de.mpg.imeji.exceptions;
 
+import java.util.Locale;
+
+import de.mpg.imeji.logic.config.Imeji;
+
 /**
  * Inherit this class if you want to show a user error message in GUI.
  * 
@@ -19,7 +23,7 @@ public abstract class ImejiExceptionWithUserMessage extends ImejiException{
 	 * 
 	 * @see files src/main/resources/messages_*.properties
 	 */
-	private final String userMessageLabel;
+	protected final String userMessageLabel;
 	
 	public ImejiExceptionWithUserMessage(String messageLabel) {
 	    super();
@@ -36,11 +40,12 @@ public abstract class ImejiExceptionWithUserMessage extends ImejiException{
 	    this.userMessageLabel = messageLabel;
 	  }
 	
-	public String getMessageLabel() {
+	public String getUserMessage(Locale locale) {
 		if(this.userMessageLabel == null) {
-			return "";
+			return " ";
 		}
-		return this.userMessageLabel;
+		String userMessage = Imeji.RESOURCE_BUNDLE.getMessage(this.userMessageLabel, locale);
+		return userMessage;
 	}
 	
 	

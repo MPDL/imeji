@@ -65,17 +65,21 @@ public class PasswordResetController {
    * @param password
    * @return
    * @throws UnprocessableError
+ * @throws ReloadBeforeSaveException 
    */
-  public User resetPassword(String tokenString, String password) throws UnprocessableError {
+  public User resetPassword(String tokenString, String password) throws UnprocessableError, ReloadBeforeSaveException {
     try {
       PasswordResetToken token = retrieveToken(tokenString);
       User userWithNewPassword = resetPassword(token.getUser(), password);
       tokenStore.delete(token.getEncryptedToken());
       return userWithNewPassword;
-    } catch (ReloadBeforeSaveException reloadBeforeException) {
-      throw new UnprocessableError("User properties have changed in store. Reload user and reset password again.");
+    } 
+    catch (ReloadBeforeSaveException reloadBeforeException) {
+        // re-throw ReloadBeforeSaveException
+    	throw reloadBeforeException;
     } catch (Exception e) {
-      throw new UnprocessableError("The token or the user was not found");
+        // all other exceptions: throw UnprocessableError
+    	throw new UnprocessableError("The token or the user was not found");
     }
   }
 

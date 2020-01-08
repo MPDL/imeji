@@ -72,7 +72,7 @@ public class RegistrationBean extends SuperBean {
       redirect(getNavigation().getHomeUrl() + "/pwdreset?from=registration");
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error activating user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error activating user: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error activating user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -123,7 +123,7 @@ public class RegistrationBean extends SuperBean {
       registration_success = true;
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error registering user: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = "Error registering user: " + exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error registering user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);

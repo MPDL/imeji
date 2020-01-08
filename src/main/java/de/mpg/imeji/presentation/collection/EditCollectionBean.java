@@ -85,7 +85,6 @@ public class EditCollectionBean extends CollectionBean {
           getCollection().setAdditionalInformations(additionalList);
 
         }
-
         //Always add empty additional info at the end
         getCollection().getAdditionalInformations().add(new ContainerAdditionalInfo());
         // init linked collections
@@ -135,7 +134,8 @@ public class EditCollectionBean extends CollectionBean {
       return true;
     } 
     catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error saving collection: " + Imeji.RESOURCE_BUNDLE.getMessage(exceptionWithMessage.getMessageLabel(), getLocale());
+        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()) + " " +
+        		exceptionWithMessage.getUserMessage(getLocale());
         BeanHelper.error(userMessage);
         if (exceptionWithMessage.getMessage() != null) {
           LOGGER.error("Error saving collection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -155,12 +155,6 @@ public class EditCollectionBean extends CollectionBean {
     } catch (final URISyntaxException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_logo_uri_save", getLocale()));
       LOGGER.error("Error saving collection", e);
-      return false;
-    } catch (final ReloadBeforeSaveException reloadBeforeSave) {
-      String reloadBeforeSaveMessage =
-          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()) + ": " + reloadBeforeSave.getMessage();
-      BeanHelper.error(reloadBeforeSaveMessage);
-      LOGGER.info("Saving collection ReloadBeforeSaveException: " + reloadBeforeSave.getMessage());
       return false;
     } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()));
