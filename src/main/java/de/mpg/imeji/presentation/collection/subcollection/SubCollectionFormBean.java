@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
@@ -50,19 +49,19 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
           .setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(), getSessionUser());
       BeanHelper.info("Subcollection created");
       redirect(getNavigation().getCollectionUrl() + subcollection.getIdString());
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error creating Subcollection: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error creating Subcollection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error creating Subcollection: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error creating Subcollection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (ImejiException e) {
+      redirect(getNavigation().getCollectionUrl());
+    } catch (ImejiException e) {
       BeanHelper.error("Error creating Subcollection: " + e.getMessage());
       LOGGER.error("Error creating Subcollection", e);
+      redirect(getNavigation().getCollectionUrl());
     }
   }
 
@@ -78,19 +77,19 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
           .setPerson(getSessionUser().getPerson()).setCollection(parent.getId().toString()).build(), getSessionUser());
       BeanHelper.info("Subcollection created");
       redirect(getNavigation().getCollectionUrl() + subcollection.getIdString() + "?showUpload=1");
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error creating Subcollection: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error creating Subcollection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error creating Subcollection: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error creating Subcollection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (ImejiException e) {
+      redirect(getNavigation().getCollectionUrl());
+    } catch (ImejiException e) {
       BeanHelper.error("Error creating Subcollection: " + e.getMessage());
       LOGGER.error("Error creating Subcollection", e);
+      redirect(getNavigation().getCollectionUrl());
     }
   }
 
@@ -105,9 +104,19 @@ public class SubCollectionFormBean extends SuperBean implements Serializable {
       collectionService.update(subCollection, getSessionUser());
       BeanHelper.info("Subcollection name changed");
       redirect(getNavigation().getCollectionUrl() + subCollection.getIdString());
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error editing subcollection: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error editing subcollection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+      redirect(getNavigation().getCollectionUrl() + subCollection.getIdString());
     } catch (ImejiException e) {
-      BeanHelper.info("Error editing Subcollection: " + e.getMessage());
-      LOGGER.error("Error editing Subcollection", e);
+      BeanHelper.error("Error editing subcollection: " + e.getMessage());
+      LOGGER.error("Error editing subcollection", e);
+      redirect(getNavigation().getCollectionUrl() + subCollection.getIdString());
     }
   }
 
