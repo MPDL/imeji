@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Calendar;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.jena.rdf.model.Model;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
@@ -103,12 +104,13 @@ public class ResourceController {
    * @return
    * @throws NotFoundException
    */
-  public Object read(Object o) throws NotFoundException {
-    if (!java2rdf.exists(o)) {
-      throw new NotFoundException(getObjectType(J2JHelper.getId(o)) + " " + getObjectId(J2JHelper.getId(o)) + " not found!");
+  public Object read(Object object) throws NotFoundException {
+    if (!java2rdf.exists(object)) {
+      throw new NotFoundException(object,
+          getObjectType(J2JHelper.getId(object)) + " " + getObjectId(J2JHelper.getId(object)) + " not found!");
     }
-    o = rdf2Java.loadResource(o);
-    return o;
+    object = rdf2Java.loadResource(object);
+    return object;
   }
 
 
@@ -122,8 +124,8 @@ public class ResourceController {
 
     // Check if object exists in Jena 
     if (!java2rdf.exists(imejiDataObject)) {
-      throw new NotFoundException("Error updating resource " + imejiDataObject.toString() + " with id \"" + J2JHelper.getId(imejiDataObject)
-          + "\". Resource doesn't exist in model " + model.toString());
+      throw new NotFoundException(imejiDataObject, "Error updating resource " + imejiDataObject.toString() + " with id \""
+          + J2JHelper.getId(imejiDataObject) + "\". Resource doesn't exist in model " + model.toString());
     }
     // Check if object in database has been changed since it was last read
     checkModified(imejiDataObject);
@@ -136,14 +138,14 @@ public class ResourceController {
   /**
    * Before updating a data object in Jena, check whether the object has been altered in database
    * since it was last read from there. Throw ReloadBeforeSaveException in case that resource has
-   * been altered.
+   * been altered. NotImplemented
    * 
    * @param imejiDataObject
    * @throws ReloadBeforeSaveException
    * @throws UnprocessableError
    * @throws NotFoundException
    */
-  private void checkModified(Object imejiDataObject) throws ReloadBeforeSaveException, UnprocessableError, NotFoundException {
+  private void checkModified(Object imejiDataObject) throws ReloadBeforeSaveException, NotFoundException {
     // Throw ReloadBeforeSaveException in case that object in Jena has been modified since we last read it.
     if (imejiDataObject instanceof ResourceLastModified) {
       if (imejiDataObject instanceof CloneURI) {
@@ -155,11 +157,12 @@ public class ResourceController {
             throw new ReloadBeforeSaveException(currentObjectInJena);
           }
         } else {
-          throw new UnprocessableError("Could not process update request, no timestamp for data synchronization available");
+          throw new NotImplementedException("Could not process update request, no timestamp for data synchronization available");
         }
       } else {
-        throw new UnprocessableError("Could not process update request, interface CloneURI not implemented (but needs to be) for class "
-            + imejiDataObject.getClass());
+        throw new NotImplementedException(
+            "Could not process update request, interface CloneURI not implemented (but needs to be) for class "
+                + imejiDataObject.getClass());
       }
     }
   }
@@ -171,12 +174,12 @@ public class ResourceController {
    * @param o
    * @throws NotFoundException
    */
-  public void delete(Object o) throws NotFoundException {
-    if (!java2rdf.exists(o)) {
-      throw new NotFoundException(
-          "Error deleting resource " + J2JHelper.getId(o).getPath().replace("imeji/", "") + ". Resource doesn't exist! ");
+  public void delete(Object object) throws NotFoundException {
+    if (!java2rdf.exists(object)) {
+      throw new NotFoundException(object,
+          "Error deleting resource " + J2JHelper.getId(object).getPath().replace("imeji/", "") + " from Jena. Resource doesn't exist! ");
     }
-    java2rdf.remove(o);
+    java2rdf.remove(object);
   }
 
 
