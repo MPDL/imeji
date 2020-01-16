@@ -401,6 +401,9 @@ public class ElasticIndexer implements SearchIndexer {
 
   private static boolean elasticSearchResponseReportsSuccess(DocWriteResponse response) {
 
+	if(response == null) {
+		return false;
+	}  
     RestStatus restStatus = response.status();
     DocWriteResponse.Result operationResult = response.getResult();
 
