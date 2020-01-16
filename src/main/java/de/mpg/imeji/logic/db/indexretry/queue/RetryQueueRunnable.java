@@ -1,32 +1,23 @@
 package de.mpg.imeji.logic.db.indexretry.queue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.db.indexretry.model.RetryBaseRequest;
 import de.mpg.imeji.logic.db.indexretry.model.RetryDeleteFromIndexRequest;
 import de.mpg.imeji.logic.db.indexretry.model.RetryIndexRequest;
@@ -35,7 +26,6 @@ import de.mpg.imeji.logic.db.reader.ReaderFactory;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticDocumentSearch;
-import de.mpg.imeji.logic.util.StringHelper;
 
 
 /**
@@ -49,49 +39,68 @@ import de.mpg.imeji.logic.util.StringHelper;
 public class RetryQueueRunnable implements Runnable {
 
 
-
-  private static final long SLEEP_TIME = 900000; // quarter of a hour
   private static final Logger LOGGER = LogManager.getLogger(RetryQueueRunnable.class);
 
-  /**
-   * ExecutorService for launching elastic search and index requests as independent threads
-   */
-  private final ExecutorService executor;
   private final RetryQueue retryQueueReference;
   private final Map<URI, RetryBaseRequest> retryQueue;
 
   /**
-   * 
+   * Constructor for RetryQueueRunnable
    */
   public RetryQueueRunnable(RetryQueue retryQueueReference) {
 
     this.retryQueueReference = retryQueueReference;
     this.retryQueue = retryQueueReference.retryQueue;
-    this.executor = Executors.newSingleThreadExecutor();
   }
-
 
   @Override
   public void run() {
 
+    // (re-) load sleep time from configuration
+    long threadSleepTime = getSleepTime();
+    // instantiate executor service in order to handle each connection to Elastic Search in own thread 
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+
     while (true) {
 
-      if (elasticSearchUpAndRunning()) {
+      if (elasticSearchUpAndRunning(executor)) {
 
-        if (retryQueueReference.moreRequestsExist()) {
-          indexQueue();
-        } else {
-          System.out.println("retryQueue isEmpty, no further requests (stored in files) exist, exit");
-          break;
+        synchronized (this.retryQueueReference) {
+          if (this.retryQueueReference.moreRequestsExist()) {
+            indexQueue(executor);
+          } else {
+            LOGGER.info("retryQueue isEmpty, no further requests (stored in files) exist, thread terminates");
+            executor.shutdown();
+            // detach thread from RetryQueue
+            this.retryQueueReference.detachRetryQueueThread();
+            break;
+          }
+        }
+      } else {
+        try {
+          LOGGER.info("retryQueue is going to sleep");
+          Thread.sleep(threadSleepTime);
+          LOGGER.info("retryQueue is waking up");
+        } catch (InterruptedException e) {
+          LOGGER.info("Retry Queue Thread interrupted, terminates");
+          executor.shutdown();
+          return;
         }
       }
-      try {
-        Thread.sleep(SLEEP_TIME);
-      } catch (InterruptedException e) {
-        LOGGER.info(e.getMessage());
-      }
     }
+  }
 
+  /**
+   * Reads sleep time from configuration and returns it.
+   * 
+   * @return
+   */
+  private long getSleepTime() {
+    String sleepTime = Imeji.CONFIG.getRetryQueueSleepTime();
+    if (sleepTime.isEmpty()) {
+      sleepTime = ImejiConfiguration.DEFAULT_RETRY_QUEUE_SLEEP_MIL_SEC;
+    }
+    return Long.parseLong(sleepTime);
   }
 
   /**
@@ -100,7 +109,7 @@ public class RetryQueueRunnable implements Runnable {
    * 
    * @return
    */
-  private boolean elasticSearchUpAndRunning() {
+  private boolean elasticSearchUpAndRunning(ExecutorService executor) {
 
     try {
 
@@ -116,7 +125,7 @@ public class RetryQueueRunnable implements Runnable {
         return Boolean.FALSE;
       };
 
-      this.executor.submit(findElasticSearchUpAndRunning).get();
+      executor.submit(findElasticSearchUpAndRunning).get();
       LOGGER.info("elasticSearchUpAndRunning");
       return true;
     }
@@ -133,47 +142,45 @@ public class RetryQueueRunnable implements Runnable {
    * "Retry": Write all requests in the queue to search index. In case the queue is empty, look if
    * there are files with stored retry requests, read and index these.
    */
-  private void indexQueue() {
+  private void indexQueue(ExecutorService executor) {
 
-    synchronized (this.retryQueue) {
-      // take queue and index	
-      // make sure that ES does work first ..
-      Collection<RetryBaseRequest> retryRequests = retryQueue.values();
-      List<URI> deleteObjectsFromQueue = new ArrayList<URI>(this.retryQueue.size());
+    // take queue and index	
+    // make sure that ES does work first ..
+    Collection<RetryBaseRequest> retryRequests = retryQueue.values();
+    List<URI> deleteObjectsFromQueue = new ArrayList<URI>(this.retryQueue.size());
 
-      WriterFacade writer = new WriterFacade();
-      // wir müssten die objekte nach art sortieren, und dann batch index machen 
-      // try to copy request  objects to index or delete request objects from index
-      for (RetryBaseRequest retryRequest : retryRequests) {
+    WriterFacade writer = new WriterFacade();
+    // wir müssten die objekte nach art sortieren, und dann batch index machen 
+    // try to copy request  objects to index or delete request objects from index
+    for (RetryBaseRequest retryRequest : retryRequests) {
 
-        long currentDocumentVersionInElasticSearch = getDocumentVersion(retryRequest.getUri());
-        // a) request to re-index an object
-        if (retryRequest instanceof RetryIndexRequest) {
-          // document does not exist in ES (any more/yet) or version could not be obtained
-          if (currentDocumentVersionInElasticSearch == ElasticDocumentSearch.VERSION_NOT_FOUND) {
-            copyObjectToSeachIndex((RetryIndexRequest) retryRequest, writer, deleteObjectsFromQueue);
-          }
-          // since fail time no new copy of the document has been indexed
-          else if (currentDocumentVersionInElasticSearch <= retryRequest.getFailTime().getTimeInMillis()) {
-            copyObjectToSeachIndex((RetryIndexRequest) retryRequest, writer, deleteObjectsFromQueue);
-          } else {
-            deleteObjectsFromQueue.add(retryRequest.getUri());
-          }
+      long currentDocumentVersionInElasticSearch = getDocumentVersion(retryRequest.getUri(), executor);
+      // a) request to re-index an object
+      if (retryRequest instanceof RetryIndexRequest) {
+        // document does not exist in ES (any more/yet) or version could not be obtained
+        if (currentDocumentVersionInElasticSearch == ElasticDocumentSearch.VERSION_NOT_FOUND) {
+          copyObjectToSeachIndex((RetryIndexRequest) retryRequest, writer, deleteObjectsFromQueue);
         }
-        // b) request to delete an object/document from index
-        else {
-          if (currentDocumentVersionInElasticSearch != ElasticDocumentSearch.VERSION_NOT_FOUND) {
-            deleteDocumentFromIndex((RetryDeleteFromIndexRequest) retryRequest, writer, deleteObjectsFromQueue);
-          } else {
-            deleteObjectsFromQueue.add(retryRequest.getUri());
-          }
+        // since fail time no new copy of the document has been indexed
+        else if (currentDocumentVersionInElasticSearch <= retryRequest.getFailTime().getTimeInMillis()) {
+          copyObjectToSeachIndex((RetryIndexRequest) retryRequest, writer, deleteObjectsFromQueue);
+        } else {
+          deleteObjectsFromQueue.add(retryRequest.getUri());
         }
       }
-
-      // remove all successfully indexed/deleted objects from queue
-      for (URI deleteObjectFromQueue : deleteObjectsFromQueue) {
-        this.retryQueue.remove(deleteObjectFromQueue);
+      // b) request to delete an object/document from index
+      else {
+        if (currentDocumentVersionInElasticSearch != ElasticDocumentSearch.VERSION_NOT_FOUND) {
+          deleteDocumentFromIndex((RetryDeleteFromIndexRequest) retryRequest, writer, deleteObjectsFromQueue);
+        } else {
+          deleteObjectsFromQueue.add(retryRequest.getUri());
+        }
       }
+    }
+
+    // remove all successfully indexed/deleted objects from queue
+    for (URI deleteObjectFromQueue : deleteObjectsFromQueue) {
+      this.retryQueue.remove(deleteObjectFromQueue);
     }
   }
 
@@ -183,25 +190,21 @@ public class RetryQueueRunnable implements Runnable {
    * 
    * @return
    */
-  private long getDocumentVersion(URI documentId) {
-
+  private long getDocumentVersion(URI documentId, ExecutorService executor) {
 
     try {
-
       Callable<Long> getDocumentVersionTask = () -> {
         long documentVersion = ElasticDocumentSearch.searchVersionOfDocument(documentId);
         return Long.valueOf(documentVersion);
       };
 
-      Long documentVersion = this.executor.submit(getDocumentVersionTask).get();
+      Long documentVersion = executor.submit(getDocumentVersionTask).get();
       return documentVersion.longValue();
     }
     // in case of exceptions, return false   
     catch (InterruptedException | ExecutionException e) {
       return ElasticDocumentSearch.VERSION_NOT_FOUND;
     }
-
-
   }
 
 

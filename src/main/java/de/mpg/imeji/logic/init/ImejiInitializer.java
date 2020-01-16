@@ -31,6 +31,7 @@ import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.emailcontent.ImejiEmailContentConfiguration;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.statement.StatementService;
+import de.mpg.imeji.logic.db.indexretry.queue.RetryQueue;
 import de.mpg.imeji.logic.db.keyValue.KeyValueStoreService;
 import de.mpg.imeji.logic.events.listener.ListenerService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
@@ -127,6 +128,7 @@ public class ImejiInitializer {
     initDefaultStatements();
     new ListenerService().init();
     HierarchyService.reloadHierarchy();
+    initRetryQueue();
   }
 
   /**
@@ -267,6 +269,17 @@ public class ImejiInitializer {
 
   }
 
+
+  /**
+   * In case imeji was shut down while retry queue was still running, the requests were saved to
+   * file. Re-start retry queue.
+   */
+  public static void initRetryQueue() {
+    RetryQueue retryQueue = RetryQueue.getInstance();
+    retryQueue.checkRetryQueueOnInitialization();
+  }
+
+
   /**
    * Shutdown imeji
    */
@@ -305,6 +318,8 @@ public class ImejiInitializer {
     final AlarmClock alarmClock = AlarmClock.get();
     alarmClock.release();
     LOGGER.info("done");
+    LOGGER.info("Shut down retry queue");
+    RetryQueue.getInstance().shutDown();
   }
 
   /**

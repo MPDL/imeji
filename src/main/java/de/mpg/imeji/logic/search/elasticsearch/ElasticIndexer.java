@@ -362,7 +362,7 @@ public class ElasticIndexer implements SearchIndexer {
   public static SearchIndexBulkFailureException getSearchIndexBulkFailureException(BulkResponse bulkResponse) {
 
     SearchIndexBulkFailureException failureException = new SearchIndexBulkFailureException();
-    for (BulkItemResponse bulkItemResponse : bulkResponse) {
+    for (BulkItemResponse bulkItemResponse : bulkResponse.getItems()) {
 
       if (bulkItemResponse.isFailed()) {
 
@@ -401,9 +401,9 @@ public class ElasticIndexer implements SearchIndexer {
 
   private static boolean elasticSearchResponseReportsSuccess(DocWriteResponse response) {
 
-	if(response == null) {
-		return false;
-	}  
+    if (response == null) {
+      return false;
+    }
     RestStatus restStatus = response.status();
     DocWriteResponse.Result operationResult = response.getResult();
 

@@ -902,6 +902,34 @@
 								</div>
 							</div>
 							
+							<!--  section Search index and database  -->
+							<div class="imj_adminPanel">
+								<div class="imj_config_headline">
+									<h2>#{lbl.config_index_retry}</h2>
+								</div>
+								<div class="imj_content">
+									<!--  save button -->
+									<h:commandButton action="#{Configuration.saveConfig}"
+										title="#{lbl.configuration_save_all}"
+										value="#{lbl.configuration_save_all}"
+										styleClass="imj_submitButton" />										
+									<!-- show different messages -->
+									<div class="imj_admindataSet">
+										<div class="imj_admindataLabel">
+												<h:outputText value="#{lbl.retry_queue_sleep_time}" />
+												<span class="imj_noDisplay">: </span>
+											</div>
+											<div class="imj_admindataValue">
+												<h:inputText value="#{Configuration.retryQueueSleepTime}"
+													styleClass="imj_admindataEdit" />
+											</div>
+											<a href="javascript: void(0);"
+												data-target=".imj_admindataSet .imj_admindataValue input"
+												class="imj_clearInput fa fa-times"> </a>
+									</div>
+								</div>
+							</div>
+							
 							<!-- AdminDataList - imj_submitPanel - cancel link + submit command buttons -->
 							<h:panelGroup layout="block" styleClass="imj_submitPanel">
 								<h:outputLink value="#{Navigation.adminUrl}">

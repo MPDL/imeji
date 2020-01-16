@@ -102,7 +102,8 @@ public class ImejiConfiguration {
     COLLECTION_METADATA_SELECTIONS_PRESELECT,
     ORGANIZATION_NAMES,
     MAX_NUMBER_CITATION_AUTHORS,
-    DISPLAY_COOKIE_NOTICE;
+    DISPLAY_COOKIE_NOTICE,
+    RETRY_QUEUE_SLEEP_MIL_SEC;
   }
 
   private static Properties config;
@@ -139,6 +140,8 @@ public class ImejiConfiguration {
   public static final String COLLECTION_METADATA_GEO_COORDINATES_LABEL = "Geo-coordinates";
   public static final String COLLECTION_METADATA_ARTICLE_DOI_LABEL = "Article DOI";
   public static final String COLLECTION_METADATA_KEYWORDS_LABEL = "Keywords";
+
+  public static final String DEFAULT_RETRY_QUEUE_SLEEP_MIL_SEC = "900000";
 
   private String dataViewerUrl;
 
@@ -234,6 +237,7 @@ public class ImejiConfiguration {
     initPropertyWithDefaultValue(CONFIGURATION.DEFAULT_LICENSE, ImejiLicenses.CC_BY.name());
     initPropertyWithDefaultValue(CONFIGURATION.DISPLAY_COOKIE_NOTICE, DEFAULT_DISPLAY_COOKIE_NOTICE);
     initPropertyWithDefaultValue(CONFIGURATION.AUTOSUGGEST_ORGAS, DEFAULT_AUTOSUGGEST_ORGAS);
+    initPropertyWithDefaultValue(CONFIGURATION.RETRY_QUEUE_SLEEP_MIL_SEC, DEFAULT_RETRY_QUEUE_SLEEP_MIL_SEC);
   }
 
   /**
@@ -1107,6 +1111,16 @@ public class ImejiConfiguration {
   }
 
 
+  public void setRetryQueueSleepTime(String sleepTimeInMilliSec) {
+    Double.parseDouble(sleepTimeInMilliSec); // will throw unchecked exception if not a number
+    setProperty(CONFIGURATION.RETRY_QUEUE_SLEEP_MIL_SEC.name(), sleepTimeInMilliSec);
+  }
+
+  public String getRetryQueueSleepTime() {
+    return getPropertyAsNonNullString(CONFIGURATION.RETRY_QUEUE_SLEEP_MIL_SEC.name());
+  }
+
+
   // ------------------------------------------------------------------------
   // Utility classes
   // ------------------------------------------------------------------------
@@ -1151,7 +1165,7 @@ public class ImejiConfiguration {
   /**
    * Utility class for a GUI password field that - does not show a password unless a password is
    * entered by the user - the password field is only active and the user can only set a password if
-   * an "set password" check box in GUI is checked
+   * a "set password" check box in GUI is checked
    */
 
   public abstract class ProtectedPassword {

@@ -733,4 +733,12 @@ public class ConfigurationBean extends SuperBean {
     return Imeji.CONFIG.getDisplayCookieNotice();
   }
 
+  public void setRetryQueueSleepTime(String sleepTimeInMilliSec) {
+    Imeji.CONFIG.setRetryQueueSleepTime(sleepTimeInMilliSec);
+  }
+
+  public String getRetryQueueSleepTime() {
+    return Imeji.CONFIG.getRetryQueueSleepTime();
+  }
+
 }

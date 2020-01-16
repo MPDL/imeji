@@ -2,8 +2,10 @@ package de.mpg.imeji.exceptions;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +49,22 @@ public class SearchIndexBulkFailureException extends ImejiException {
     this.failures.put(idOfDocument, failure);
   }
 
+  @Override
+  public String getMessage() {
 
+    String message = "Error indexing document(s) in Elastic Search. ";
+    Set<String> failedIds = failures.keySet();
+    for (String failedId : failedIds) {
+      OperationFailureInformation failureInfo = failures.get(failedId);
+      message = message + "- Id " + failedId;
+      if (failureInfo.operationException != null) {
+        message = message + ": " + failureInfo.operationException.getMessage();
+      }
+      message = message + " ";
+    }
+    return message;
+
+  }
 
   public List<RetryBaseRequest> getRetryRequests(List<Object> objectsToIndexOrDelete) {
 
