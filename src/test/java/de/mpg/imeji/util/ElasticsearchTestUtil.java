@@ -20,7 +20,7 @@ public class ElasticsearchTestUtil {
 
   private static final Logger LOGGER = LogManager.getLogger(ElasticsearchTestUtil.class);
 
-  private static final String ELASTICSEARCH_DOCKER_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:7.0.1";
+  private static final String ELASTICSEARCH_DOCKER_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch:7.5.2";
   private static ElasticsearchContainer elasticSearchContainer;
 
   /**
