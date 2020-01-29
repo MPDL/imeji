@@ -124,15 +124,19 @@ public class ElasticIndexer implements SearchIndexer {
 
     for (final Object obj : objectList) {
 
-      LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
-      final IndexRequest indexRequest;
-      if (obj instanceof ResourceLastModified) {
-        long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
-        indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType, timestamp);
-      } else {
-        indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType);
+      try {
+        LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
+        final IndexRequest indexRequest;
+        if (obj instanceof ResourceLastModified) {
+          long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
+          indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType, timestamp);
+        } else {
+          indexRequest = getIndexRequest(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType);
+        }
+        bulkRequest.add(indexRequest);
+      } catch (Exception e) {
+        LOGGER.error("Error adding object to bulk index list", e);
       }
-      bulkRequest.add(indexRequest);
     }
 
     if (bulkRequest.numberOfActions() > 0) {
