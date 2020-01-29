@@ -53,17 +53,15 @@ public class UploadBean extends SuperBean {
           BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("cannot_create_collection", getLocale()));
         }
       }
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error initializing page: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }    
-    catch (Exception e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error initializing page: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (Exception e) {
       BeanHelper.error("Error initializing page: " + e.getMessage());
       // LOGGER.error("Error initializing upload page", e);
     }

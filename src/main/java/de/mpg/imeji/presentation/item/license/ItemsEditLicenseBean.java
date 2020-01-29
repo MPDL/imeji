@@ -91,17 +91,15 @@ public class ItemsEditLicenseBean extends SuperBean {
       save(items);
       BeanHelper.addMessage(getLicenseName() + " " + Imeji.RESOURCE_BUNDLE.getLabel("licenses_added_to", getLocale()) + " " + items.size()
           + " " + Imeji.RESOURCE_BUNDLE.getLabel("items", getLocale()));
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error saving items " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error saving items " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (final ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error saving items", e);
     }

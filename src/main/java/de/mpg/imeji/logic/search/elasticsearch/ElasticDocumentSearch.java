@@ -21,8 +21,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Collection of functions for checking status of Elastic Search and
- * searching documents.
+ * Collection of functions for checking status of Elastic Search and searching documents.
  * 
  * @author breddin
  *
@@ -49,9 +48,8 @@ public class ElasticDocumentSearch {
 
 
   /**
-   * Checks if cluster health has yellow state, i.e. Elastic Search 
-   * is ready for operations.
-   *  
+   * Checks if cluster health has yellow state, i.e. Elastic Search is ready for operations.
+   * 
    * @return
    * @throws IOException
    */
@@ -72,8 +70,8 @@ public class ElasticDocumentSearch {
 
     ClusterClient clusterClient = ElasticService.getClient().cluster();
     ClusterHealthResponse response = clusterClient.health(clusterHealthRequest, RequestOptions.DEFAULT);
-    if(response.getStatus() == ClusterHealthStatus.YELLOW || response.getStatus() == ClusterHealthStatus.GREEN) {
-    	return true;
+    if (response.getStatus() == ClusterHealthStatus.YELLOW || response.getStatus() == ClusterHealthStatus.GREEN) {
+      return true;
     }
     return false;
 
@@ -118,11 +116,10 @@ public class ElasticDocumentSearch {
   }
 
   /**
-   * Connect to Elastic Search and retrieve the current version of the document
-   * with given id (URI). 
+   * Connect to Elastic Search and retrieve the current version of the document with given id (URI).
    * 
    * @param request Elastic Saerch SearchRequest
-   * @param uri id of the document 
+   * @param uri id of the document
    * @return version of document or -1 if version could not be retrieved for document
    * @throws IOException
    */

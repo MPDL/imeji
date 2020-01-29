@@ -132,19 +132,17 @@ public class EditCollectionBean extends CollectionBean {
       }
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_collection_save", getLocale()));
       return true;
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()) + " " +
-        		exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error saving collection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      return false;
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage =
+          Imeji.RESOURCE_BUNDLE.getMessage("error_collection_save", getLocale()) + " " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error saving collection: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (final UnprocessableError e) {
+      return false;
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving collection", e);
       return false;

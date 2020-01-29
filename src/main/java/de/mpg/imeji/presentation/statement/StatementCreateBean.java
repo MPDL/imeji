@@ -31,15 +31,14 @@ public class StatementCreateBean extends SuperBean {
       service.create(statementForm.asStatement(), getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "statements");
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error creating statement: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }     
-    catch (final ImejiException | IOException e) {
+      String userMessage = "Error creating statement: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (final ImejiException | IOException e) {
       BeanHelper.error("Error creating statement: " + e.getMessage());
       LOGGER.error("Error creating statement", e);
     }

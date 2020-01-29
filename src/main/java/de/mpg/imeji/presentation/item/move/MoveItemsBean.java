@@ -206,15 +206,14 @@ public class MoveItemsBean extends SuperBean {
             + " " + Imeji.RESOURCE_BUNDLE.getLabel("moved_error", getLocale()));
       }
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error moving items " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }   
-    catch (Exception e) {
+      String userMessage = "Error moving items " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (Exception e) {
       BeanHelper.error("Error moving items " + e.getMessage());
       LOGGER.error("Error moving items ", e);
     }
@@ -248,14 +247,14 @@ public class MoveItemsBean extends SuperBean {
         collectionItemsBean.refresh();
       }
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error moving collection: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      } catch (ImejiException e) {
+      String userMessage = "Error moving collection: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (ImejiException e) {
       BeanHelper.error("Error moving collection: " + e.getMessage());
       LOGGER.error("Error moving collection", e);
     }

@@ -59,13 +59,12 @@ public class WorkflowValidator implements Serializable {
    */
   public void isUpdateAllowed(Properties p) throws WorkflowException {
     if (p.getStatus() == Status.WITHDRAWN) {
-    	String userErrorMessageLabel = null;
-    	if(p instanceof CollectionImeji) {
-    		userErrorMessageLabel = "error_update_withdrawn_collection";
-    	}
-    	else if(p instanceof Item) {
-    		userErrorMessageLabel = "error_update_withdrawn_item";
-    	}
+      String userErrorMessageLabel = null;
+      if (p instanceof CollectionImeji) {
+        userErrorMessageLabel = "error_update_withdrawn_collection";
+      } else if (p instanceof Item) {
+        userErrorMessageLabel = "error_update_withdrawn_item";
+      }
       throw new WorkflowException("Can not update discarded object", userErrorMessageLabel);
     }
   }
@@ -102,12 +101,11 @@ public class WorkflowValidator implements Serializable {
     if (Imeji.CONFIG.getPrivateModus() && !isSubcollection(p)) {
       throw new NotSupportedMethodException("Object publication is disabled!");
     }
-    
+
     if (p.getStatus() == Status.RELEASED) {
       throw new WorkflowException("Only PENDING objects can be released", "error_release_released_collection");
-    }
-    else if(p.getStatus() == Status.WITHDRAWN) {
-    	throw new WorkflowException("Only PENDING objects can be released", "error_release_withdrawn_collection");
+    } else if (p.getStatus() == Status.WITHDRAWN) {
+      throw new WorkflowException("Only PENDING objects can be released", "error_release_withdrawn_collection");
     }
   }
 
@@ -122,9 +120,8 @@ public class WorkflowValidator implements Serializable {
   public void isWithdrawAllowed(Properties p) throws WorkflowException, NotSupportedMethodException {
     if (p.getStatus() == Status.PENDING) {
       throw new WorkflowException("Only RELEASED objects can be withdrawn", null);
-    }
-    else if(p.getStatus() == Status.WITHDRAWN) {
-    	throw new WorkflowException("Only RELEASED objects can be withdrawn", "error_withdraw_withdrawn_object");
+    } else if (p.getStatus() == Status.WITHDRAWN) {
+      throw new WorkflowException("Only RELEASED objects can be withdrawn", "error_withdraw_withdrawn_object");
     }
   }
 

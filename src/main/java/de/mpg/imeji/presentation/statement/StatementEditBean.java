@@ -84,17 +84,15 @@ public class StatementEditBean extends StatementCreateBean {
     try {
       service.update(statement, getStatementForm().asStatement(), getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "statements");
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error editing statement: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error editing statement: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (final ImejiException | IOException e) {
+    } catch (final ImejiException | IOException e) {
       BeanHelper.error("Error editing statement: " + e.getMessage());
       LOGGER.error("Error editing statement", e);
     }

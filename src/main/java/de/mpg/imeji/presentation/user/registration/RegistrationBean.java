@@ -70,17 +70,15 @@ public class RegistrationBean extends SuperBean {
       loginBean.getSessionBean().setUser(user);
       sendRegistrationNotification(user);
       redirect(getNavigation().getHomeUrl() + "/pwdreset?from=registration");
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error activating user: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error activating user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }    
-    catch (Exception e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error activating user: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error activating user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (Exception e) {
       LOGGER.error("Error activating user", e);
       BeanHelper.error("Error during user activation");
     }
@@ -121,17 +119,15 @@ public class RegistrationBean extends SuperBean {
     try {
       passwordUrl = getNavigation().getRegistrationUrl() + "?token=" + registrationService.register(user).getToken();
       registration_success = true;
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error registering user: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error registering user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }    
-    catch (final UnprocessableError e) {
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error registering user: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error registering user: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (final UnprocessableError e) {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error registering user", e);
     } catch (final AlreadyExistsException e) {

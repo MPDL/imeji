@@ -158,15 +158,14 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       return thumbnailBeans;
 
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }    
-    catch (final ImejiException e) {
+      String userMessage = exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (final ImejiException e) {
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error retrieving items", e);
     }
@@ -407,17 +406,15 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       unselect(uris);
       BeanHelper.info(count + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_withdraw", getLocale()));
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = 
-        		Imeji.RESOURCE_BUNDLE.getMessage("error_withdraw_selected_items", getLocale()) + " " + 
-        				exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }    
-    catch (final ImejiException e) {
+      String userMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_withdraw_selected_items", getLocale()) + " "
+          + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (final ImejiException e) {
       BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_withdraw_selected_items", getLocale()));
       BeanHelper.error(e.getMessage());
       LOGGER.error("Error discarding items:", e);
@@ -439,14 +436,14 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
       BeanHelper.info(uris.size() + " " + Imeji.RESOURCE_BUNDLE.getLabel("images_deleted", getLocale()));
       unselect(uris);
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      } catch (final ImejiException e) {
+      String userMessage = exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (final ImejiException e) {
       LOGGER.error("Error deleting items", e);
       BeanHelper.error(e.getMessage());
     }
@@ -696,18 +693,16 @@ public class ItemsBean extends SuperPaginatorBean<ThumbnailBean> {
           .collect(Collectors.toList());
       return deletableItems;
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = 
-        		Imeji.RESOURCE_BUNDLE.getMessage("error_retrieve_selected_items", getLocale()) + " " + 
-        				exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-        return new ArrayList<Item>();
-      }    
-    catch (final ImejiException e) {
+      String userMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_retrieve_selected_items", getLocale()) + " "
+          + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+      return new ArrayList<Item>();
+    } catch (final ImejiException e) {
       String errorMessage = Imeji.RESOURCE_BUNDLE.getMessage("error_retrieve_selected_items", getLocale());
       LOGGER.error(errorMessage, e);
       BeanHelper.error(errorMessage);

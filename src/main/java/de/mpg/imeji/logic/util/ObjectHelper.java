@@ -193,37 +193,31 @@ public class ObjectHelper {
       }
     }
   }
-  
+
   /**
-   * Function returns the GUI label of the given object, i.e. "Collection" for a CollectionImeji object.
-   * See src/main/resources/labels_*.properties for available GUI labels.
-   *  
+   * Function returns the GUI label of the given object, i.e. "Collection" for a CollectionImeji
+   * object. See src/main/resources/labels_*.properties for available GUI labels.
+   * 
    * @param object
    * @return label for object, base line: "Object"
    */
   public static String getGUILabel(Object object) {
-	  
-	  if(object instanceof CollectionImeji) {
-		  return "COLLECTION";
-	  }
-	  else if(object instanceof User) {
-		  return "user";
-	  }
-	  else if(object instanceof Item) {
-		  return "image";
-	  }
-	  else if(object instanceof UserGroup) {
-		  return "admin_userGroup";
-	  }
-	  else if(object instanceof Statement) {
-		  return "statement";
-	  }
-	  else if(object instanceof Facet) {
-		  return "facet";
-	  }
-	  else {
-		  return "object";
-	  }
+
+    if (object instanceof CollectionImeji) {
+      return "COLLECTION";
+    } else if (object instanceof User) {
+      return "user";
+    } else if (object instanceof Item) {
+      return "image";
+    } else if (object instanceof UserGroup) {
+      return "admin_userGroup";
+    } else if (object instanceof Statement) {
+      return "statement";
+    } else if (object instanceof Facet) {
+      return "facet";
+    } else {
+      return "object";
+    }
   }
-  
+
 }

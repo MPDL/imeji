@@ -51,17 +51,15 @@ public abstract class EditMetadataAbstract extends SuperBean {
       statementMap = StatementUtil.statementListToMap(
           statementService.searchAndRetrieve(null, null, getSessionUser(), Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX));
       statementMenu = statementMap.keySet().stream().map(s -> new SelectItem(s)).collect(Collectors.toList());
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error retrieving statements. " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error retrieving statements. " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (final ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error("Error retrieving statements");
       LOGGER.error("Error retrieving statements", e);
     }

@@ -104,17 +104,15 @@ public class UserGroupsBean extends SuperBean {
         final UserGroupService controller = new UserGroupService();
         controller.delete(group, sessionUser);
       }
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error removing group: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error removing group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error removing group: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error removing group: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (final Exception e) {
+    } catch (final Exception e) {
       BeanHelper.error("Error removing group");
       LOGGER.error(e);
     }

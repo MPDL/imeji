@@ -59,17 +59,15 @@ public class CreateFacetBean extends SuperBean {
     try {
       service.create(facet, getSessionUser());
       redirect(getNavigation().getApplicationUrl() + "facets");
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error creating facet. " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error creating facet. " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (UnprocessableError e) {
+    } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException | IOException e) {
       LOGGER.error("Error creating facet", e);

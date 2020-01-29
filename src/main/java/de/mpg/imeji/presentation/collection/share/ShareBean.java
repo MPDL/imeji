@@ -101,17 +101,15 @@ public class ShareBean extends SuperBean implements Serializable {
             !StringHelper.isNullOrEmptyTrim(q) || !StringHelper.isNullOrEmptyTrim(fq) ? collectionUrl + q + "&fq=" + fq : null;
       }
       this.init();
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error initializing page: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error("Error initializing page: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error initializing page: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error("Error initializing page: " + exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (final Exception e) {
+    } catch (final Exception e) {
       LOGGER.error("Error initializing the share collection page", e);
       BeanHelper.error("Error initializing page: " + e.getMessage());
     }

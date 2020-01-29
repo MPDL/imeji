@@ -77,17 +77,15 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       initHeaders(itemList);
       initRows(itemList);
       tableSize = rows.size() > tableSize ? tableSize : rows.size();
-    } 
-    catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error initialiting page: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error initialiting page: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
       }
-    catch (final ImejiException e) {
+    } catch (final ImejiException e) {
       BeanHelper.error("Error initialiting page:" + e.getCause());
       LOGGER.error("Error initializing bean", e);
     }
@@ -111,15 +109,14 @@ public class EditItemsSelectedBean extends EditMetadataAbstract {
       goBack();
       BeanHelper.addMessage(Imeji.RESOURCE_BUNDLE.getMessage("success_items_save", getLocale()));
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error updating items: " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }     
-    catch (UnprocessableError e) {
+      String userMessage = "Error updating items: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (UnprocessableError e) {
       BeanHelper.error(e, getLocale());
     } catch (ImejiException e1) {
       LOGGER.error("Error updating items", e1);

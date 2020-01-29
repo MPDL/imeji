@@ -69,15 +69,14 @@ public class UserBean extends SuperBean {
         this.setQuota(new QuotaUICompoment(user, getLocale()));
       }
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-        String userMessage = "Error initializing page. " + exceptionWithMessage.getUserMessage(getLocale());
-        BeanHelper.error(userMessage);
-        if (exceptionWithMessage.getMessage() != null) {
-          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-        } else {
-          LOGGER.error(userMessage, exceptionWithMessage);
-        }
-      }    
-    catch (final Exception e) {
+      String userMessage = "Error initializing page. " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (final Exception e) {
       LOGGER.error("Error initializing page", e);
       BeanHelper.error("Error initializing page");
     }
@@ -119,17 +118,16 @@ public class UserBean extends SuperBean {
       } catch (final JoseException e) {
         LOGGER.error("Error generating API Key ", e);
         BeanHelper.error("Error generating API Key");
-      } 
-      catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-          String userMessage = "Error saving API key. " + exceptionWithMessage.getUserMessage(getLocale());
-          BeanHelper.error(userMessage);
-          if (exceptionWithMessage.getMessage() != null) {
-            LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-          } else {
-            LOGGER.error(userMessage, exceptionWithMessage);
-          }
-          reloadPage();
-        } catch (ImejiException ie) {
+      } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+        String userMessage = "Error saving API key. " + exceptionWithMessage.getUserMessage(getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+        reloadPage();
+      } catch (ImejiException ie) {
         LOGGER.error("Error generating API Key ", ie);
         BeanHelper.error("Error generating API Key");
       }
@@ -212,19 +210,18 @@ public class UserBean extends SuperBean {
         BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("success_save", getLocale()));
         reloadPage();
       } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
-          String userMessage = "Error updating user: " + exceptionWithMessage.getUserMessage( getLocale());
-          BeanHelper.error(userMessage);
-          if (exceptionWithMessage.getMessage() != null) {
-            LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
-          } else {
-            LOGGER.error(userMessage, exceptionWithMessage);
-          }
-          reloadPage();
-        }      
-      catch (final UnprocessableError e) {
+        String userMessage = "Error updating user: " + exceptionWithMessage.getUserMessage(getLocale());
+        BeanHelper.error(userMessage);
+        if (exceptionWithMessage.getMessage() != null) {
+          LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+        } else {
+          LOGGER.error(userMessage, exceptionWithMessage);
+        }
+        reloadPage();
+      } catch (final UnprocessableError e) {
         BeanHelper.error(e, getLocale());
         LOGGER.error("Error updating user", e);
-      } 
+      }
     }
   }
 
