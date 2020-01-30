@@ -127,6 +127,8 @@ public class CollectionItemsBean extends ItemsBean {
         String organizationName = organization.getName();
         String departmentName = organization.getDepartment();
         String affiliation = StringHelper.isNullOrEmptyTrim(departmentName) ? organizationName : departmentName + ", " + organizationName;
+        affiliation =
+            StringHelper.isNullOrEmptyTrim(organization.getAddress()) ? affiliation : affiliation + ", " + organization.getAddress();
 
         if (!affiliationNumberMapping.containsValue(affiliation)) {
           affiliationNumberMapping.put(affiliationMappingKey, affiliation);
