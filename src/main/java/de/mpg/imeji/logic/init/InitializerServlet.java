@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.log4j.lf5.util.StreamUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,7 +84,8 @@ public class InitializerServlet extends HttpServlet {
       LOGGER.info("No " + f.getAbsolutePath() + " found, no migration runs");
     }
     if (in != null) {
-      String migrationRequest = new String(StreamUtils.getBytes(in), "UTF-8");
+
+      String migrationRequest = IOUtils.toString(in, StandardCharsets.UTF_8);
       migrationRequest = migrationRequest.replaceAll("XXX_BASE_URI_XXX", Imeji.PROPERTIES.getBaseURI());
       migrationRequest = addNewIdToMigration(migrationRequest);
 
