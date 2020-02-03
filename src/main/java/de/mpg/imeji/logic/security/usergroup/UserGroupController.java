@@ -15,8 +15,8 @@ import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.generic.AccessElement;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 
 /**

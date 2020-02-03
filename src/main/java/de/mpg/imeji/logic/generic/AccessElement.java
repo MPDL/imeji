@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.generic;
 import java.lang.reflect.Field;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
+import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 
 
 /**

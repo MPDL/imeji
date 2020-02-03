@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.UnprocessableError;
-import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.item.ItemService;
@@ -29,9 +28,9 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.License;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.Properties.Status;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
@@ -149,19 +148,25 @@ public class MoveFacade implements Serializable {
    * <li>if the collection is released, the user has no admin rights on the objects
    * <li>The objects can't be deleted (for instance released)
    * 
-   * @param items
-   * @param collection
+   * @param objects (items or sub collection)
+   * @param targetCollection
    * @param user
-   * @throws NotAllowedError
-   * @throws WorkflowException
+   * @throws ImejiException
    */
-  public void checkIfUserCanMoveObjectsToCollection(List<Object> objects, CollectionImeji collection, User user)
-      throws NotAllowedError, WorkflowException {
+  public void checkIfUserCanMoveObjectsToCollection(List<Object> objects, CollectionImeji targetCollection, User user)
+      throws ImejiException {
+
+    // reload collection
+    CollectionService collectionService = new CollectionService();
+    targetCollection = collectionService.retrieve(targetCollection.getId(), user);
+    // workflow check for target collection
+    workflowValidator.isUpdateAllowed(targetCollection);
     final Authorization authorization = new Authorization();
-    if (!authorization.update(user, collection) || objects.stream().filter(o -> !authorization.delete(user, o)).findAny().isPresent()
-        || (collection.getStatus().equals(Status.RELEASED)
+    authorization.reload();
+    if (!authorization.update(user, targetCollection) || objects.stream().filter(o -> !authorization.delete(user, o)).findAny().isPresent()
+        || (targetCollection.getStatus().equals(Status.RELEASED)
             && objects.stream().filter(o -> !authorization.administrate(user, o)).findAny().isPresent())) {
-      throw new NotAllowedError(user.getEmail() + " is not allowed to moved the items to the collection " + collection.getIdString());
+      throw new NotAllowedError(user.getEmail() + " is not allowed to moved the items to the collection " + targetCollection.getIdString());
     }
     for (Object p : objects) {
       workflowValidator.isDeleteAllowed((Properties) p);

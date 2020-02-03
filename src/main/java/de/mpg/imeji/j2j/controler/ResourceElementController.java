@@ -7,7 +7,7 @@ import de.mpg.imeji.exceptions.ReloadBeforeSaveException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.logic.model.aspects.AccessMember;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
 
 /**

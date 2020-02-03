@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
+import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -229,6 +231,13 @@ public class Authorization implements Serializable {
   }
 
   /**
+   * Reloads the representation of file structure from database
+   */
+  public void reload() {
+    HierarchyService.reloadHierarchy();
+  }
+
+  /**
    * Return the uri which is relevant for the {@link Authorization}
    *
    * @param obj
@@ -270,7 +279,7 @@ public class Authorization implements Serializable {
       return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
     } catch (final Exception e) {
       LOGGER.error("Error get security URI", e);
-      return AuthorizationPredefinedRoles.IMEJI_GLOBAL_URI;
+      return AuthorizationPredefinedRoles.IMEJI_NO_AUTHORIZATION;
     }
   }
 
@@ -280,7 +289,7 @@ public class Authorization implements Serializable {
    * @param obj
    * @return
    */
-  private String getLastParent(Object obj) {
+  protected String getLastParent(Object obj) throws ImejiException {
     if (obj instanceof Item) {
       return hierarchyService.getLastParent(((Item) obj).getCollection().toString());
     }
@@ -290,7 +299,7 @@ public class Authorization implements Serializable {
     return null;
   }
 
-  private String getLastParent(String uri) {
+  protected String getLastParent(String uri) throws ImejiException {
     return hierarchyService.getLastParent(uri);
   }
 

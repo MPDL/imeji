@@ -19,9 +19,9 @@ import org.apache.jena.rdf.model.Model;
  * @version $Revision$ $LastChangedDate$
  */
 public abstract class Transaction {
-  private String modelURI;
-  private boolean exceptionWasThrown;
-  private ImejiException transactionException;
+  protected String modelURI;
+  protected boolean exceptionWasThrown;
+  protected ImejiException transactionException;
   private static final Logger LOGGER = LogManager.getLogger(Transaction.class);
 
   /**

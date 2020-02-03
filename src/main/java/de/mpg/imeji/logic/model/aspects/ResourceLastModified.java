@@ -14,7 +14,7 @@ import java.util.Calendar;
  * date older than the one in store, another process has modified the stored object since is was
  * last read by our process.
  * 
- * The data object must then be updated with it's latest version and changes can only be added to
+ * The data object must then be updated with its latest version and changes can only be added to
  * this updated version.
  * 
  * @author breddin

@@ -143,7 +143,7 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   }
 
   /**
-   * Create a subcollection of the parent collection with the following name
+   * Create a sub collection of the parent collection with the following name
    * 
    * @param parent
    * @param name

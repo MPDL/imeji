@@ -10,7 +10,7 @@ import org.apache.jena.rdf.model.Model;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.j2j.helper.J2JHelper;
 import de.mpg.imeji.j2j.transaction.CRUDTransaction;
-import de.mpg.imeji.j2j.transaction.CRUDTransaction.CRUDTransactionType;
+import de.mpg.imeji.j2j.transaction.OperationType;
 import de.mpg.imeji.j2j.transaction.Transaction;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.writer.JenaWriter;
@@ -117,7 +117,7 @@ public class JenaReader implements Reader {
    * @throws ImejiException
    */
   private List<Object> read(List<Object> objects, User user, boolean lazy) throws ImejiException {
-    final Transaction crudTransaction = new CRUDTransaction(objects, CRUDTransactionType.READ, modelURI, lazy);
+    final Transaction crudTransaction = new CRUDTransaction(objects, OperationType.READ, user, modelURI, lazy);
     crudTransaction.start(Imeji.dataset);
     crudTransaction.rethrowException();
     return objects;

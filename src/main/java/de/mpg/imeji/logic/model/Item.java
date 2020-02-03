@@ -16,6 +16,8 @@ import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.model.aspects.AccessMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;

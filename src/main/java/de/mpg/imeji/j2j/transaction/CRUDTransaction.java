@@ -3,17 +3,13 @@ package de.mpg.imeji.j2j.transaction;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.exceptions.WorkflowException;
 import de.mpg.imeji.j2j.controler.ResourceController;
-import de.mpg.imeji.logic.model.Properties;
-import de.mpg.imeji.logic.model.aspects.CloneURI;
-import de.mpg.imeji.logic.workflow.WorkflowValidator;
+import de.mpg.imeji.logic.model.User;
+
 
 /**
  * {@link Transaction} for CRUD methods
@@ -22,21 +18,14 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class CRUDTransaction extends Transaction {
+public class CRUDTransaction extends SecureTransaction {
 
   private List<Object> objects = new ArrayList<Object>();
   private List<Object> results = new ArrayList<Object>();
 
-  private final CRUDTransactionType type;
+  private final OperationType type;
   private boolean lazy = false;
 
-
-  public enum CRUDTransactionType {
-    CREATE,
-    READ,
-    UPDATE,
-    DELETE;
-  }
 
   /**
    * Constructor for a {@link CRUDTransaction} with a {@link List} of {@link Object}
@@ -46,8 +35,8 @@ public class CRUDTransaction extends Transaction {
    * @param modelURI
    * @param lazy
    */
-  public CRUDTransaction(List<Object> objects, CRUDTransactionType type, String modelURI, boolean lazy) {
-    super(modelURI);
+  public CRUDTransaction(List<Object> objects, OperationType type, User user, String modelURI, boolean lazy) {
+    super(modelURI, objects, type, user);
     this.objects = objects;
     this.type = type;
     this.lazy = lazy;
@@ -57,70 +46,13 @@ public class CRUDTransaction extends Transaction {
   protected void execute(Dataset ds) throws ImejiException {
     final ResourceController rc = new ResourceController(getModel(ds), lazy);
     for (final Object o : objects) {
-      checkObjectStatus(rc, o);
+      checkObjectStatus(rc, o, this.type);
       invokeResourceController(rc, o);
     }
   }
 
   public List<Object> getResults() {
     return this.results;
-  }
-
-  /**
-   * For data objects that have a status (i.e. Item or CollectionImeji) check whether the status
-   * allows proceeding with a create, update or delete operation.
-   * 
-   * @param object
-   * @throws NotFoundException
-   * @throws WorkflowException
-   */
-  private void checkObjectStatus(ResourceController resourceController, Object object) throws NotFoundException, WorkflowException {
-
-    if (object instanceof Properties) {
-
-      WorkflowValidator workflowManager = new WorkflowValidator();
-
-      // create: check client object
-      if (this.type == CRUDTransactionType.CREATE) {
-        workflowManager.isCreateAllowed((Properties) object);
-      }
-      // update, delete: check database object (and not client object)
-      else if (this.type == CRUDTransactionType.UPDATE || this.type == CRUDTransactionType.DELETE) {
-        Object databaseObject = getCorrespondingObjectInDatabase(object, resourceController);
-        switch (this.type) {
-          case DELETE:
-            workflowManager.isDeleteAllowed((Properties) databaseObject);
-            break;
-          case UPDATE:
-            workflowManager.isUpdateAllowed((Properties) databaseObject);
-            break;
-          default:
-            // error
-        }
-      }
-    }
-  }
-
-  /**
-   * Given a data object that has been manipulated by a client, read the corresponding data object
-   * from database. Useful in order to determine if database object has changed since it was last
-   * read by the client.
-   * 
-   * @param clientImejiDataObject
-   * @param resourceController
-   * @return
-   * @throws NotFoundException
-   */
-  private Object getCorrespondingObjectInDatabase(Object clientImejiDataObject, ResourceController resourceController)
-      throws NotFoundException {
-
-    if (clientImejiDataObject instanceof CloneURI) {
-      Object currentObjectInJena = resourceController.read(((CloneURI) clientImejiDataObject).cloneURI());
-      return currentObjectInJena;
-    } else {
-      throw new NotImplementedException("Could not process update request, interface CloneURI not implemented but should be in class "
-          + clientImejiDataObject.getClass());
-    }
   }
 
 
@@ -146,6 +78,8 @@ public class CRUDTransaction extends Transaction {
         break;
       case DELETE:
         rc.delete(o);
+        break;
+      case NOOPERATION:
         break;
     }
     if (result != null) {

@@ -36,7 +36,7 @@ import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.SearchIndexer;
 import de.mpg.imeji.logic.search.factory.SearchFactory;
@@ -189,7 +189,7 @@ public class WriterFacade {
     Object valueToSet = changeMember.getValue();
     validate(valueToSet, Validator.Method.UPDATE);
 
-    List<Object> updatedObjects = writeAndIndex(new EditElementsTask(changeMember), new IndexTask());
+    List<Object> updatedObjects = writeAndIndex(new EditElementsTask(changeMember, user), new IndexTask());
     return updatedObjects.get(0);
 
   }
@@ -214,7 +214,7 @@ public class WriterFacade {
       validate(valueToSet, Validator.Method.UPDATE);
     }
 
-    List<Object> dataObjectsChangedInStore = writeToDatabase(new EditElementsTask(changeElements));
+    List<Object> dataObjectsChangedInStore = writeToDatabase(new EditElementsTask(changeElements, user));
 
     // copy latest object version of object in Jena to ElasticSearch:
     Map<Class<?>, List<Object>> typedObjectMap = ObjectsHelper.createTypedObjectMap(dataObjectsChangedInStore);
@@ -634,20 +634,23 @@ public class WriterFacade {
   private class EditElementsTask implements Callable<List<Object>> {
 
     private final List<ChangeMember> changeElements;
+    private final User user;
 
-    public EditElementsTask(ChangeMember changeMember) {
+    public EditElementsTask(ChangeMember changeMember, User user) {
       this.changeElements = new ArrayList<ChangeMember>(1);
       this.changeElements.add(changeMember);
+      this.user = user;
     }
 
 
-    public EditElementsTask(List<ChangeMember> changeElements) {
+    public EditElementsTask(List<ChangeMember> changeElements, User user) {
       this.changeElements = changeElements;
+      this.user = user;
     }
 
     @Override
     public List<Object> call() throws Exception {
-      List<Object> resultObjects = writer.editElements(changeElements);
+      List<Object> resultObjects = writer.editElements(changeElements, user);
       return resultObjects;
     }
   }

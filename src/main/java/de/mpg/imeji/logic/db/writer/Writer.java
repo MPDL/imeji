@@ -4,7 +4,7 @@ package de.mpg.imeji.logic.db.writer;
 import java.util.List;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.aspects.AccessMember.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
 
 /**
  * Write imeji objects in the persistence layer. Important: {@link Writer} doens't check
@@ -61,5 +61,5 @@ public interface Writer {
    * @return
    * @throws ImejiException
    */
-  public List<Object> editElements(List<ChangeMember> changeElements) throws ImejiException;
+  public List<Object> editElements(List<ChangeMember> changeElements, User user) throws ImejiException;
 }

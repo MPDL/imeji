@@ -18,7 +18,11 @@ import de.mpg.imeji.logic.model.User;
  * @version $Revision$ $LastChangedDate$
  */
 public class AuthorizationPredefinedRoles {
+
+
   public static final String IMEJI_GLOBAL_URI = Imeji.PROPERTIES.getBaseURI();
+
+  public static final String IMEJI_NO_AUTHORIZATION = "";
 
   /**
    * The default {@link User} role in imeji can create (collection/album) in imeji

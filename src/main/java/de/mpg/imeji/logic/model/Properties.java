@@ -16,6 +16,8 @@ import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.model.aspects.AccessMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 
 /**

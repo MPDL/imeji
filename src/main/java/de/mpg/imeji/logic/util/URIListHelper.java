@@ -4,7 +4,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.mpg.imeji.logic.model.aspects.AccessMember.ActionType;
+import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 
 /**
  * Add/edit/remove elements from/in a list of unique objects (i.e. the list contains only one object
