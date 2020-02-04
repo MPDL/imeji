@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
+import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.concurrency.Locks;
@@ -308,6 +309,9 @@ public class ItemBean extends SuperBean {
       BeanHelper.error(e, getLocale());
       LOGGER.error("Error saving item metadata", e);
       editor.updateMetadataEntries();
+    } catch (NotFoundException | NotAllowedError e) {
+      LOGGER.error("Error saving item metadata", e);
+      redirectToBrowsePage();
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
       String userMessage =
           Imeji.RESOURCE_BUNDLE.getMessage("error_metadata_edit", getLocale()) + " " + exceptionWithMessage.getUserMessage(getLocale());
