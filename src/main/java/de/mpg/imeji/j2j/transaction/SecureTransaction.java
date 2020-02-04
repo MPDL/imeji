@@ -104,14 +104,12 @@ public abstract class SecureTransaction extends Transaction {
    */
   private void executeSecure(Dataset dataset) throws ImejiException {
 
-    if (this.issuingUser == null) {
-      throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
-    }
 
-    // Imeji.adminUser is a static user object that is constructed upon server start
+    // (1) issuingUser == null if user is not logged in
+    // (2) Imeji.adminUser is a static user object that is constructed upon server start
     // and represents general admin access rights. The constant is used in system operations
     // that involve no actual users. This user object does not exist in database.
-    if (this.issuingUser != Imeji.adminUser) {
+    if (this.issuingUser != null && this.issuingUser != Imeji.adminUser) {
       // (1) check access rights:
       // (1a) load user object from database (if not Imeji.adminUser)    	
       String userModelURI = ImejiInitializer.getModelName(User.class);
@@ -232,21 +230,25 @@ public abstract class SecureTransaction extends Transaction {
 
     Authorization authorization = new JenaAuthorization(dataset);
     if (this.writeOperations != null) {
-      String message = this.issuingUser.getEmail();
+
+      String message = "";
+      if (this.issuingUser != null) {
+        message = this.issuingUser.getEmail() + " ";
+      }
       for (final ObjectOperation writeOperation : this.writeOperations) {
 
         URI objectId = WriterFacade.extractID(writeOperation.dataObject);
         if (writeOperation.operationToPerform == OperationType.NOOPERATION) {
           // throw error
-          throw new NotAllowedError(message + " not allowed to perform operation on " + objectId);
+          throw new NotAllowedError(message + "not allowed to perform operation on " + objectId);
         } else if (writeOperation.operationToPerform == OperationType.CREATE) {
-          String usermessage = message + " not allowed to create " + objectId;
+          String usermessage = message + "not allowed to create " + objectId;
           boolean authorized = authorization.create(this.issuingUser, writeOperation.dataObject);
           checkAndThrowException(authorized, usermessage);
         }
         // edit, delete
         else {
-          String usermessage = message + " not allowed to edit or delete " + objectId;
+          String usermessage = message + "not allowed to edit or delete " + objectId;
           boolean authorized = authorization.update(this.issuingUser, writeOperation.dataObject);
           checkAndThrowException(authorized, usermessage);
         }
@@ -269,9 +271,11 @@ public abstract class SecureTransaction extends Transaction {
       for (Object dataObject : this.readObjects) {
         if (!authorization.read(this.issuingUser, dataObject)) {
           final String id = J2JHelper.getId(dataObject).toString();
-          String email = "Not logged in";
-          email = this.issuingUser.getEmail();
-          throw new NotAllowedError(email + " not allowed to read " + id);
+          String message = "Not logged in";
+          if (this.issuingUser != null) {
+            message = this.issuingUser.getEmail() + " not allowed to read " + id;
+          }
+          throw new NotAllowedError(message);
         }
       }
     }
