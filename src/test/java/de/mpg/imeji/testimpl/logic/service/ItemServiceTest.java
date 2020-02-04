@@ -495,7 +495,7 @@ public class ItemServiceTest extends SuperServiceTest {
     try {
       itemPrivate.setFilename("testname_2.jpg");
       itemPrivate.setId(new URI("fakeId"));
-      update_Test("Item updated with wrong ID should throw NotFoundException ", itemPrivate, userEditGrant, NotFoundException.class);
+      update_Test("Item updated with wrong ID should throw NotFoundException ", itemPrivate, userEditGrant, NotAllowedError.class);
     } catch (URISyntaxException e) {
       Assert.fail(e.getMessage());
     }
@@ -743,20 +743,23 @@ public class ItemServiceTest extends SuperServiceTest {
       Item itemToMove = ImejiFactory.newItem(col1);
       (new CollectionService()).create(col1, userAdmin);
       (new CollectionService()).create(col2, userAdmin);
-      (new UserService()).create(user, USER_TYPE.DEFAULT);
+      UserService userService = new UserService();
+      user = userService.create(user, USER_TYPE.DEFAULT);
       (new ItemService()).createWithFile(itemToMove, ImejiTestResources.getTest1Jpg(), "Test1.jpg", col1, userAdmin);
 
       user.getGrants().add(new Grant(GrantType.EDIT, col1.getId().toString()).toGrantString());
+      user = userService.update(user, userAdmin);
       move_Test("only edit grant on col 1", itemToMove, col2, user, NotAllowedError.class);
       user.setGrants(new ArrayList<String>());
       user.getGrants().add(new Grant(GrantType.EDIT, col2.getId().toString()).toGrantString());
+      user = userService.update(user, userAdmin);
       move_Test("only edit grant on col 2", itemToMove, col2, user, NotAllowedError.class);
       user.getGrants().add(new Grant(GrantType.EDIT, col1.getId().toString()).toGrantString());
+      user = userService.update(user, userAdmin);
       move_Test("normal", itemToMove, col2, user, null);
       new CollectionService().release(col2, userAdmin, getDefaultLicense());
 
-      // Check, that moving back is not possible because item is released now,
-      // seperaly
+      // Check, that moving back is not possible because item is released now, separately
       ItemService service = new ItemService();
       itemToMove = service.retrieve(itemToMove.getUri(), user);
       service.moveItems(Arrays.asList(itemToMove), col1, userAdmin, getDefaultLicense());

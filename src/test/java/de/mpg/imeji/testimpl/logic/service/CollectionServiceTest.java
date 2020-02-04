@@ -85,19 +85,19 @@ public class CollectionServiceTest extends SuperServiceTest {
       userNoGrant = ImejiFactory.newUser().setEmail("no2@test.org").setPerson("no", "no", "org").setPassword("password")
           .setQuota(Long.MAX_VALUE).build();
 
-      userService.create(sysadmin, USER_TYPE.ADMIN);
-      userService.create(defaultUser, USER_TYPE.DEFAULT);
-      userService.create(userEditGrant, USER_TYPE.DEFAULT);
-      userService.create(userReadGrant, USER_TYPE.DEFAULT);
-      userService.create(userNoGrant, USER_TYPE.DEFAULT);
-      userService.create(restrictedUser, USER_TYPE.RESTRICTED);
+      sysadmin = userService.create(sysadmin, USER_TYPE.ADMIN);
+      defaultUser = userService.create(defaultUser, USER_TYPE.DEFAULT);
+      userEditGrant = userService.create(userEditGrant, USER_TYPE.DEFAULT);
+      userReadGrant = userService.create(userReadGrant, USER_TYPE.DEFAULT);
+      userNoGrant = userService.create(userNoGrant, USER_TYPE.DEFAULT);
+      restrictedUser = userService.create(restrictedUser, USER_TYPE.RESTRICTED);
 
       CollectionService collectionService = new CollectionService();
       collectionPrivate = ImejiFactory.newCollection().setTitle("Private Collection").setPerson("Max", "Planck", "MPDL").build();
       collectionReleased = ImejiFactory.newCollection().setTitle("Released Collection").setPerson("Max", "Planck", "MPDL").build();
 
-      collectionService.create(collectionPrivate, defaultUser);
-      collectionService.create(collectionReleased, defaultUser);
+      collectionPrivate = collectionService.create(collectionPrivate, defaultUser);
+      collectionReleased = collectionService.create(collectionReleased, defaultUser);
       defaultUser = userService.retrieve(defaultUser.getId(), sysadmin);
       Item releasedItem = ImejiFactory.newItem(collectionReleased);
       (new ItemService()).create(releasedItem, collectionReleased, defaultUser);
@@ -106,6 +106,9 @@ public class CollectionServiceTest extends SuperServiceTest {
 
       userReadGrant.getGrants().add(new Grant(GrantType.READ, collectionPrivate.getId().toString()).toGrantString());
       userEditGrant.getGrants().add(new Grant(GrantType.EDIT, collectionPrivate.getId().toString()).toGrantString());
+      
+      userService.update(userReadGrant, sysadmin);
+      userService.update(userEditGrant, sysadmin);
 
     } catch (ImejiException e) {
       e.printStackTrace();
