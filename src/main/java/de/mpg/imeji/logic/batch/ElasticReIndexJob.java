@@ -45,15 +45,41 @@ public class ElasticReIndexJob implements Callable<Integer> {
         ElasticInitializer.initializeIndex(index);
         new ElasticIndexer(index.name()).addMapping();
       }
-      reindexUsers(ElasticIndices.users.name());
-      reindexUserGroups(ElasticIndices.usergroups.name());
-      reindexItems(ElasticIndices.items.name());
-      reindexContents(ElasticIndices.items.name());
-      reindexFolders(ElasticIndices.folders.name());
+
+      try {
+        reindexUsers(ElasticIndices.users.name());
+      } catch (Exception e) {
+        LOGGER.error("Error while reindexing users", e);
+      }
+
+      try {
+        reindexUserGroups(ElasticIndices.usergroups.name());
+      } catch (Exception e) {
+        LOGGER.error("Error while reindexing usergroups", e);
+      }
+
+      try {
+        reindexItems(ElasticIndices.items.name());
+      } catch (Exception e) {
+        LOGGER.error("Error while reindexing items", e);
+      }
+
+      try {
+        reindexContents(ElasticIndices.items.name());
+      } catch (Exception e) {
+        LOGGER.error("Error while reindexing contents", e);
+      }
+
+      try {
+        reindexFolders(ElasticIndices.folders.name());
+      } catch (Exception e) {
+        LOGGER.error("Error while reindexing folders", e);
+      }
       // ElasticInitializer.setNewIndexAndRemoveOldIndex(index);
       LOGGER.info("Reindex done!");
+
     } catch (final Exception e) {
-      LOGGER.error("Error by reindex", e);
+      LOGGER.error("Error while initializing indexes, stopping reindex", e);
     }
 
     return null;

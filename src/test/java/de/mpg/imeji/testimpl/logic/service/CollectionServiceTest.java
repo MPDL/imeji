@@ -106,7 +106,7 @@ public class CollectionServiceTest extends SuperServiceTest {
 
       userReadGrant.getGrants().add(new Grant(GrantType.READ, collectionPrivate.getId().toString()).toGrantString());
       userEditGrant.getGrants().add(new Grant(GrantType.EDIT, collectionPrivate.getId().toString()).toGrantString());
-      
+
       userService.update(userReadGrant, sysadmin);
       userService.update(userEditGrant, sysadmin);
 
