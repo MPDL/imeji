@@ -81,8 +81,8 @@ public class WorkflowValidator implements Serializable {
     if (Imeji.CONFIG.getPrivateModus() && !isSubcollection(p)) {
       throw new WorkflowException("DOI is not allowed in private mode", null);
     }
-    if (p.getStatus() != Status.RELEASED) {
-      throw new WorkflowException("DOI is only allowed for released items", null);
+    if (p.getStatus() != Status.RELEASED && p.getStatus() != Status.PENDING) {
+      throw new WorkflowException("DOI is only allowed for pending and released items", null);
     }
 
   }
