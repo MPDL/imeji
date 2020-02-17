@@ -17,8 +17,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -27,6 +27,7 @@ import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.doi.models.DOICollection;
 import de.mpg.imeji.logic.doi.models.DOICreator;
 import de.mpg.imeji.logic.doi.models.DOIIdentifier;
+import de.mpg.imeji.logic.doi.models.DOIResourceType;
 import de.mpg.imeji.logic.doi.models.DOITitle;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Person;
@@ -56,6 +57,7 @@ public class DOIUtil {
     dcol.getTitles().add(title);
     dcol.getCreators().setCreator(creators);
     dcol.setPublicationYear(String.valueOf(col.getCreated().get(Calendar.YEAR)));
+    dcol.setResourceType(new DOIResourceType());
     return dcol;
   }
 
