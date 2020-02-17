@@ -70,7 +70,7 @@ public class DOIUtil {
       m = context.createMarshaller();
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
       m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
-          "http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd");
+          "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd");
       m.marshal(dcol, sw);
     } catch (final JAXBException e) {
       throw new ImejiException("Error occured, when contacting DOxI.");
