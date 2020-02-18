@@ -46,7 +46,7 @@ public class DOIUtil {
     // private controller
   }
 
-  public static DOICollection transformToDO(CollectionImeji col) {
+  public static DOICollection transformToDOICollection(CollectionImeji col) {
     DOICollection dcol = new DOICollection();
     DOITitle title = new DOITitle(col.getTitle());
     List<DOICreator> creators = new ArrayList<>();
@@ -78,26 +78,84 @@ public class DOIUtil {
 
     final String xml = sw.toString().trim();
     return xml;
-
   }
 
-  public static String makeDOIRequest(String doiServiceUrl, String doiUser, String doiPassword, String url, String xml)
+  public static String convertToXML(CollectionImeji collection) throws ImejiException {
+    DOICollection doiCollection = DOIUtil.transformToDOICollection(collection);
+    final String xml = DOIUtil.convertToXML(doiCollection);
+
+    return xml;
+  }
+
+  /**
+   * Sends a HTTP PUT method request to the DOI service.
+   * 
+   * @param doiServiceUrl
+   * @param doiUser
+   * @param doiPassword
+   * @param url
+   * @param xml
+   * @return the request response.
+   * @throws ImejiException if an error status code is returned (or service url validation fails).
+   */
+  public static String makeDOIPutRequest(String doiServiceUrl, String doiUser, String doiPassword, String url, String xml)
       throws ImejiException {
     // Trim to avoid errors due to unwanted spaces
     doiServiceUrl = doiServiceUrl.trim();
     validateURL(doiServiceUrl);
+
     final Response response = client.target(doiServiceUrl).queryParam("url", url)
         .register(HttpAuthenticationFeature.basic(doiUser, doiPassword)).register(MultiPartFeature.class).register(JacksonFeature.class)
         .request(MediaType.TEXT_PLAIN).put(Entity.entity(xml, "text/xml"));
 
     final int statusCode = response.getStatus();
 
-    // throw Exception if the DOI service request fails
-    if (statusCode != HttpStatus.SC_CREATED) {
-      LOGGER.error("Error creating doi with xml " + xml);
-      throw new ImejiException("Error occured, when contacting DOxI. StatusCode=" + statusCode + " - "
-          + HttpStatus.getStatusText(statusCode) + " - " + response.readEntity(String.class) + ". Please contact your admin");
+    if (statusCode == HttpStatus.SC_CREATED) {
+      LOGGER.info("DOI sucessfully created by DOXI.");
+    } else if (statusCode == HttpStatus.SC_ACCEPTED) {
+      LOGGER.info("Draft DOI sucessfully created by DOXI.");
+    } else {
+      LOGGER.error("Error occured, when contacting DOXI. StatusCode = %s - Parameters: URL = %s, XML = %s", statusCode, url, xml);
+      throw new ImejiException("Error creating DOI. StatusCode=" + statusCode + " - " + HttpStatus.getStatusText(statusCode) + " - "
+          + response.readEntity(String.class) + ". Please contact your admin!");
     }
+
+    return response.readEntity(String.class);
+  }
+
+  /**
+   * Sends a HTTP POST method request to the DOI service.
+   * 
+   * @param doiServiceUrl
+   * @param doiUser
+   * @param doiPassword
+   * @param url
+   * @param doi
+   * @param body
+   * @return the request response.
+   * @throws ImejiException if an error status code is returned (or service url validation fails).
+   */
+  public static String makeDOIPostRequest(String doiServiceUrl, String doiUser, String doiPassword, String url, String doi, String body)
+      throws ImejiException {
+    // Trim to avoid errors due to unwanted spaces
+    doiServiceUrl = doiServiceUrl.trim();
+    validateURL(doiServiceUrl);
+
+    final Response response = client.target(doiServiceUrl + "/" + doi).queryParam("url", url)
+        .register(HttpAuthenticationFeature.basic(doiUser, doiPassword)).register(MultiPartFeature.class).register(JacksonFeature.class)
+        .request(MediaType.APPLICATION_XML).post(Entity.entity(body, "text/xml"));
+
+    final int statusCode = response.getStatus();
+
+    if (statusCode == HttpStatus.SC_CREATED) {
+      LOGGER.info("DOI sucessfully updated by DOXI.");
+    } else {
+      LOGGER.error("Error occured, when contacting DOXI. StatusCode = %s - Parameters: DOI = %s URL = %s, Body = %s", statusCode, doi, url,
+          body);
+      throw new ImejiException("Error updatig DOI. StatusCode=" + statusCode + " - " + HttpStatus.getStatusText(statusCode) + " - "
+          + response.readEntity(String.class) + ". Please contact your admin!");
+    }
+
     return response.readEntity(String.class);
   }
 
