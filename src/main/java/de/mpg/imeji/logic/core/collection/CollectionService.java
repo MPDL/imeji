@@ -18,7 +18,6 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.facade.MoveFacade;
 import de.mpg.imeji.logic.core.facade.WorkflowFacade;
 import de.mpg.imeji.logic.core.item.ItemService;
-import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.events.MessageService;
 import de.mpg.imeji.logic.events.messages.CollectionMessage;
 import de.mpg.imeji.logic.events.messages.Message.MessageType;
@@ -272,9 +271,6 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
    * @throws ImejiException
    */
   public void release(CollectionImeji collection, User user, License defaultLicense) throws ImejiException {
-    if (!StringHelper.isNullOrEmptyTrim(collection.getDoi())) {
-      (new DoiService()).updateDoi(collection);
-    }
     new WorkflowFacade().release(collection, user, defaultLicense);
   }
 
