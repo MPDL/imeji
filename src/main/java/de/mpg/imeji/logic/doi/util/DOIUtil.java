@@ -90,6 +90,9 @@ public class DOIUtil {
   /**
    * Sends a HTTP PUT method request to the DOI service.
    * 
+   * A new DOI for the given URL is created by the DOI service. If the URL is null, a draft DOI is
+   * created.
+   * 
    * @param doiServiceUrl
    * @param doiUser
    * @param doiPassword
@@ -109,22 +112,25 @@ public class DOIUtil {
         .request(MediaType.TEXT_PLAIN).put(Entity.entity(xml, "text/xml"));
 
     final int statusCode = response.getStatus();
+    final String responseEntity = response.readEntity(String.class);
 
     if (statusCode == HttpStatus.SC_CREATED) {
-      LOGGER.info("DOI sucessfully created by DOXI.");
+      LOGGER.info("DOI {} sucessfully created by DOXI.", responseEntity);
     } else if (statusCode == HttpStatus.SC_ACCEPTED) {
-      LOGGER.info("Draft DOI sucessfully created by DOXI.");
+      LOGGER.info("Draft DOI {} sucessfully created by DOXI.", responseEntity);
     } else {
-      LOGGER.error("Error occured, when contacting DOXI. StatusCode = %s - Parameters: URL = %s, XML = %s", statusCode, url, xml);
+      LOGGER.error("Error occured, when contacting DOXI. StatusCode = {} - Parameters: URL = {}, XML = \n{}", statusCode, url, xml);
       throw new ImejiException("Error creating DOI. StatusCode=" + statusCode + " - " + HttpStatus.getStatusText(statusCode) + " - "
-          + response.readEntity(String.class) + ". Please contact your admin!");
+          + responseEntity + ". Please contact your admin!");
     }
 
-    return response.readEntity(String.class);
+    return responseEntity;
   }
 
   /**
    * Sends a HTTP POST method request to the DOI service.
+   * 
+   * The URL and metadata (body) for the given DOI are updated by the DOI service.
    * 
    * @param doiServiceUrl
    * @param doiUser
@@ -146,17 +152,18 @@ public class DOIUtil {
         .request(MediaType.APPLICATION_XML).post(Entity.entity(body, "text/xml"));
 
     final int statusCode = response.getStatus();
+    final String responseEntity = response.readEntity(String.class);
 
     if (statusCode == HttpStatus.SC_CREATED) {
-      LOGGER.info("DOI sucessfully updated by DOXI.");
+      LOGGER.info("DOI {} sucessfully updated by DOXI.", doi);
     } else {
-      LOGGER.error("Error occured, when contacting DOXI. StatusCode = %s - Parameters: DOI = %s URL = %s, Body = %s", statusCode, doi, url,
-          body);
+      LOGGER.error("Error occured, when contacting DOXI. StatusCode = {} - Parameters: DOI = {}, URL = {}, Body = \n{}", statusCode, doi,
+          url, body);
       throw new ImejiException("Error updatig DOI. StatusCode=" + statusCode + " - " + HttpStatus.getStatusText(statusCode) + " - "
-          + response.readEntity(String.class) + ". Please contact your admin!");
+          + responseEntity + ". Please contact your admin!");
     }
 
-    return response.readEntity(String.class);
+    return responseEntity;
   }
 
   private static void validateURL(String doiServiceUrl) throws ImejiException {
