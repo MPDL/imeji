@@ -11,6 +11,7 @@
 		<composite:attribute name="submitLabel" required="true" type="java.lang.String"/>
 		<composite:attribute name="confirmationText" required="true" type="java.lang.String"/>
 		<composite:attribute name="confirmationText2" type="java.lang.String"/>
+		<composite:attribute name="confirmationText3" type="java.lang.String"/>
 		<composite:attribute name="dialogId" required="true" type="java.lang.String"/>
 		<composite:attribute name="identifierName" required="false" type="java.lang.String"/>
 		<composite:attribute name="identifierValue" required="false"/>
@@ -37,6 +38,14 @@
 							<br/>
 							<lic:licenseViewer license="#{cc.attrs.confirmationTextLicense}"/>
 						</ui:fragment>
+					</div>
+				</ui:fragment>
+				<ui:fragment rendered="#{(not empty cc.attrs.confirmationText or not empty cc.attrs.confirmationText2) and (not empty cc.attrs.confirmationText3)}">
+					<br/>
+				</ui:fragment>
+				<ui:fragment rendered="#{not empty cc.attrs.confirmationText3}">
+					<div class="imj_confirmationText">
+						<h:outputText value="#{cc.attrs.confirmationText3}" escape="#{!cc.attrs.rawHtml}"/>
 					</div>
 				</ui:fragment>
 				<div class="imj_submitPanel">
