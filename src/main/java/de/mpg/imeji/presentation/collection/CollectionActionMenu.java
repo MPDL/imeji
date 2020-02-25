@@ -9,8 +9,8 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.ImejiExceptionWithUserMessage;
@@ -174,7 +174,7 @@ public class CollectionActionMenu implements Serializable {
       LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage(e.getMessage(), locale));
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
       String userMessage =
-          Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + exceptionWithMessage.getUserMessage(locale);
+          Imeji.RESOURCE_BUNDLE.getMessage("error_doi_generation", locale) + " " + exceptionWithMessage.getUserMessage(locale);
       BeanHelper.error(userMessage);
       if (exceptionWithMessage.getMessage() != null) {
         LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
@@ -182,8 +182,8 @@ public class CollectionActionMenu implements Serializable {
         LOGGER.error(userMessage, exceptionWithMessage);
       }
     } catch (final ImejiException e) {
-      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale));
-      LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_creation", locale) + " " + e.getMessage());
+      BeanHelper.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_generation", locale));
+      LOGGER.error(Imeji.RESOURCE_BUNDLE.getMessage("error_doi_generation", locale) + " " + e.getMessage());
     }
   }
 
