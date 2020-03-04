@@ -111,7 +111,7 @@ public class UserService {
         break;
     }
     u = controller.create(u);
-    new InvitationService().consume(u);
+    u = new InvitationService().consume(u);
     try {
       u.setApiKey(APIKeyAuthentication.generateKey(u.getId(), Integer.MAX_VALUE));
       controller.update(u, Imeji.adminUser);
