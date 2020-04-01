@@ -5,6 +5,9 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiProperties;
 
@@ -32,6 +35,10 @@ public class UtilBean {
 
   public String getBaseUri() {
     return Imeji.PROPERTIES.getBaseURI();
+  }
+
+  public String cleanHtml(String s) {
+    return Jsoup.clean(s, Whitelist.basic());
   }
 
 }

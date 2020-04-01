@@ -16,7 +16,7 @@
 					src="#{cc.attrs.bean.collection.logoUrl.toString()}" />
 			</ui:fragment>
 			<pre style="white-space: pre-line;">
-					<h:outputText escape="false" value="#{cc.attrs.bean.collection.description}" />
+					<h:outputText escape="false" value="#{UtilBean.cleanHtml(cc.attrs.bean.collection.description)}" />
 				</pre>
 		</div>
 	</ui:fragment>
@@ -44,7 +44,7 @@
 		
 		<span class="imj_infodataLabel">#{lbl.cite}</span>
 		<span class="imj_infodataValue">
-			<h:outputText value="#{cc.attrs.bean.citation}" escape="false" />
+			<h:outputText value="#{UtilBean.cleanHtml(cc.attrs.bean.citation)}" escape="false" />
 		</span>
 	
 		<ui:fragment rendered="#{not empty Configuration.collectionTypes}">

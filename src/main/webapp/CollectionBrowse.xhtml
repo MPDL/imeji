@@ -58,7 +58,7 @@
 			<ui:fragment rendered="#{CollectionItemsBean.collection.status == 'WITHDRAWN'}">
 				<div class="imj_infodataSet imj_mediaWithdrawn">
 					#{lbl.withdrawn}<br/>
-					<h:outputText value="#{CollectionItemsBean.collection.discardComment}" escape="false"/>
+					<h:outputText value="#{CollectionItemsBean.collection.discardComment}"/>
 				</div>
 			</ui:fragment>
 			<col:details bean="#{CollectionItemsBean}" applicationUrl="#{Navigation.applicationUrl}" lbl="#{lbl}"/>
