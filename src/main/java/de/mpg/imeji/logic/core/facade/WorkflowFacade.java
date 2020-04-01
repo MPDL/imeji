@@ -16,6 +16,7 @@ import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.concurrency.Locks;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
+import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
@@ -103,6 +104,11 @@ public class WorkflowFacade implements Serializable {
         ChangeMember changeCollectionStatusIssued = new ChangeMember(ActionType.ADD, collectionToChange, issuedField, releaseDate);
         changeParts.add(changeCollectionStatus);
         changeParts.add(changeCollectionStatusIssued);
+      }
+
+      // if the collection already has a DOI it must be updated (from state draft to state findable)
+      if (!StringHelper.isNullOrEmptyTrim(collection.getDoi())) {
+        (new DoiService()).updateDoi(collection);
       }
 
       // direct access to WriterFacade

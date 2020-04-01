@@ -17,6 +17,7 @@ public class DOICollection implements Serializable {
   private final List<DOITitle> titles = new ArrayList<DOITitle>();
   private final String publisher = Imeji.CONFIG.getDoiPublisher();
   private String publicationYear;
+  private DOIResourceType resourceType;
 
   @XmlElement(name = "creators")
   public DOICreators getCreators() {
@@ -47,6 +48,14 @@ public class DOICollection implements Serializable {
 
   public void setIdentifier(DOIIdentifier identifier) {
     this.identifier = identifier;
+  }
+
+  public DOIResourceType getResourceType() {
+    return resourceType;
+  }
+
+  public void setResourceType(DOIResourceType resourceType) {
+    this.resourceType = resourceType;
   }
 
 }
