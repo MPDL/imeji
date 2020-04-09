@@ -48,7 +48,7 @@
 						<div class="imj_message #{message.severity == 'ERROR 2' ? 'imj_messageError' : 'imj_messageSuccess'}">
 							<span class="imj_messageAreaCloseBtn"
 								onclick="this.parentElement.style.display='none';">x</span>
-							<h:outputText value="#{UtilBean.cleanHtml(MessagesBean.getDetails(message))}" escape="false" />a
+							<h:outputText value="#{UtilBean.cleanHtml(MessagesBean.getDetails(message))}" escape="true" />a
 						</div>
 					</ui:repeat>
 				</div>
