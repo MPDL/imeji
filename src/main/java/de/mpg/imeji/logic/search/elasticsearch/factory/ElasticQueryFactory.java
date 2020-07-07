@@ -477,9 +477,11 @@ public class ElasticQueryFactory {
         q = matchFieldQuery(fieldName, ElasticSearchFactoryUtil.escape(value));
         break;
       case GREATER:
+      case GREATER_EQUALS:
         q = greaterThanQuery(fieldName, value);
         break;
       case LESSER:
+      case LESSER_EQUALS:
         q = lessThanQuery(fieldName, value);
         break;
       default:
@@ -506,9 +508,11 @@ public class ElasticQueryFactory {
     }
     switch (operator) {
       case GREATER:
+      case GREATER_EQUALS:
         q = greaterThanQuery(field, Long.toString(DateFormatter.getTime(dateString)));
         break;
       case LESSER:
+      case LESSER_EQUALS:
         q = lessThanQuery(field, Long.toString(DateFormatter.getTime(dateString)));
         break;
       default:
@@ -549,9 +553,11 @@ public class ElasticQueryFactory {
     }
     switch (operator) {
       case GREATER:
+      case GREATER_EQUALS:
         q = greaterThanQuery(field, number);
         break;
       case LESSER:
+      case LESSER_EQUALS:
         q = lessThanQuery(field, number);
         break;
       default:
