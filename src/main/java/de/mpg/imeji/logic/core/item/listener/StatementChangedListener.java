@@ -42,7 +42,10 @@ public class StatementChangedListener extends Listener {
   public Integer call() throws Exception {
     String oldIndex = getMessage().getPreviousIndex();
     String newIndex = getMessage().getIndex();
-    updateItemIndex(oldIndex, newIndex, Imeji.adminUser);
+    //Only change items if the index name of the statement has changed.
+    if (!oldIndex.equals(newIndex)) {
+      updateItemIndex(oldIndex, newIndex, Imeji.adminUser);
+    }
     return null;
   }
 
