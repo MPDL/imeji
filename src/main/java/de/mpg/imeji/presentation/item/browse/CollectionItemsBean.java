@@ -83,28 +83,27 @@ public class CollectionItemsBean extends ItemsBean {
 
     try {
       id = UrlHelper.getParameterValue("collectionId");
-      if(id!=null)
-      {
+      if (id != null) {
         uri = ObjectHelper.getURI(CollectionImeji.class, id);
         setShowUpload(UrlHelper.getParameterBoolean("showUpload"));
         collection = new CollectionService().retrieveLazy(uri, getSessionUser());
         browseContext = getNavigationString() + id;
         update();
         actionMenu = new CollectionActionMenu(collection, getSessionUser(), getLocale());
-  
+
         for (Person person : collection.getPersons()) {
           String personWithOrganization = person.getCompleteName() + " (" + person.getOrganizationString() + ")";
           authorsWithOrganizationsList.add(personWithOrganization);
           authorsList.add(person.getCompleteName());
         }
-  
+
         authorsShort = collection.getPersons().iterator().next().getCompleteName();
         if (collection.getPersons().size() > 1) {
           authorsShort += " & " + (collection.getPersons().size() - 1) + " " + Imeji.RESOURCE_BUNDLE.getLabel("more_authors", getLocale());
         }
-  
+
         this.mapAuthorsAffiliations();
-  
+
         descriptionShort = CommonUtils.removeTags(collection.getDescription());
         if (descriptionShort != null && descriptionShort.length() > DESCRIPTION_MAX_SIZE) {
           descriptionShort = descriptionShort.substring(0, DESCRIPTION_MAX_SIZE);
