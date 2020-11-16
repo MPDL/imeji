@@ -9,8 +9,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.mpg.imeji.exceptions.AlreadyExistsException;
 import de.mpg.imeji.exceptions.ImejiException;
@@ -26,8 +26,8 @@ import de.mpg.imeji.logic.security.sharing.invitation.InvitationService;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.UrlHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
-import de.mpg.imeji.presentation.security.LoginBean;
 import de.mpg.imeji.presentation.session.BeanHelper;
+import de.mpg.imeji.presentation.session.SessionBean;
 import de.mpg.imeji.util.DateHelper;
 
 /**
@@ -42,13 +42,13 @@ import de.mpg.imeji.util.DateHelper;
 public class RegistrationBean extends SuperBean {
   private static final long serialVersionUID = -993770106648303808L;
   private static final Logger LOGGER = LogManager.getLogger(RegistrationBean.class);
+  private final RegistrationService registrationService = new RegistrationService();
   private User user = new User();
   private boolean isInvited = false;
   private boolean termsAccepted =
       StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUse()) && StringHelper.isNullOrEmptyTrim(Imeji.CONFIG.getTermsOfUseUrl());
-  @ManagedProperty(value = "#{LoginBean}")
-  private LoginBean loginBean;
-  private final RegistrationService registrationService = new RegistrationService();
+  @ManagedProperty(value = "#{SessionBean}")
+  private SessionBean sessionBean;
 
   @PostConstruct
   public void init() {
@@ -67,7 +67,7 @@ public class RegistrationBean extends SuperBean {
     String token = UrlHelper.getParameterValue("token");
     try {
       User user = registrationService.activate(registrationService.retrieveByToken(token));
-      loginBean.getSessionBean().setUser(user);
+      this.sessionBean.setUser(user);
       sendRegistrationNotification(user);
       redirect(getNavigation().getHomeUrl() + "/pwdreset?from=registration");
     } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
@@ -211,6 +211,31 @@ public class RegistrationBean extends SuperBean {
     return Imeji.CONFIG.isRegistrationEnabled() || isInvited;
   }
 
+  public boolean isStartOfRegistration() {
+    return this.isRegistrationEnabled() && getSessionUser() == null && UrlHelper.getParameterValue("token") == null;
+  }
+
+  public boolean isLoggedInUser() {
+    return getSessionUser() != null;
+  }
+
+  public String getChangePasswordUrl() {
+    return this.getNavigation().getPasswordReserUrl();
+  }
+
+  public String getLoginUrl() {
+    return this.getNavigation().getLoginUrl();
+  }
+
+  public String getRegistrationUrl() {
+    return this.getNavigation().getRegistrationUrl();
+  }
+
+  public String getRegistrationHeadline() {
+    return this.isStartOfRegistration() ? Imeji.RESOURCE_BUNDLE.getLabel("register", getLocale())
+        : Imeji.RESOURCE_BUNDLE.getMessage("invalid_registration_link", getLocale());
+  }
+
   public boolean isTermsAccepted() {
     return termsAccepted;
   }
@@ -219,11 +244,11 @@ public class RegistrationBean extends SuperBean {
     this.termsAccepted = termsAccepted;
   }
 
-  public LoginBean getLoginBean() {
-    return loginBean;
+  public SessionBean getSessionBean() {
+    return sessionBean;
   }
 
-  public void setLoginBean(LoginBean loginBean) {
-    this.loginBean = loginBean;
+  public void setSessionBean(SessionBean sessionBean) {
+    this.sessionBean = sessionBean;
   }
 }
