@@ -48,7 +48,7 @@ public class ForgotPasswordBean extends SuperBean {
       try {
         user = new UserService().retrieve(resetEmail, Imeji.adminUser);
       } catch (ImejiException e) {
-        BeanHelper.info(resetEmail + ": " + Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_sent", getLocale()));
+        BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_sent", getLocale()));
         redirect(getNavigation().getLoginUrl());
         return;
       }
@@ -60,7 +60,7 @@ public class ForgotPasswordBean extends SuperBean {
           EmailMessages.getResetRequestEmailBody(url, user, DateHelper.printDate(expirationDate), getLocale()));
 
       BeanHelper.info(Imeji.RESOURCE_BUNDLE.getMessage("email_password_reset_sent", getLocale()));
-      redirect(getNavigation().getHomeUrl());
+      redirect(getNavigation().getLoginUrl());
     }
   }
 
