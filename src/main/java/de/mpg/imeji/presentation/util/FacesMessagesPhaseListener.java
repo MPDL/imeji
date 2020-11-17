@@ -58,6 +58,7 @@ public class FacesMessagesPhaseListener implements PhaseListener {
     LOGGER.trace(event.getPhaseId().toString() + " - Before Phase");
     if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
       restoreMessages(event.getFacesContext());
+      removeFromCache(event.getFacesContext());
     }
   }
 
