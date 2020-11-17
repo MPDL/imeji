@@ -6,19 +6,14 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:html5="http://xmlns.jcp.org/jsf/passthrough">
 
-	<ui:param name="headline" value="#{lbl.register}" />
-	<ui:param name="title" value="#{headline}" />
+	<ui:param name="headline" value="#{RegistrationBean.registrationHeadline}" />
+	<ui:param name="title" value="#{lbl.register}" />
 	<ui:param name="hideRegister" value="true" />
 
-	<f:metadata>
-		<f:viewParam name="token" value="#{PasswordChangeBean.token}" />
-	</f:metadata>
-
 	<ui:define name="mainContent">
-		<h:panelGroup layout="block" id="registerArea"
-			rendered="#{RegistrationBean.registrationEnabled}">
+		<h:panelGroup layout="block" id="registerArea" rendered="#{RegistrationBean.startOfRegistration}">
 
-			<ui:fragment rendered="#{PasswordChangeBean.token==null}">
+			<ui:fragment>
 				<h2 class="imj_headline">#{lbl.registration}</h2>
 
 				<ol class="imj_registerSteps">
@@ -115,12 +110,30 @@
 
 						<div class="imj_registerText">#{lbl.required_marker}
 							#{lbl.required}</div>
-
-
 					</h:form>
 				</div>
 			</ui:fragment>
 		</h:panelGroup>
+		<ui:fragment rendered="#{not RegistrationBean.startOfRegistration}">
+			<div class="imj_errorPage">
+				<ui:fragment rendered="#{RegistrationBean.loggedInUser}">
+					<p>
+						#{msg.already_registered_and_logged_in}
+					</p>
+					<p>
+						#{msg.change_password_by_link} <a href="#{RegistrationBean.changePasswordUrl}" target="_blank">#{lbl.password_set}</a>
+					</p>
+				</ui:fragment>
+				<ui:fragment rendered="#{not RegistrationBean.loggedInUser}">
+					<p>
+						#{msg.reset_password_by_link} <a href="#{RegistrationBean.loginUrl}" target="_blank">#{lbl.login_page}</a>.
+					</p>
+					<p>
+						#{msg.register_by_link} <a href="#{RegistrationBean.registrationUrl}" target="_blank">#{lbl.registration_page}</a>.
+					</p>
+				</ui:fragment>
+			</div>
+		</ui:fragment>
 	</ui:define>
 
 </ui:composition>
