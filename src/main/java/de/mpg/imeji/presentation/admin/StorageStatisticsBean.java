@@ -103,19 +103,19 @@ public class StorageStatisticsBean {
         .getNumberOfRecords();
   }
 
-  public ArrayList<Institute> getInstitutes() {
+  public List<Institute> getInstitutes() {
+    return this.sortInstitutesByStorageReverse(this.institutes);
+  }
+
+  private List<Institute> sortInstitutesByStorageReverse(List<Institute> institutes) {
     Collections.sort(institutes, new Comparator<Institute>() {
       @Override
       public int compare(Institute institute1, Institute institute2) {
-        if ((institute2.getStorage() - institute1.getStorage()) >= 0) {
-          return 1;
-        } else {
-          return -1;
-        }
+        //get reverse order by swapping the institute-attributes in the compare method
+        return Long.compare(institute2.getStorage(), institute1.getStorage());
       }
     });
-    return (ArrayList<Institute>) institutes;
-
+    return institutes;
   }
 
   public String getAllFileSize() {
