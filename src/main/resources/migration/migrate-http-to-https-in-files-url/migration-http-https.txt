@@ -5,6 +5,18 @@ PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
 #with slight changes can also be used when changing the storage path of the data.
 #First insert the new data and then delete old data (faster than update)
 
+
+WITH <http://imeji.org/collection>
+DELETE {?s <http://imeji.org/terms/logoUrl> ?o}
+INSERT{?s <http://imeji.org/terms/logoUrl> ?newurl}
+USING <http://imeji.org/collection>
+WHERE{
+  ?s <http://imeji.org/terms/logoUrl> ?o.
+  FILTER(fn:starts-with(str(?o), "http://")).
+  LET(?newurl := STRDT(str(REPLACE(str(?o), "http://", "https://", "i")),<http://www.w3.org/2001/XMLSchema#string>)) 
+};
+
+
 WITH <http://imeji.org/content>
 DELETE {?s <http://imeji.org/terms/thumbnail> ?o}
 INSERT{?s <http://imeji.org/terms/thumbnail> ?newurl}
