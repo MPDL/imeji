@@ -110,6 +110,7 @@ public class LoginBean extends SuperBean {
   }
 
   private void redirectAfterLogin() {
+    //if no redirect param is set use internal history or home url
     if (isNullOrEmptyTrim(redirect)) {
       // HistoryPage current = getHistory().getCurrentPage();
       if (!requestUrl.equals(getNavigation().getRegistrationUrl()) && !requestUrl.equals(getNavigation().getLoginUrl())) {
@@ -118,6 +119,12 @@ public class LoginBean extends SuperBean {
         redirect = getNavigation().getHomeUrl();
       }
     }
+
+    //if the redirect url is another website, use internal home url for security reasons
+    if (!redirect.startsWith(getNavigation().getApplicationUri())) {
+      redirect = getNavigation().getHomeUrl();
+    }
+
     try {
       redirect(redirect);
     } catch (IOException e) {
