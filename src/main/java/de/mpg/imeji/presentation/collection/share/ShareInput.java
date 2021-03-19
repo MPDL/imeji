@@ -128,15 +128,16 @@ public class ShareInput implements Serializable {
     unknownEmails.clear();
     invalidEntries.clear();
     for (final String value : input.split("\\s*[|,;\\n]\\s*")) {
-      if (EmailService.isValidEmail(value) && !value.equalsIgnoreCase(this.objectOwnerEmail)) {
-        final boolean exists = retrieveUser(value) != null;
+      String email = value.trim();
+      if (EmailService.isValidEmail(email) && !email.equalsIgnoreCase(this.objectOwnerEmail)) {
+        final boolean exists = retrieveUser(email) != null;
         if (exists) {
-          validEmails.add(value);
+          validEmails.add(email);
         } else {
-          unknownEmails.add(value);
+          unknownEmails.add(email);
         }
       } else {
-        invalidEntries.add(value);
+        invalidEntries.add(email);
       }
     }
   }
