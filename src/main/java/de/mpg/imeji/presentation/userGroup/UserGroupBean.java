@@ -64,9 +64,17 @@ public class UserGroupBean extends SuperBean implements Serializable {
     if (groupId != null) {
       final UserGroupService c = new UserGroupService();
       try {
+        long startRetrUserGroup = System.currentTimeMillis();
+
         this.userGroup = c.retrieve(groupId, getSessionUser());
+        long endRetrUserGroup = System.currentTimeMillis() - startRetrUserGroup;
+        LOGGER.info("Time USer Group: " + endRetrUserGroup);
+        long startRetrUsers = System.currentTimeMillis();
         this.users = loadUsers(userGroup).stream()
             .sorted((u1, u2) -> u1.getPerson().getCompleteName().compareTo(u2.getPerson().getCompleteName())).collect(Collectors.toList());
+        long endRetrUsers = System.currentTimeMillis() - startRetrUsers;
+        LOGGER.info("Time USers: " + endRetrUsers);
+
         this.roles = ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
 
       } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
@@ -94,16 +102,9 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @return
    */
   public Collection<User> loadUsers(UserGroup group) {
-    final Collection<User> users = new ArrayList<User>();
     final UserService c = new UserService();
-    for (final URI uri : userGroup.getUsers()) {
-      try {
-        users.add(c.retrieve(uri, Imeji.adminUser));
-      } catch (final ImejiException e) {
-        LOGGER.error("Error reading user: ", e);
-      }
-    }
-    return users;
+    List<String> uris = group.getUsers().stream().map(i -> i.toString()).collect(Collectors.toList());
+    return c.retrieveBatch(uris, 0);
   }
 
   /**
