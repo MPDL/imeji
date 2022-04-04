@@ -119,7 +119,7 @@
 		</repository>
 		<repository>
 			<id>nexus</id>
-			<url>http://rd.mpdl.mpg.de/nexus/content/groups/public</url>
+			<url>https://rd.mpdl.mpg.de/nexus3/content/groups/public/</url>
 		</repository>
 		<repository>
 			<releases />
@@ -145,12 +145,12 @@
 		<repository>
 			<id>releases</id>
 			<name>Nexus Managed Releases</name>
-			<url>http://rd.mpdl.mpg.de/nexus/content/repositories/releases</url>
+			<url>https://rd.mpdl.mpg.de/nexus3/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>Nexus Managed Snapshots</name>
-			<url>http://rd.mpdl.mpg.de/nexus/content/repositories/snapshots</url>
+			<url>https://rd.mpdl.mpg.de/nexus3/content/repositories/snapshots/</url>
 		</snapshotRepository>
 
 	</distributionManagement>
@@ -392,8 +392,8 @@
 		<!-- USED during compile, e.g. javax.mail -->
 		<dependency>
 			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4</version>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
