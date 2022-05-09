@@ -102,7 +102,8 @@
 										confirmationText="#{msg.confirmation_delete_user}: #{user.person.completeName} (#{user.email})?"
 										submitLabel="#{lbl.user_admin_delete}"
 										dialogId="deleteUser#{row.index}" identifierName="email"
-										identifierValue="#{user.email}" />	
+										identifierValue="#{user.email}"
+									    reRender=":imj_pageMessageArea"/>
 								</div>
 							</ui:fragment>
 							<ui:fragment rendered="#{UsersBean.group != null}">

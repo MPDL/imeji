@@ -10,15 +10,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.lang.reflect.Field;
 
+import de.mpg.imeji.exceptions.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
 
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.exceptions.QuotaExceededException;
-import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -128,6 +125,13 @@ public class UserService {
    * @throws ImejiException
    */
   public void delete(User user) throws ImejiException {
+    final Search search = SearchFactory.create(); // default is JENA
+    final List<String> results = search.searchString(JenaCustomQueries.selectCreatorOrModifiedBy(user.getId().toString()), null, null,
+        Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
+    if (results != null && results.size() > 0) {
+      throw new WorkflowException("User cannot be deleted, as they own or modified collections",
+          "User cannot be deleted, as they own or modified collections");
+    }
     controller.delete(user);
   }
 

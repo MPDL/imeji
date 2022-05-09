@@ -702,4 +702,9 @@ public class JenaCustomQueries {
         + "FILTER NOT EXISTS {?s <http://imeji.org/terms/license> ?license}}";
     return sparqlQuery;
   }
+
+
+  public static final String selectCreatorOrModifiedBy(String userUri) {
+    return "SELECT ?s WHERE { ?s <" + ImejiNamespaces.CREATOR + ">|<" + ImejiNamespaces.MODIFIED_BY + "> <" + userUri + ">}";
+  }
 }
