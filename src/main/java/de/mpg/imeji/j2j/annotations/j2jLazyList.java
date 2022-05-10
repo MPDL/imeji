@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
-import com.googlecode.mp4parser.util.LazyList;
+import org.apache.commons.collections4.list.LazyList;
 import org.apache.jena.Jena;
 import org.apache.jena.rdf.model.Resource;
 
