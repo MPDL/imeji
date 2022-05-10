@@ -74,6 +74,23 @@
 								</FORM>
 							</div>
 
+
+							<div class="imj_headline">
+								<h2>
+									<h:outputText value="SPARQL Update (use carefully!!!)" />
+								</h2>
+							</div>
+							<div class="imj_content">
+								<h:form>
+									<p>
+										<h:inputTextarea cols="40" rows="20" value="#{AdminBean.sparqlUpdateQuery}" />
+									</p>
+
+									<h:commandLink styleClass="imj_submitButton"
+												   action="#{AdminBean.runSparqlUpdateQuery}" value="Run SPARQL update" />
+								</h:form>
+							</div>
+
 							<!-- Admin - Clean storage -->
 							<div class="imj_headline">
 								<h2>

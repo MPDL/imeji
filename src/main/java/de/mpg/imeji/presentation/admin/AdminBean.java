@@ -8,6 +8,15 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import de.mpg.imeji.presentation.session.BeanHelper;
+import net.sf.ehcache.concurrent.LockType;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.update.UpdateAction;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -54,6 +63,8 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 public class AdminBean extends SuperBean {
   private static final long serialVersionUID = 777808298937503532L;
   private static final Logger LOGGER = LogManager.getLogger(AdminBean.class);
+
+  private String sparqlUpdateQuery;
 
   /**
    * Refresh the file size of all items
@@ -177,6 +188,29 @@ public class AdminBean extends SuperBean {
 
   public void makeEmailTextsEditable() {
     ImejiExternalEmailContent.copyEmailContentToExternalXMLFiles();
+  }
+
+  public String getSparqlUpdateQuery() {
+    return sparqlUpdateQuery;
+  }
+
+  public void setSparqlUpdateQuery(String sparqlUpdateQuery) {
+    this.sparqlUpdateQuery = sparqlUpdateQuery;
+  }
+
+  public void runSparqlUpdateQuery() {
+    final Dataset dataset = Imeji.dataset;
+    try {
+      dataset.begin(ReadWrite.WRITE);
+      UpdateAction.parseExecute(sparqlUpdateQuery, dataset);
+      dataset.commit();
+      BeanHelper.info("SPARQL update query successfully executed");
+    } catch (Exception e) {
+      dataset.abort();
+      BeanHelper.error(e.getMessage());
+      LOGGER.error(e);
+    }
+
   }
 
 }
