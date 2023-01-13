@@ -122,7 +122,7 @@
 			<url>https://rd.mpdl.mpg.de/nexus3/content/groups/public/</url>
 		</repository>
 		<repository>
-			<releases />
+			<releases/>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -293,7 +293,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -306,7 +306,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -320,7 +320,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -344,7 +344,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
+			<version>3.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -618,9 +618,9 @@
 								<phase>install</phase>
 								<configuration>
 									<tasks>
-										<delete quiet="true" file="${tomcat.webapps}/${project.warName}.war" />
-										<delete quiet="true" dir="${tomcat.webapps}/${project.warName}" />
-										<copy overwrite="true" file="${project.build.directory}/${project.warName}.war" tofile="${tomcat.webapps}/${project.warName}.war" />
+										<delete quiet="true" file="${tomcat.webapps}/${project.warName}.war"/>
+										<delete quiet="true" dir="${tomcat.webapps}/${project.warName}"/>
+										<copy overwrite="true" file="${project.build.directory}/${project.warName}.war" tofile="${tomcat.webapps}/${project.warName}.war"/>
 									</tasks>
 								</configuration>
 								<goals>
