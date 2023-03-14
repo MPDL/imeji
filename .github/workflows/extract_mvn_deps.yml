@@ -1,0 +1,13 @@
+name: extract maven deps
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    name: Dependencies
+    runs-on: ubuntu-latest
+    permissions: # The Dependency Submission API requires write permission
+      contents: write
+    steps:
+      - name: Submit Dependency Snapshot
+        uses: advanced-security/maven-dependency-submission-action@v3
