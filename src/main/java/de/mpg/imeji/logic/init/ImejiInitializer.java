@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.jena.atlas.lib.AlarmClock;
+import org.apache.jena.tdb.StoreConnection;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.jose4j.lang.JoseException;
@@ -305,7 +306,7 @@ public class ImejiInitializer {
     LOGGER.info("dataset closed");
     TDB.closedown();
     LOGGER.info("tdb closed");
-    TDBMaker.releaseLocation(Location.create(Imeji.tdbPath));
+    StoreConnection.release(Location.create(Imeji.tdbPath));
     LOGGER.info("location released");
     LOGGER.info("...done!");
 

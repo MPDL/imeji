@@ -8,16 +8,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.common.document.DocumentField;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.nodes.Node;
 
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import org.elasticsearch.xcontent.XContentBuilder;
+import org.elasticsearch.xcontent.XContentFactory;
 
 /**
  * Class to store collection informations with items in ElasticSearch

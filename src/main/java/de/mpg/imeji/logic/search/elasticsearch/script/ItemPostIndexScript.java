@@ -12,7 +12,6 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 
 import de.mpg.imeji.exceptions.SearchIndexBulkFailureException;
@@ -22,6 +21,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
+import org.elasticsearch.xcontent.XContentBuilder;
 
 /**
  * Script running after an item is indexed

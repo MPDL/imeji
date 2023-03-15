@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.codehaus.jettison.json.JSONException;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -343,7 +342,7 @@ public class ItemCreate extends ItemTestBase {
   }
 
   @Test
-  public void createItemExtensionsTest() throws IOException, JSONException {
+  public void createItemExtensionsTest() throws IOException {
     // NOTE: test assumes .exe file will never be allowed!!!!
     initItem();
     // init Item creates already one item with test.png file , thus checksum

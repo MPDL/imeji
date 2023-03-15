@@ -1,36 +1,8 @@
 package de.mpg.imeji.presentation.admin;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-
-import de.mpg.imeji.presentation.session.BeanHelper;
-import net.sf.ehcache.concurrent.LockType;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.ReadWrite;
-import org.apache.jena.query.Syntax;
-import org.apache.jena.tdb.TDBFactory;
-import org.apache.jena.update.UpdateAction;
-import org.apache.jena.update.UpdateFactory;
-import org.apache.jena.update.UpdateRequest;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotFoundException;
-import de.mpg.imeji.logic.batch.AggregateMessages;
-import de.mpg.imeji.logic.batch.CleanContentVOsJob;
-import de.mpg.imeji.logic.batch.CleanInternalStorageJob;
-import de.mpg.imeji.logic.batch.CleanTempFilesJob;
-import de.mpg.imeji.logic.batch.ElasticReIndexJob;
-import de.mpg.imeji.logic.batch.FulltextAndTechnicalMetadataJob;
-import de.mpg.imeji.logic.batch.ReGenerateFullWebThumbnailJob;
-import de.mpg.imeji.logic.batch.RefreshFileSizeJob;
-import de.mpg.imeji.logic.batch.ResizeWebAndThumbnailJob;
+import de.mpg.imeji.logic.batch.*;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.emailcontent.ImejiExternalEmailContent;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -50,6 +22,19 @@ import de.mpg.imeji.logic.storage.StorageController;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.presentation.beans.SuperBean;
+import de.mpg.imeji.presentation.session.BeanHelper;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.update.UpdateAction;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Bean for the administration page. Methods working on data

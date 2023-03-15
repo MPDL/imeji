@@ -10,7 +10,6 @@ import java.net.URLEncoder;
 
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -67,7 +66,14 @@ public class UrlHelper {
    * @return
    */
   public static boolean isValidURL(String url) {
-    return UrlValidator.getInstance().isValid(url);
+    try {
+      new URL(url).toURI();
+      return true;
+    } catch (MalformedURLException e) {
+      return false;
+    } catch (URISyntaxException e) {
+      return false;
+    }
 
   }
 

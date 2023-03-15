@@ -21,7 +21,6 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.VersionType;
 import org.elasticsearch.rest.RestStatus;
 
@@ -51,6 +50,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticUserGroup;
 import de.mpg.imeji.logic.search.elasticsearch.script.CollectionPostIndexScript;
 import de.mpg.imeji.logic.search.elasticsearch.script.ItemPostIndexScript;
 import de.mpg.imeji.logic.util.StringHelper;
+import org.elasticsearch.xcontent.XContentType;
 
 /**
  * Indexer for ElasticSearch

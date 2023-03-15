@@ -10,18 +10,18 @@ import javax.ws.rs.core.Response;
 
 import de.mpg.imeji.rest.process.RestProcessUtils;
 import de.mpg.imeji.rest.process.StorageProcess;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Created by vlad on 13.01.15.
  */
 @Path("/storage")
-@Api(value = "storage")
+@Tag(name = "storage")
 public class StorageResource {
 
   @GET
-  @ApiOperation(value = "Get storage properties")
+  @Operation(summary = "Get storage properties")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getStorageProperties() {
     return RestProcessUtils.buildJSONResponse(StorageProcess.getStorageProperties());
@@ -29,7 +29,7 @@ public class StorageResource {
 
   @GET
   @Path("/messages")
-  @ApiOperation(value = "Get all messages")
+  @Operation(summary = "Get all messages")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getMessagess(@Context HttpServletRequest req) {
     return RestProcessUtils.buildJSONResponse(StorageProcess.getMessages(req));

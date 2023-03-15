@@ -1,14 +1,13 @@
 package de.mpg.imeji.logic.util;
 
+import de.mpg.imeji.exceptions.ImejiException;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
-
-import de.mpg.imeji.exceptions.ImejiException;
 
 /**
  * Static functions to manipulate {@link String}
@@ -139,7 +138,7 @@ public class StringHelper {
     if (StringHelper.isNullOrEmptyTrim(s)) {
       return false;
     }
-    if (!Jsoup.isValid(s, Whitelist.relaxed())) {
+    if (!Jsoup.isValid(s, Safelist.relaxed())) {
       return true;
     }
     return false;

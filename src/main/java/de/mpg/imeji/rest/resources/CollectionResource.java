@@ -30,17 +30,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import de.mpg.imeji.rest.to.JSONResponse;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 // @Singleton
 @Path("/collections")
-@Api(value = "collections")
+@Tag(name = "collections")
 public class CollectionResource implements ImejiResource {
 
   @GET
   @Path("/{id}/items")
-  @ApiOperation(value = "Search and retrieve items of the collection")
+  @Operation(summary = "Search and retrieve items of the collection")
   @Produces(MediaType.APPLICATION_JSON)
   public Response readItemsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id, @QueryParam("q") String q,
       @DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
@@ -50,7 +51,7 @@ public class CollectionResource implements ImejiResource {
 
   @GET
   @Path("/{id}/elements")
-  @ApiOperation(value = "Search and retrieve items and subcollection of the collection")
+  @Operation(summary = "Search and retrieve items and subcollection of the collection")
   @Produces(MediaType.APPLICATION_JSON)
   public Response readContentsWithQuery(@Context HttpServletRequest req, @PathParam("id") String id, @QueryParam("q") String q,
       @DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
@@ -60,7 +61,8 @@ public class CollectionResource implements ImejiResource {
 
   @Override
   @GET
-  @ApiOperation(value = "Get all collections user has access to.", notes = "With provided query parameter you filter only some collections")
+  @Operation(summary = "Get all collections user has access to.",
+      description = "With provided query parameter you filter only some collections")
   @Produces(MediaType.APPLICATION_JSON)
   public Response readAll(@Context HttpServletRequest req, @QueryParam("q") String q, @DefaultValue("0") @QueryParam("offset") int offset,
       @DefaultValue(DEFAULT_LIST_SIZE) @QueryParam("size") int size) {
@@ -71,7 +73,7 @@ public class CollectionResource implements ImejiResource {
   @Override
   @GET
   @Path("/{id}")
-  @ApiOperation(value = "Get collection by id")
+  @Operation(summary = "Get collection by id")
   @Produces(MediaType.APPLICATION_JSON)
   public Response read(@Context HttpServletRequest req, @PathParam("id") String id) {
     final JSONResponse resp = readCollection(req, id);
@@ -80,7 +82,7 @@ public class CollectionResource implements ImejiResource {
 
   @PUT
   @Path("/{id}")
-  @ApiOperation(value = "Update collection by id")
+  @Operation(summary = "Update collection by id")
   @Produces(MediaType.APPLICATION_JSON)
   public Response update(@Context HttpServletRequest req, InputStream json, @PathParam("id") String id) throws Exception {
     final JSONResponse resp = updateCollection(req, id);
@@ -89,7 +91,7 @@ public class CollectionResource implements ImejiResource {
 
   @PUT
   @Path("/{id}/release")
-  @ApiOperation(value = "Release collection by id")
+  @Operation(summary = "Release collection by id")
   @Produces(MediaType.APPLICATION_JSON)
   public Response release(@Context HttpServletRequest req, @PathParam("id") String id) throws Exception {
     final JSONResponse resp = releaseCollection(req, id);
@@ -99,7 +101,7 @@ public class CollectionResource implements ImejiResource {
   @PUT
   @Path("/{id}/discard")
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-  @ApiOperation(value = "Discard a collection by id, with mandatory discard comment")
+  @Operation(summary = "Discard a collection by id, with mandatory discard comment")
   @Produces(MediaType.APPLICATION_JSON)
   public Response withdraw(@Context HttpServletRequest req, @PathParam("id") String id, @FormParam("discardComment") String discardComment)
       throws Exception {
@@ -109,8 +111,8 @@ public class CollectionResource implements ImejiResource {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Create collection or new version of collection",
-      notes = "The body parameter is the json of a collection. You can get an example by using the get collection method.")
+  @Operation(summary = "Create collection or new version of collection",
+      description = "The body parameter is the json of a collection. You can get an example by using the get collection method.")
   @Produces(MediaType.APPLICATION_JSON)
   public Response create(@Context HttpServletRequest req, InputStream json) {
     final JSONResponse resp = createCollection(req);
@@ -120,7 +122,7 @@ public class CollectionResource implements ImejiResource {
   @Override
   @DELETE
   @Path("/{id}")
-  @ApiOperation(value = "Delete collection by id", notes = "Deletes also items of this collection")
+  @Operation(summary = "Delete collection by id", description = "Deletes also items of this collection")
   @Produces(MediaType.APPLICATION_JSON)
   public Response delete(@Context HttpServletRequest req, @PathParam("id") String id) {
     final JSONResponse resp = deleteCollection(req, id);
