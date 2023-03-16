@@ -6,7 +6,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
 
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiProperties;
@@ -38,7 +38,7 @@ public class UtilBean {
   }
 
   public String cleanHtml(String s) {
-    return Jsoup.clean(s, Whitelist.basic());
+    return Jsoup.clean(s, Safelist.basic());
   }
 
 }

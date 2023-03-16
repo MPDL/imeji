@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 import de.mpg.imeji.exceptions.ImejiException;
 
@@ -139,7 +139,7 @@ public class StringHelper {
     if (StringHelper.isNullOrEmptyTrim(s)) {
       return false;
     }
-    if (!Jsoup.isValid(s, Whitelist.relaxed())) {
+    if (!Jsoup.isValid(s, Safelist.relaxed())) {
       return true;
     }
     return false;
