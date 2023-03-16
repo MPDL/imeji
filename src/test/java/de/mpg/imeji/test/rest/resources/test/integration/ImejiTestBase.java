@@ -59,7 +59,7 @@ public class ImejiTestBase extends JerseyTest {
   @Override
   protected Application configure() {
     if (app == null) {
-      app = new ImejiRestService();
+      app = new ImejiRestService(null);
     }
     return app;
   }
