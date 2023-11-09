@@ -1,19 +1,17 @@
 package de.mpg.imeji.exceptions;
 
+import co.elastic.clients.elasticsearch._types.ErrorCause;
+import co.elastic.clients.elasticsearch.core.bulk.OperationType;
+import de.mpg.imeji.logic.db.indexretry.model.RetryBaseRequest;
+import de.mpg.imeji.logic.db.writer.WriterFacade;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.elasticsearch.action.DocWriteResponse;
-import org.elasticsearch.rest.RestStatus;
-
-import de.mpg.imeji.logic.db.indexretry.model.RetryBaseRequest;
-import de.mpg.imeji.logic.db.writer.WriterFacade;
 
 /**
  * Exception is thrown when one or more requests (delete/index) of a bulk request to elastic search
@@ -43,7 +41,7 @@ public class SearchIndexBulkFailureException extends ImejiException {
 
 
 
-  public void addFailure(String idOfDocument, DocWriteResponse operationType, RestStatus status, Exception operationException) {
+  public void addFailure(String idOfDocument, OperationType operationType, int status, ErrorCause operationException) {
 
     OperationFailureInformation failure = new OperationFailureInformation(operationType, status, operationException);
     this.failures.put(idOfDocument, failure);
@@ -58,7 +56,7 @@ public class SearchIndexBulkFailureException extends ImejiException {
       OperationFailureInformation failureInfo = failures.get(failedId);
       message = message + "- Id " + failedId;
       if (failureInfo.operationException != null) {
-        message = message + ": " + failureInfo.operationException.getMessage();
+        message = message + ": " + failureInfo.operationException.toString();
       }
       message = message + " ";
     }
@@ -104,12 +102,12 @@ public class SearchIndexBulkFailureException extends ImejiException {
    */
   private class OperationFailureInformation {
 
-    DocWriteResponse operationType;
-    RestStatus status;
-    Exception operationException;
+    OperationType operationType;
+    int status;
+    ErrorCause operationException;
 
 
-    public OperationFailureInformation(DocWriteResponse operationType, RestStatus status, Exception operationException) {
+    public OperationFailureInformation(OperationType operationType, int status, ErrorCause operationException) {
 
       this.operationType = operationType;
       this.status = status;

@@ -49,11 +49,8 @@ public class ImejiRestService extends ResourceConfig {
 
     Server server = new Server().url("/imeji");
     oas.servers(Stream.of(server).collect(Collectors.toList()));
-    SwaggerConfiguration oasConfig = new SwaggerConfiguration()
-            .openAPI(oas)
-            .prettyPrint(true)
-            .resourcePackages(Stream.of(ImejiRestService.class.getPackage().getName()).collect(Collectors.toSet()))
-            .alwaysResolveAppPath(true);
+    SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true)
+        .resourcePackages(Stream.of(ImejiRestService.class.getPackage().getName()).collect(Collectors.toSet())).alwaysResolveAppPath(true);
 
     register(new OpenApiResource().openApiConfiguration(oasConfig));
     /*
@@ -62,7 +59,7 @@ public class ImejiRestService extends ResourceConfig {
     } catch (OpenApiConfigurationException e) {
       throw new RuntimeException(e.getMessage(), e);
     }
-
+    
      */
     //register(io.swagger.jaxrs.listing.ApiListingResource.class);
     //register(io.swagger.jaxrs.listing.SwaggerSerializers.class);

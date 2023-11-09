@@ -1,24 +1,20 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
+import co.elastic.clients.elasticsearch._types.HealthStatus;
+import co.elastic.clients.elasticsearch._types.Time;
+import co.elastic.clients.elasticsearch._types.query_dsl.IdsQuery;
+import co.elastic.clients.elasticsearch.cluster.HealthRequest;
+import co.elastic.clients.elasticsearch.cluster.HealthResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.URI;
-
-import org.apache.logging.log4j.LogManager;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.ClusterClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.cluster.health.ClusterHealthStatus;
-import org.elasticsearch.core.TimeValue;
-import org.elasticsearch.index.query.IdsQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
-import org.apache.logging.log4j.Logger;
+import java.util.List;
 
 /**
  * Collection of functions for checking status of Elastic Search and searching documents.
@@ -42,8 +38,7 @@ public class ElasticDocumentSearch {
    * @throws IOException
    */
   public static boolean pingElasticSearch() throws IOException {
-
-    return ElasticService.getClient().ping(RequestOptions.DEFAULT);
+    return ElasticService.getClient().ping().value();
   }
 
 
@@ -64,13 +59,13 @@ public class ElasticDocumentSearch {
      * (RuntimeException) and adds the original ResponseException as a suppressed exception to it.
      */
 
-    ClusterHealthRequest clusterHealthRequest = new ClusterHealthRequest();
-    clusterHealthRequest.timeout(TimeValue.timeValueSeconds(TIME_OUT_FOR_CLUSTER_HEALTH_IN_SEC));
-    clusterHealthRequest.waitForStatus(ClusterHealthStatus.YELLOW);
+    ElasticService.getClient().cluster().health();
+    HealthRequest healthRequest =
+        HealthRequest.of(hr -> hr.timeout(Time.of(t -> t.offset(TIME_OUT_FOR_CLUSTER_HEALTH_IN_SEC))).waitForStatus(HealthStatus.Yellow));
 
-    ClusterClient clusterClient = ElasticService.getClient().cluster();
-    ClusterHealthResponse response = clusterClient.health(clusterHealthRequest, RequestOptions.DEFAULT);
-    if (response.getStatus() == ClusterHealthStatus.YELLOW || response.getStatus() == ClusterHealthStatus.GREEN) {
+    HealthResponse healthResponse = ElasticService.getClient().cluster().health(healthRequest);
+
+    if (healthResponse.status() == HealthStatus.Yellow || healthResponse.status() == HealthStatus.Green) {
       return true;
     }
     return false;
@@ -91,12 +86,16 @@ public class ElasticDocumentSearch {
     // get index from uri
     ElasticIndices index = ElasticIndices.uriToElasticIndex(documentId);
 
+    SearchRequest searchRequest = SearchRequest.of(sr -> sr.version(true).query(getIdQuery(documentId)._toQuery()).index(index.name()));
+
+    /*
     SearchRequest searchRequest = new SearchRequest();
     SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
     searchSourceBuilder.version(true);
     searchSourceBuilder.query(getIdQuery(documentId));
     searchRequest.indices(index.name());
     searchRequest.source(searchSourceBuilder);
+    */
 
     return getDocumentVersion(searchRequest, documentId);
 
@@ -108,11 +107,11 @@ public class ElasticDocumentSearch {
    * @param uri
    * @return
    */
-  private static IdsQueryBuilder getIdQuery(URI uri) {
-
-    IdsQueryBuilder idQuery = QueryBuilders.idsQuery();
-    idQuery.addIds(uri.toString());
-    return idQuery;
+  private static IdsQuery getIdQuery(URI uri) {
+    return IdsQuery.of(idq -> idq.values(uri.toString()));
+    //IdsQueryBuilder idQuery = QueryBuilders.idsQuery();
+    //idQuery.addIds(uri.toString());
+    //return idQuery;
   }
 
   /**
@@ -127,11 +126,12 @@ public class ElasticDocumentSearch {
 
     long version = VERSION_NOT_FOUND;
 
-    SearchResponse response = ElasticService.getClient().search(request, RequestOptions.DEFAULT);
-    SearchHit[] hits = response.getHits().getHits();
-    if (hits.length == 1) {
-      SearchHit firstHit = hits[0];
-      version = firstHit.getVersion();
+    SearchResponse response = ElasticService.getClient().search(request, Object.class);
+    List<Hit> searchHits = response.hits().hits();
+    //SearchHit[] hits = response.getHits().getHits();
+    if (searchHits.size() == 1) {
+      Hit firstHit = searchHits.get(0);
+      version = firstHit.version();
     } else {
       LOGGER.error("Could not find document with uri " + uri.toString());
     }

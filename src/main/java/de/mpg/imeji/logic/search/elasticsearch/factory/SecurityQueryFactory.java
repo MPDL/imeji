@@ -1,13 +1,13 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.Grant.GrantType;
@@ -18,6 +18,7 @@ import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
+import org.reflections.util.QueryBuilder;
 
 /**
  * Build a Boolean query with a list of all allowed collection and subcollections for one user.
@@ -45,9 +46,9 @@ public class SecurityQueryFactory {
    * 
    * @return
    */
-  public QueryBuilder build() {
+  public Query build() {
     if (SecurityUtil.authorization().isSysAdmin(user) && role == null) {
-      return QueryBuilders.matchAllQuery();
+      return new MatchAllQuery.Builder().build()._toQuery();
     } else if (user != null) {
       return buildLoggedInUserSecurityQuery();
     } else {
@@ -60,16 +61,17 @@ public class SecurityQueryFactory {
    * 
    * @return
    */
-  private QueryBuilder buildLoggedInUserSecurityQuery() {
+  private Query buildLoggedInUserSecurityQuery() {
     List<String> collectionUris = getCollectionUris();
     collectionUris = addChildren(collectionUris);
-    BoolQueryBuilder q = toQuery(collectionUris);
+    BoolQuery.Builder qb = toQuery(collectionUris);
     if (role == null) {
-      q.should(getStatusQuery());
+      qb.should(getStatusQuery());
     } else if (role != null && collectionUris.isEmpty()) {
-      return QueryBuilders.boolQuery().mustNot(QueryBuilders.matchAllQuery());
+      return BoolQuery.of(bq -> bq.mustNot(new MatchAllQuery.Builder().build()._toQuery()))._toQuery();
+      //return QueryBuilders.boolQuery().mustNot(QueryBuilders.matchAllQuery());
     }
-    return q;
+    return qb.build()._toQuery();
   }
 
   /**
@@ -77,8 +79,8 @@ public class SecurityQueryFactory {
    * 
    * @return
    */
-  private QueryBuilder getStatusQuery() {
-    return QueryBuilders.termQuery(ElasticFields.STATUS.field(), Status.RELEASED.name());
+  private Query getStatusQuery() {
+    return TermQuery.of(t -> t.field(ElasticFields.STATUS.field()).value(FieldValue.of(Status.RELEASED.name())))._toQuery();
   }
 
   /**
@@ -87,9 +89,13 @@ public class SecurityQueryFactory {
    * @param collectionUris
    * @return
    */
-  private BoolQueryBuilder toQuery(List<String> collectionUris) {
-    final BoolQueryBuilder q = QueryBuilders.boolQuery();
-    q.should(QueryBuilders.termsQuery(searchForCollections ? ElasticFields.ID.field() : ElasticFields.FOLDER.field(), collectionUris));
+  private BoolQuery.Builder toQuery(List<String> collectionUris) {
+    final BoolQuery.Builder q = new BoolQuery.Builder();
+    //List<FieldValue> fvList = new ArrayList<>();
+    List<FieldValue> fvList = collectionUris.stream().map(i -> FieldValue.of(i)).collect(Collectors.toList());
+    q.should(TermsQuery
+        .of(i -> i.field(searchForCollections ? ElasticFields.ID.field() : ElasticFields.FOLDER.field()).terms(te -> te.value(fvList)))
+        ._toQuery());
 
     //collectionUris.stream().forEach(
     //    uri -> q.should(QueryBuilders.termQuery(searchForCollections ? ElasticFields.ID.field() : ElasticFields.FOLDER.field(), uri)));

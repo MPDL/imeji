@@ -1,15 +1,16 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
-
+import co.elastic.clients.elasticsearch._types.FieldSort;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.mapping.FieldType;
 import de.mpg.imeji.logic.model.SearchFields;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SortCriterion;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory for {@link SortBuilder}
@@ -27,7 +28,9 @@ public class ElasticSortFactory {
   /**
    * Default Sorting value
    */
-  private static final SortBuilder defaultSort = SortBuilders.fieldSort(ElasticFields.CREATED.field()).order(SortOrder.ASC);
+  //private static final SortBuilder defaultSort = SortBuilders.fieldSort(ElasticFields.CREATED.field()).order(SortOrder.ASC);
+  private static final SortOptions defaultSort =
+      SortOptions.of(so -> so.field(fs -> fs.field(ElasticFields.CREATED.field()).order(SortOrder.Asc)));
 
   /**
    * Build a list of ElasticSearch {@link SortBuilder} from a list of Imeji {@link SortCriterion}
@@ -40,9 +43,10 @@ public class ElasticSortFactory {
    * @param sortCriteria list of {@link SortCriterion}
    * @return list of {@link SortBuilder}
    */
-  public static List<SortBuilder> build(List<SortCriterion> sortCriteria) {
+  public static List<SortOptions> build(List<SortCriterion> sortCriteria) {
 
-    ArrayList<SortBuilder> sortBuilderList = new ArrayList<SortBuilder>(sortCriteria.size());
+
+    ArrayList<SortOptions> sortBuilderList = new ArrayList<SortOptions>(sortCriteria.size());
     for (SortCriterion sortCriterion : sortCriteria) {
       if (sortCriterion != null) {
         sortBuilderList.add(build(sortCriterion));
@@ -57,7 +61,7 @@ public class ElasticSortFactory {
    * @param sort
    * @return
    */
-  public static SortBuilder build(SortCriterion sort) {
+  public static SortOptions build(SortCriterion sort) {
     if (sort == null) {
       return defaultSort;
       //return null;
@@ -65,25 +69,25 @@ public class ElasticSortFactory {
     final SearchFields index = sort.getField();
     switch (index) {
       case title:
-        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort, "keyword");
+        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort, FieldType.Keyword);
       case created:
-        return makeBuilder(ElasticFields.CREATED.field(), sort, "long");
+        return makeBuilder(ElasticFields.CREATED.field(), sort, FieldType.Long);
       case modified:
-        return makeBuilder(ElasticFields.MODIFIED.field(), sort, "long");
+        return makeBuilder(ElasticFields.MODIFIED.field(), sort, FieldType.Long);
       case filename:
-        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort, "keyword");
+        return makeBuilder(ElasticFields.NAME.field() + SORT_INDEX, sort, FieldType.Keyword);
       case filetype:
-        return makeBuilder(ElasticFields.FILETYPE.field(), sort, "keyword");
+        return makeBuilder(ElasticFields.FILETYPE.field(), sort, FieldType.Keyword);
       case filesize:
-        return makeBuilder(ElasticFields.SIZE.field(), sort, "long");
+        return makeBuilder(ElasticFields.SIZE.field(), sort, FieldType.Long);
       case fileextension:
-        return makeBuilder(ElasticFields.FILEEXTENSION.field() + SORT_INDEX, sort, "keyword");
+        return makeBuilder(ElasticFields.FILEEXTENSION.field() + SORT_INDEX, sort, FieldType.Keyword);
       case creatorid:
-        return makeBuilder(ElasticFields.CREATORS.field() + SORT_INDEX, sort, "keyword");
+        return makeBuilder(ElasticFields.CREATORS.field() + SORT_INDEX, sort, FieldType.Keyword);
       case status:
-        return makeBuilder(ElasticFields.STATUS.field(), sort, "keyword");
+        return makeBuilder(ElasticFields.STATUS.field(), sort, FieldType.Keyword);
       case completename:
-        return makeBuilder("completename" + SORT_INDEX, sort, "keyword");
+        return makeBuilder("completename" + SORT_INDEX, sort, FieldType.Keyword);
       default:
         return defaultSort;
     }
@@ -97,8 +101,9 @@ public class ElasticSortFactory {
    * @return
    */
   // unmappedType in order to prevent shard failures for missing sort fields
-  private static SortBuilder makeBuilder(String field, SortCriterion sortCriterion, String unmappedType) {
-    return SortBuilders.fieldSort(field).unmappedType(unmappedType).order(getSortOrder(sortCriterion));
+  private static SortOptions makeBuilder(String field, SortCriterion sortCriterion, FieldType unmappedType) {
+    return SortOptions.of(so -> so.field(fs -> fs.field(field).unmappedType(unmappedType).order(getSortOrder(sortCriterion))));
+
   }
 
   /**
@@ -108,6 +113,6 @@ public class ElasticSortFactory {
    * @return
    */
   private static SortOrder getSortOrder(SortCriterion sort) {
-    return sort.getSortOrder() == de.mpg.imeji.logic.search.model.SortCriterion.SortOrder.ASCENDING ? SortOrder.ASC : SortOrder.DESC;
+    return sort.getSortOrder() == de.mpg.imeji.logic.search.model.SortCriterion.SortOrder.ASCENDING ? SortOrder.Asc : SortOrder.Desc;
   }
 }

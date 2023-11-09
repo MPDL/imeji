@@ -11,12 +11,7 @@ import java.util.List;
  */
 public interface SearchIndexer {
 
-  /**
-   * Index an object.
-   *
-   * @param obj
-   */
-  public void index(Object obj) throws Exception;
+
 
   /**
    * Index a list of Object. This method might be faster for multiple objects, than using the index
@@ -38,12 +33,6 @@ public interface SearchIndexer {
    */
   public void updateIndexBatch(List<?> l) throws Exception;
 
-  /**
-   * Delete an object from the Index
-   *
-   * @param obj
-   */
-  public void delete(Object obj) throws Exception;
 
   /**
    * Delete many objects from the index

@@ -22,7 +22,6 @@ import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.exceptions.SearchIndexBulkFailureException;
-import de.mpg.imeji.exceptions.SearchIndexFailureException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.indexretry.RetryIndex;
@@ -334,11 +333,6 @@ public class WriterFacade {
           // SearchIndex is down, connection timed out
           List<RetryBaseRequest> retryIndexList = indexTask.getRetryRequests();
           RetryQueue.getInstance().addRetryIndexRequests(retryIndexList);
-        } else if (taskException instanceof SearchIndexFailureException) {
-          // single operation failed
-          SearchIndexFailureException failedException = (SearchIndexFailureException) taskException;
-          RetryBaseRequest retryRequest = failedException.getRetryRequest(objectsToIndex);
-          RetryQueue.getInstance().addRetryIndexRequests(Arrays.asList(retryRequest));
         } else if (taskException instanceof SearchIndexBulkFailureException) {
           // in a bulk request one or more operations failed
           SearchIndexBulkFailureException failedException = (SearchIndexBulkFailureException) taskException;
