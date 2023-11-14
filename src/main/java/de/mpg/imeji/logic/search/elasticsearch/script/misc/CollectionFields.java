@@ -1,6 +1,9 @@
 package de.mpg.imeji.logic.search.elasticsearch.script.misc;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.util.ObjectHelper;
@@ -107,13 +110,27 @@ public class CollectionFields {
     return id;
   }
 
-  /*
-  public XContentBuilder toXContentBuilder() throws IOException {
+
+  public ObjectNode toJsonNode() throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode rootNode = mapper.createObjectNode();
+    rootNode.putArray(ElasticFields.AUTHORS_OF_COLLECTION.field())
+        .addAll(authors.stream().map(auth -> new TextNode(auth)).collect(Collectors.toList()));
+    rootNode.putArray(ElasticFields.ORGANIZATION_OF_COLLECTION.field())
+        .addAll(organizations.stream().map(auth -> new TextNode(auth)).collect(Collectors.toList()));
+    rootNode.put(ElasticFields.TITLE_WITH_ID_OF_COLLECTION.field(), titleWithId);
+    return rootNode;
+
+
+
+    /*
     return XContentFactory.jsonBuilder().startObject().field(ElasticFields.AUTHORS_OF_COLLECTION.field(), authors)
         .field(ElasticFields.ORGANIZATION_OF_COLLECTION.field(), organizations)
         .field(ElasticFields.TITLE_WITH_ID_OF_COLLECTION.field(), titleWithId).endObject();
+        */
+
   }
-   */
+
 
   public List<String> getAuthors() {
     return authors;

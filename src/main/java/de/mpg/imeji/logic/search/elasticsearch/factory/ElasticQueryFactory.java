@@ -463,7 +463,7 @@ public class ElasticQueryFactory {
     }
     switch (operator) {
       case EQUALS:
-        q = matchFieldQuery(fieldName, value);
+        q = matchFieldQuery(fieldName, ElasticSearchFactoryUtil.escape(value));
         break;
       case GREATER:
       case GREATER_EQUALS:
@@ -866,4 +866,6 @@ public class ElasticQueryFactory {
   public void setIncludeSubcollections(boolean includeSubcollections) {
     this.includeSubcollections = includeSubcollections;
   }
+
+
 }

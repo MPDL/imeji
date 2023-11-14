@@ -1,5 +1,4 @@
 {
-	"_doc": {
 		"dynamic": "strict",
 		"properties": {
 			"all": {
@@ -69,6 +68,5 @@
 				}
 			}
 		}
-	}
 
 }

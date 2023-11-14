@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import de.mpg.imeji.logic.config.util.PropertyReader;
@@ -43,7 +44,7 @@ public class ElasticInitializer {
 
     RestClient restClient = RestClient.builder(HttpHost.create(url)).build();
     ElasticService.setRestClient(restClient);
-    ElasticsearchClient elClient = new ElasticsearchClient(new RestClientTransport(restClient, new JsonbJsonpMapper()));
+    ElasticsearchClient elClient = new ElasticsearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
     ElasticService.setClient(elClient);
     start(elClient);
   }

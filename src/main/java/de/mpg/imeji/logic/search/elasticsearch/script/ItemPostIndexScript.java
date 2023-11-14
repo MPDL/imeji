@@ -39,15 +39,16 @@ public class ItemPostIndexScript {
     for (final Item item : items) {
       CollectionFields fields = retrieveCollectionFields(item, index);
       if (fields != null) {
-        //final XContentBuilder json = fields.toXContentBuilder();
+        final ObjectNode json = fields.toJsonNode();
         bulkRequestBuilder.operations(BulkOperation
-            .of(bo -> bo.update(ur -> ur.index(ElasticIndices.items.name()).id(item.getId().toString()).action(act -> act.doc(fields)))));
+            .of(bo -> bo.update(ur -> ur.index(ElasticIndices.items.name()).id(item.getId().toString()).action(act -> act.doc(json)))));
 
       }
     }
 
-    final BulkRequest bulkRequest = bulkRequestBuilder.build();
-    if (bulkRequest.operations().size() > 0) {
+
+    if (items.size() > 0) {
+      final BulkRequest bulkRequest = bulkRequestBuilder.build();
       BulkResponse bulkResponse = ElasticService.getClient().bulk(bulkRequest);
 
       if (bulkResponse.errors()) {

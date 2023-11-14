@@ -14,6 +14,7 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
 import co.elastic.clients.elasticsearch.core.search.ResponseBody;
 import co.elastic.clients.elasticsearch.core.search.TrackHits;
+import co.elastic.clients.json.JsonpUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.LogManager;
 
@@ -235,13 +236,13 @@ public class ElasticSearch implements Search {
   private SearchResult searchSinglePage(SearchRequest request, SearchQuery query) {
 
     // send request to ElasticSearch
-    LOGGER.debug(request.source().toString());
+    LOGGER.info(request.toString());
     SearchResponse<ObjectNode> resp;
     try {
       resp = ElasticService.getClient().search(request, ObjectNode.class);
       SearchResult elasticSearchResult = getSearchResultFromElasticSearchResponse(resp, query);
       return elasticSearchResult;
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOGGER.error("error getting search response", e);
     }
     return null;
@@ -264,7 +265,7 @@ public class ElasticSearch implements Search {
     // add scroll search
     // request = request.setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC));
 
-    LOGGER.debug(request.source().toString());
+    LOGGER.debug(request.toString());
     SearchResponse<ObjectNode> searchResponse;
     try {
       searchResponse = ElasticService.getClient().search(request, ObjectNode.class);

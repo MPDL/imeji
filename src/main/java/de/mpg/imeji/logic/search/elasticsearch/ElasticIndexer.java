@@ -10,6 +10,8 @@ import co.elastic.clients.elasticsearch.core.bulk.OperationType;
 import co.elastic.clients.elasticsearch.indices.PutMappingRequest;
 import co.elastic.clients.elasticsearch.indices.PutMappingResponse;
 import co.elastic.clients.elasticsearch.indices.RefreshRequest;
+import co.elastic.clients.util.BinaryData;
+import co.elastic.clients.util.ContentType;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -214,10 +216,10 @@ public class ElasticIndexer implements SearchIndexer {
     return indexRequest;
   }
 
-  private IndexOperation getIndexOperation(String id, String json, String parent, String type, Long timestamp) {
+  private IndexOperation getIndexOperation(String id, byte[] json, String parent, String type, Long timestamp) {
 
     final IndexOperation.Builder indexOperationBuilder = new IndexOperation.Builder();
-    indexOperationBuilder.index(indexName).id(id).withJson(new StringReader(json));
+    indexOperationBuilder.document(BinaryData.of(json, ContentType.APPLICATION_JSON)).index(indexName).id(id);
 
     // Add version information (See ticket #1122)
     // We can choose here:
@@ -299,7 +301,7 @@ public class ElasticIndexer implements SearchIndexer {
    * @return
    * @throws UnprocessableError
    */
-  public static String toJson(Object obj, String dataType, String index) throws UnprocessableError {
+  public static byte[] toJson(Object obj, String dataType, String index) throws UnprocessableError {
     try {
       // mapper.configure(DeserializationFeature..UNWRAP_ROOT_VALUE, true);
       /*
@@ -307,7 +309,7 @@ public class ElasticIndexer implements SearchIndexer {
       mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
       }
       */
-      return mapper.setSerializationInclusion(Include.NON_NULL).writeValueAsString(toESEntity(obj, dataType, index));
+      return mapper.setSerializationInclusion(Include.NON_NULL).writeValueAsBytes(toESEntity(obj, dataType, index));
     } catch (final JsonProcessingException e) {
       throw new UnprocessableError("Error serializing object to json", e);
     }

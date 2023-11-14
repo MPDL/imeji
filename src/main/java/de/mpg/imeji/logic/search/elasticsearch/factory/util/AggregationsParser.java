@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.search.elasticsearch.factory.util;
 import co.elastic.clients.elasticsearch._types.aggregations.*;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.ResponseBody;
+import co.elastic.clients.json.JsonpUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
@@ -12,6 +13,7 @@ import de.mpg.imeji.logic.search.facet.model.FacetResult;
 import de.mpg.imeji.logic.search.facet.model.FacetResultValue;
 import org.apache.logging.log4j.LogManager;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +104,7 @@ public class AggregationsParser {
   public static List<FacetResult> parseForItemFacets(ResponseBody<ObjectNode> resp) {
 
     List<FacetResult> facetResults = new ArrayList<>();
-    if (resp != null && resp.aggregations() != null) {
+    if (resp != null && resp.aggregations() != null && resp.aggregations().size() > 0) {
       NestedAggregate metadata = resp.aggregations().get("metadata").nested();
       if (metadata != null) {
         for (Map.Entry<String, Aggregate> mdAgg : metadata.aggregations().entrySet()) {
@@ -126,8 +128,8 @@ public class AggregationsParser {
                 facetResult.getValues().add(new FacetResultValue(bucket.getKey(), bucket.getValue().docCount()));
               }
             } else if (agg.getValue().isSterms()) {
-              for (Map.Entry<String, StringTermsBucket> bucket : agg.getValue().sterms().buckets().keyed().entrySet()) {
-                facetResult.getValues().add(new FacetResultValue(bucket.getKey(), bucket.getValue().docCount()));
+              for (StringTermsBucket bucket : agg.getValue().sterms().buckets().array()) {
+                facetResult.getValues().add(new FacetResultValue(bucket.key().stringValue(), bucket.docCount()));
               }
 
             }
@@ -170,16 +172,27 @@ public class AggregationsParser {
       FacetResultValue result = new FacetResultValue(key, terms.stats().count());
       double max = terms.stats().max();
       double min = terms.stats().min();
-      if (Double.isInfinite(max)) {
-        result.setMax("0");
-      } else {
-        result.setMax(terms.stats().maxAsString());
+      if(facetResult.getIndex().endsWith(".date")) // Date
+      {
+        String maxDate = Instant.ofEpochMilli(Double.valueOf(terms.stats().max()).longValue()).toString();
+        String minDate = Instant.ofEpochMilli(Double.valueOf(terms.stats().min()).longValue()).toString();
+        result.setMax(maxDate);
+        result.setMin(minDate);
       }
-      if (Double.isInfinite(min)) {
-        result.setMin("0");
-      } else {
-        result.setMin(terms.stats().minAsString());
+      else { //Number
+        if (Double.isInfinite(max)) {
+          result.setMax("0");
+        } else {
+
+          result.setMax(terms.stats().maxAsString()!=null ? terms.stats().maxAsString(): Double.toString(terms.stats().max()));
+        }
+        if (Double.isInfinite(min)) {
+          result.setMin("0");
+        } else {
+          result.setMin(terms.stats().minAsString()!=null ? terms.stats().minAsString(): Double.toString(terms.stats().min()));
+        }
       }
+
       facetResult.getValues().add(result);
     } else {
       System.out.println("NOT PARSED  METADATA AGGREGATION: " + terms);

@@ -110,8 +110,9 @@ public class ElasticAggregationFactory {
 
 
 
-    Aggregation.Builder.ContainerBuilder systemAggregations = new Aggregation.Builder().filters(FiltersAggregation.of(fa -> fa.keyed(true)
-        .filters(f -> f.keyed(Collections.singletonMap("all", ExistsQuery.of(eq -> eq.field(ElasticFields.FOLDER.field()))._toQuery())))));
+    Aggregation.Builder.ContainerBuilder systemAggregations =
+        new Aggregation.Builder().filters(fa -> fa.keyed(true).filters(f -> f.keyed(Collections.singletonMap("all",
+            BoolQuery.of(bq -> bq.mustNot(q -> q.exists(eq -> eq.field(ElasticFields.FOLDER.field()))))._toQuery()))));
     Aggregation.Builder.ContainerBuilder metadataAggregations = new Aggregation.Builder().nested(na -> na.path("info"));
 
     Map<String, Aggregation> aggregations = new LinkedHashMap<>();
