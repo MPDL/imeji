@@ -172,26 +172,33 @@ public class AggregationsParser {
       FacetResultValue result = new FacetResultValue(key, terms.stats().count());
       double max = terms.stats().max();
       double min = terms.stats().min();
-      if(facetResult.getIndex().endsWith(".date")) // Date
-      {
-        String maxDate = Instant.ofEpochMilli(Double.valueOf(terms.stats().max()).longValue()).toString();
-        String minDate = Instant.ofEpochMilli(Double.valueOf(terms.stats().min()).longValue()).toString();
-        result.setMax(maxDate);
-        result.setMin(minDate);
-      }
-      else { //Number
-        if (Double.isInfinite(max)) {
-          result.setMax("0");
-        } else {
 
-          result.setMax(terms.stats().maxAsString()!=null ? terms.stats().maxAsString(): Double.toString(terms.stats().max()));
-        }
-        if (Double.isInfinite(min)) {
-          result.setMin("0");
+      if (Double.isInfinite(max)) {
+        result.setMax("0");
+      } else {
+        if (facetResult.getIndex().endsWith(".date")) // Date
+        {
+          String maxDate = Instant.ofEpochMilli(Double.valueOf(terms.stats().max()).longValue()).toString();
+          result.setMax(maxDate);
         } else {
-          result.setMin(terms.stats().minAsString()!=null ? terms.stats().minAsString(): Double.toString(terms.stats().min()));
+          result.setMax(Double.toString(terms.stats().max()));
         }
+
       }
+      if (Double.isInfinite(min)) {
+        result.setMin("0");
+      } else {
+        if (facetResult.getIndex().endsWith(".date")) // Date
+        {
+          String minDate = Instant.ofEpochMilli(Double.valueOf(terms.stats().min()).longValue()).toString();
+          result.setMin(minDate);
+        } else {
+          result.setMin(Double.toString(terms.stats().min()));
+        }
+
+
+      }
+
 
       facetResult.getValues().add(result);
     } else {

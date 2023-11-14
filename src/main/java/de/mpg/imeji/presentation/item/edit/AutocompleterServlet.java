@@ -1,9 +1,11 @@
 package de.mpg.imeji.presentation.item.edit;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,9 +19,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -52,7 +54,7 @@ public class AutocompleterServlet extends HttpServlet {
   private final Pattern coneAuthorPattern = Pattern.compile("http.*/cone/persons/.*?format=json.*", Pattern.CASE_INSENSITIVE);
   private final Pattern googleGeoAPIPattern =
       Pattern.compile("https://maps.googleapis.com/maps/api/geocode/json.*address=", Pattern.CASE_INSENSITIVE);
-  private final HttpClient client = new HttpClient(new MultiThreadedHttpConnectionManager());
+  private final CloseableHttpClient client;
 
   private static final int SUGGEST_RESULTS_SIZE = 5;
 
@@ -61,6 +63,7 @@ public class AutocompleterServlet extends HttpServlet {
    */
   public AutocompleterServlet() {
     super();
+    this.client = StorageUtils.getHttpClient();
   }
 
   /**
@@ -79,10 +82,10 @@ public class AutocompleterServlet extends HttpServlet {
       } else if ("imeji_orgs".equals(datasource)) {
         responseString = autoCompleteForInternalOrganisations(suggest);
       } else {
-        final GetMethod getMethod = new GetMethod(datasource + URLEncoder.encode(suggest.toString(), "UTF-8"));
-        try {
-          ProxyHelper.executeMethod(client, getMethod);
-          responseString = new String(StorageUtils.toBytes(getMethod.getResponseBodyAsStream()), "UTF-8");
+        final HttpGet getMethod = new HttpGet(datasource + URLEncoder.encode(suggest.toString(), "UTF-8"));
+        try (CloseableHttpResponse resp = ProxyHelper.executeMethod(client, getMethod)) {
+
+          responseString = new String(StorageUtils.toBytes(resp.getEntity().getContent()), "UTF-8");
           if (datasource != null && responseString != null) {
             responseString = parseResult(responseString, datasource);
           }

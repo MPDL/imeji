@@ -13,12 +13,15 @@ import java.net.URL;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.tika.Tika;
@@ -28,6 +31,7 @@ import org.apache.tika.mime.MimeTypes;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import org.checkerframework.common.reflection.qual.GetMethod;
 
 /**
  * Util class fore the storage package
@@ -145,13 +149,25 @@ public class StorageUtils {
    *
    * @return
    */
-  public static HttpClient getHttpClient() {
+  public static CloseableHttpClient getHttpClient() {
+
+    PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+    cm.setDefaultMaxPerRoute(50);
+
+    RequestConfig config =
+        RequestConfig.custom().setConnectTimeout(5 * 1000).setConnectionRequestTimeout(5 * 1000).setSocketTimeout(5 * 1000).build();
+
+    CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).setConnectionManager(cm).build();
+    return client;
+    /*
     final MultiThreadedHttpConnectionManager conn = new MultiThreadedHttpConnectionManager();
     final HttpConnectionManagerParams connParams = new HttpConnectionManagerParams();
     connParams.setConnectionTimeout(5000);
     connParams.setDefaultMaxConnectionsPerHost(50);
     conn.setParams(connParams);
     return new HttpClient(conn);
+    
+     */
   }
 
   /**
@@ -161,10 +177,10 @@ public class StorageUtils {
    * @param url
    * @return
    */
-  public static GetMethod newGetMethod(HttpClient client, String url) throws ImejiException {
-    final GetMethod method = new GetMethod(url);
-    method.addRequestHeader("Cache-Control", "public");
-    method.setRequestHeader("Connection", "close");
+  public static HttpGet newGetMethod(String url) throws ImejiException {
+    final HttpGet method = new HttpGet(url);
+    method.addHeader("Cache-Control", "public");
+    method.addHeader("Connection", "close");
     return method;
   }
 
