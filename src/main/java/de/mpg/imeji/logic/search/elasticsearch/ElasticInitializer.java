@@ -65,13 +65,12 @@ public class ElasticInitializer {
   public static void shutdown() {
     LOGGER.info("SHUTTING DOWN ELASTICSEARCH...");
     if (ElasticService.getClient() != null) {
-      /*
+
       try {
-        ElasticService.getClient().close();
+        ElasticService.getRestClient().close();
       } catch (IOException e) {
         LOGGER.error("Error shutting down elasticsearch", e);
       }
-       */
     }
     LOGGER.info("... DONE!");
 

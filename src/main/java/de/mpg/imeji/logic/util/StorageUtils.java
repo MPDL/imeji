@@ -53,6 +53,8 @@ public class StorageUtils {
   private static final int MAX_LENGTH_FILE_EXTENSION = 20;
   private static final String EXPECTED_FILE_EXTENSION_REGEX = "[a-zA-Z\\d]{1," + MAX_LENGTH_FILE_EXTENSION + "}?";
 
+  private static CloseableHttpClient httpClient;
+
   /**
    * Transform an {@link InputStream} to a {@link Byte} array
    *
@@ -149,16 +151,20 @@ public class StorageUtils {
    *
    * @return
    */
-  public static CloseableHttpClient getHttpClient() {
+  public synchronized static CloseableHttpClient getHttpClient() {
 
-    PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-    cm.setDefaultMaxPerRoute(50);
+    if(httpClient == null) {
+      PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+      cm.setDefaultMaxPerRoute(50);
 
-    RequestConfig config =
-        RequestConfig.custom().setConnectTimeout(5 * 1000).setConnectionRequestTimeout(5 * 1000).setSocketTimeout(5 * 1000).build();
+      RequestConfig config =
+              RequestConfig.custom().setConnectTimeout(5 * 1000).setConnectionRequestTimeout(5 * 1000).setSocketTimeout(5 * 1000).build();
 
-    CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).setConnectionManager(cm).build();
-    return client;
+      CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).setConnectionManager(cm).build();
+
+    }
+    return httpClient;
+
     /*
     final MultiThreadedHttpConnectionManager conn = new MultiThreadedHttpConnectionManager();
     final HttpConnectionManagerParams connParams = new HttpConnectionManagerParams();
