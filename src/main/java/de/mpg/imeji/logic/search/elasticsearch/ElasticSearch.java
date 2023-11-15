@@ -236,7 +236,7 @@ public class ElasticSearch implements Search {
   private SearchResult searchSinglePage(SearchRequest request, SearchQuery query) {
 
     // send request to ElasticSearch
-    LOGGER.info(request.toString());
+    LOGGER.debug(request.toString());
     SearchResponse<ObjectNode> resp;
     try {
       resp = ElasticService.getClient().search(request, ObjectNode.class);

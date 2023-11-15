@@ -390,11 +390,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.ocpsoft.rewrite</groupId>
-			<artifactId>rewrite-integration-faces</artifactId>
-			<version>3.5.2.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.ocpsoft.rewrite</groupId>
 			<artifactId>rewrite-config-prettyfaces</artifactId>
 			<version>3.5.2.Final</version>
 		</dependency>
@@ -572,7 +567,7 @@
 		<dependency>
 			<groupId>co.elastic.clients</groupId>
 			<artifactId>elasticsearch-java</artifactId>
-			<version>8.11.0</version>
+			<version>8.11.1</version>
 		</dependency>
 
 

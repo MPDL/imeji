@@ -8,6 +8,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.logic.storage.Storage;
+import de.mpg.imeji.logic.util.StorageUtils;
 import org.apache.jena.atlas.lib.AlarmClock;
 import org.apache.jena.tdb.StoreConnection;
 import org.apache.logging.log4j.Logger;
@@ -308,6 +310,13 @@ public class ImejiInitializer {
     LOGGER.info("tdb closed");
     StoreConnection.release(Location.create(Imeji.tdbPath));
     LOGGER.info("location released");
+    LOGGER.info("Closing Http client");
+    try {
+      StorageUtils.getHttpClient().close();
+      LOGGER.info("Http client closed");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     LOGGER.info("...done!");
 
     // This is a bug of com.hp.hpl.jena.sparql.engine.QueryExecutionBase
