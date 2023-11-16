@@ -73,7 +73,7 @@
 	</mailingLists>
 	<properties>
 		<!-- the jdk version to use -->
-		<jdk.version>11</jdk.version>
+		<jdk.version>17</jdk.version>
 		<jersey.version>2.39</jersey.version>
 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -175,6 +175,18 @@
 			<testResource>
 				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
+				<excludes>
+					<exclude>storage/**</exclude>
+					<exclude>pdf/**</exclude>
+				</excludes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>storage/**</include>
+					<include>pdf/**</include>
+				</includes>
 			</testResource>
 		</testResources>
 		<plugins>
@@ -237,15 +249,18 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18</version>
+				<version>3.2.2</version>
 				<configuration>
 					<!-- if there are no tests, don't bail out -->
 					<failIfNoTests>false</failIfNoTests>
 					<!-- avoid the out of memory exception thrown in some test scenarios -->
-					<argLine>-Xms1024m -Xmx1024m -XX:MaxPermSize=512m</argLine>
+					<argLine>-Xms1024m -Xmx1024m</argLine>
 					<includes>
-						<include>**/de/mpg/imeji/test/**/*.java</include>
+						<include>**/de/mpg/imeji/**/*.java</include>
 					</includes>
+
+
+
 				</configuration>
 				<executions>
 					<execution>
@@ -423,10 +438,18 @@
 			<scope>compile</scope>
 		</dependency>
 		-->
+		<!--
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>5.9.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

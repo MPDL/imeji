@@ -75,7 +75,8 @@ public class CollectionPostIndexScript {
 
       //final UpdateRequest req = new UpdateRequest();
       //req.index(index).type("_doc").id(id).doc(json);
-      bulkRequestBuilder.operations(BulkOperation.of(bo -> bo.update(ur -> ur.index(index).id(id).action(act -> act.doc(collectionFields)))));
+      bulkRequestBuilder
+          .operations(BulkOperation.of(bo -> bo.update(ur -> ur.index(index).id(id).action(act -> act.doc(collectionFields)))));
     }
 
     final BulkRequest bulkRequest = bulkRequestBuilder.build();
@@ -112,8 +113,7 @@ public class CollectionPostIndexScript {
     ids = new ArrayList<>(Math.toIntExact(resp.hits().total().value()));
     scrollId = resp.scrollId();
 
-    while(resp.hits().hits().size()>0)
-    {
+    while (resp.hits().hits().size() > 0) {
       for (final Hit hit : resp.hits().hits()) {
         ids.add(hit.id());
       }

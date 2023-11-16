@@ -153,12 +153,12 @@ public class StorageUtils {
    */
   public synchronized static CloseableHttpClient getHttpClient() {
 
-    if(httpClient == null) {
+    if (httpClient == null) {
       PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
       cm.setDefaultMaxPerRoute(50);
 
       RequestConfig config =
-              RequestConfig.custom().setConnectTimeout(5 * 1000).setConnectionRequestTimeout(5 * 1000).setSocketTimeout(5 * 1000).build();
+          RequestConfig.custom().setConnectTimeout(5 * 1000).setConnectionRequestTimeout(5 * 1000).setSocketTimeout(5 * 1000).build();
 
       CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).setConnectionManager(cm).build();
 

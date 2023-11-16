@@ -162,7 +162,7 @@ public class RetryQueue {
   public synchronized void shutDown() {
 
     LOGGER.info("Shut down retry Queue" + retryQueueThread);
-    if (this.retryQueueThread!= null && this.retryQueueThread.isAlive()) {
+    if (this.retryQueueThread != null && this.retryQueueThread.isAlive()) {
       // terminate thread
       this.retryQueueThread.interrupt();
     }

@@ -43,15 +43,16 @@ public class ElasticInitializer {
     LOGGER.info("Starting elasticsearch REST client for url " + url);
 
     RestClient restClient = RestClient.builder(HttpHost.create(url)).build();
-    ElasticService.setRestClient(restClient);
-    ElasticsearchClient elClient = new ElasticsearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
-    ElasticService.setClient(elClient);
-    start(elClient);
+
+    start(restClient);
   }
 
 
-  public static void start(ElasticsearchClient client) throws IOException, URISyntaxException {
+  public static void start(RestClient restClient) throws IOException, URISyntaxException {
 
+    ElasticService.setRestClient(restClient);
+    ElasticsearchClient elClient = new ElasticsearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
+    ElasticService.setClient(elClient);
 
     LOGGER.info("Add elasticsearch mappings...");
     for (final ElasticIndices index : ElasticIndices.values()) {
