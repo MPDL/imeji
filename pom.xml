@@ -256,7 +256,7 @@
 					<!-- avoid the out of memory exception thrown in some test scenarios -->
 					<argLine>-Xms1024m -Xmx1024m</argLine>
 					<includes>
-						<include>**/de/mpg/imeji/**/*.java</include>
+						<include>**/de/mpg/imeji/test/**/*.java</include>
 					</includes>
 
 

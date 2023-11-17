@@ -400,7 +400,7 @@ public class ItemIntegration extends ItemTestBase {
     // Read no user
     Response response =
         (target(PATH_PREFIX).path("/" + itemId).register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)).get();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
     // Read user , but not allowed
     Response response2 = (target(PATH_PREFIX).path("/" + itemId).register(authAsUser2).register(MultiPartFeature.class)
@@ -757,7 +757,7 @@ public class ItemIntegration extends ItemTestBase {
     Form form = new Form();
     form.param("id", itemId);
     Response response = target(PATH_PREFIX).path("/" + itemId).request(MediaType.APPLICATION_JSON_TYPE).delete();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
     Response response2 = target(PATH_PREFIX).register(authAsUserFalse).path("/" + itemId).request(MediaType.APPLICATION_JSON_TYPE).delete();
     assertEquals(Status.UNAUTHORIZED.getStatusCode(), response2.getStatus());

@@ -1,5 +1,7 @@
 package de.mpg.imeji.test.rest.resources.test.integration;
 
+import de.mpg.imeji.testimpl.rest.resources.CollectionIntegration;
+import de.mpg.imeji.testimpl.rest.resources.ItemIntegration;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -11,8 +13,7 @@ import de.mpg.imeji.testimpl.rest.resources.VersionManagerTest;
     // Tests failing from time to time throwing: 
     //"javax.ws.rs.ProcessingException: Failed to start Grizzly HTTP server: Address already in use: bind"
 
-    // ItemIntegration.class, CollectionIntegration.class,
-    StorageIntegration.class, VersionManagerTest.class})
+    ItemIntegration.class, CollectionIntegration.class, StorageIntegration.class, VersionManagerTest.class})
 
 public class IntegrationTestSuite {
 

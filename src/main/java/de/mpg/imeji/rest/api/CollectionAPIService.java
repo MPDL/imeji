@@ -111,12 +111,19 @@ public class CollectionAPIService implements APIService<CollectionTO> {
     // toDo: Move to Controller
     final CollectionService cc = new CollectionService();
 
-    final CollectionImeji vo = new CollectionImeji();
+    CollectionImeji vo = new CollectionImeji();
     transferCollection(to, vo, CREATE, u);
 
+    /*
     URI collectionURI = null;
     collectionURI = cc.create(vo, u).getId();
-    return read(CommonUtils.extractIDFromURI(collectionURI), u);
+     */
+
+    //return read(CommonUtils.extractIDFromURI(collectionURI), u);
+    vo = cc.create(vo, u);
+    final CollectionTO createdTO = new CollectionTO();
+    TransferVOtoTO.transferCollection(vo, to);
+    return to;
   }
 
   @Override
