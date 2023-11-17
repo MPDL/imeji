@@ -270,7 +270,6 @@
 						</goals>
 						<configuration>
 							<skip>false</skip>
-							<test>Initializer</test>
 						</configuration>
 					</execution>
 				</executions>
