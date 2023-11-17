@@ -1,5 +1,5 @@
 node {
-	env.JAVA_HOME = tool name: 'OpenJDK 11', type: 'jdk'
+	env.JAVA_HOME = tool name: 'OpenJDK 17', type: 'jdk'
 	def  mvnHome = tool name: 'Maven35', type: 'maven'
 
 
