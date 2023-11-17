@@ -9,6 +9,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Download maven dependencies
+        run: mvn dependency:resolve
       - name: Run the Maven build
         run: mvn clean package -P env-testing
 
