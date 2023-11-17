@@ -29,8 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.codehaus.jettison.json.JSONException;
+import org.apache.http.HttpStatus;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -364,7 +363,7 @@ public class ItemIntegration extends ItemTestBase {
   }
 
   @Test
-  public void createItemExtensionsTest() throws IOException, JSONException {
+  public void createItemExtensionsTest() throws IOException {
     // NOTE: test assumes .exe file will never be allowed!!!!
     initItem();
     // init Item creates already one item with test.png file , thus checksum
@@ -401,7 +400,7 @@ public class ItemIntegration extends ItemTestBase {
     // Read no user
     Response response =
         (target(PATH_PREFIX).path("/" + itemId).register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)).get();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
     // Read user , but not allowed
     Response response2 = (target(PATH_PREFIX).path("/" + itemId).register(authAsUser2).register(MultiPartFeature.class)
@@ -758,7 +757,7 @@ public class ItemIntegration extends ItemTestBase {
     Form form = new Form();
     form.param("id", itemId);
     Response response = target(PATH_PREFIX).path("/" + itemId).request(MediaType.APPLICATION_JSON_TYPE).delete();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
     Response response2 = target(PATH_PREFIX).register(authAsUserFalse).path("/" + itemId).request(MediaType.APPLICATION_JSON_TYPE).delete();
     assertEquals(Status.UNAUTHORIZED.getStatusCode(), response2.getStatus());

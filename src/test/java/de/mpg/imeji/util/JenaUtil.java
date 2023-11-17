@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.jena.tdb.StoreConnection;
 import org.apache.jena.tdb.TDB;
 import org.apache.jena.tdb.base.block.FileMode;
 import org.apache.jena.tdb.base.file.Location;
@@ -89,8 +90,8 @@ public class JenaUtil {
     Imeji.dataset.close();
     LOGGER.info("Dataset closed!");
     TDB.closedown();
-    TDBMaker.reset();
-    TDBMaker.releaseLocation(Location.create(TDB_PATH));
+    TDBMaker.resetCache();
+    StoreConnection.release(Location.create(TDB_PATH));
     LOGGER.info("TDB Location released!");
 
     // Remove old Database- and File-Directories

@@ -35,6 +35,7 @@ public enum SearchFields {
   author_organization("author.organization"),
   author_organization_exact("author.organization.exact"),
   author_completename_exact("author.completename.exact"),
+  author_completename("author.completename"),
   collection_type("collection.type"),
   md,
   index,

@@ -5,23 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import co.elastic.clients.elasticsearch._types.Time;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
+import co.elastic.clients.elasticsearch.core.*;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch.core.bulk.UpdateOperation;
+
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.core.search.ResponseBody;
+import co.elastic.clients.elasticsearch.core.search.TrackHits;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.search.ClearScrollRequest;
-import org.elasticsearch.action.search.ClearScrollResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchScrollRequest;
-import org.elasticsearch.action.update.UpdateRequest;
+
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import de.mpg.imeji.exceptions.SearchIndexBulkFailureException;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -29,7 +27,7 @@ import de.mpg.imeji.logic.search.elasticsearch.ElasticIndexer;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
-import de.mpg.imeji.logic.search.elasticsearch.script.misc.CollectionFields;
+
 
 /**
  * Script runned after a collection has been indexed
@@ -70,16 +68,22 @@ public class CollectionPostIndexScript {
     if (ids.isEmpty()) {
       return;
     }
-    final BulkRequest bulkRequest = new BulkRequest();
-    final XContentBuilder json = new CollectionFields(c).toXContentBuilder();
+    final BulkRequest.Builder bulkRequestBuilder = new BulkRequest.Builder();
+    //inal XContentBuilder json = new CollectionFields(c).toXContentBuilder();
+    final ObjectNode collectionFields = new CollectionFields(c).toJsonNode();
     for (final String id : ids) {
-      final UpdateRequest req = new UpdateRequest();
-      req.index(index).type("_doc").id(id).doc(json);
-      bulkRequest.add(req);
+
+      //final UpdateRequest req = new UpdateRequest();
+      //req.index(index).type("_doc").id(id).doc(json);
+      bulkRequestBuilder
+          .operations(BulkOperation.of(bo -> bo.update(ur -> ur.index(index).id(id).action(act -> act.doc(collectionFields)))));
     }
-    if (bulkRequest.numberOfActions() > 0) {
-      BulkResponse bulkResponse = ElasticService.getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-      if (bulkResponse.hasFailures()) {
+
+    final BulkRequest bulkRequest = bulkRequestBuilder.build();
+    if (bulkRequest.operations().size() > 0) {
+      BulkResponse bulkResponse = ElasticService.getClient().bulk(bulkRequest);
+
+      if (bulkResponse.errors()) {
         throw ElasticIndexer.getSearchIndexBulkFailureException(bulkResponse);
       }
     }
@@ -97,36 +101,31 @@ public class CollectionPostIndexScript {
   private static List<String> getCollectionItemIds(CollectionImeji collection)
       throws InterruptedException, ExecutionException, IOException {
 
-    TermQueryBuilder q = QueryBuilders.termQuery(ElasticFields.FOLDER.field(), collection.getId().toString());
-    SearchRequest searchRequest = new SearchRequest();
-    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-    searchSourceBuilder.trackTotalHits(true);
-    searchSourceBuilder.query(q);
-    searchRequest.indices(ElasticIndices.items.name()).source(searchSourceBuilder).scroll(TimeValue.timeValueMinutes(1));
+    TermQuery q = TermQuery.of(tq -> tq.field(ElasticFields.FOLDER.field()).value(collection.getId().toString()));
+    SearchRequest searchRequest = SearchRequest.of(sr -> sr.trackTotalHits(TrackHits.of(th -> th.enabled(true))).query(q._toQuery())
+        .index(ElasticIndices.items.name()).scroll(Time.of(t -> t.time("1m"))));
+
     List<String> ids = new ArrayList<String>(0);
 
-    SearchResponse resp = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
-    ids = new ArrayList<>(Math.toIntExact(resp.getHits().getTotalHits().value));
-    for (final SearchHit hit : resp.getHits()) {
-      ids.add(hit.getId());
+    String scrollId;
+
+    ResponseBody<Void> resp = ElasticService.getClient().search(searchRequest, Void.class);
+    ids = new ArrayList<>(Math.toIntExact(resp.hits().total().value()));
+    scrollId = resp.scrollId();
+
+    while (resp.hits().hits().size() > 0) {
+      for (final Hit hit : resp.hits().hits()) {
+        ids.add(hit.id());
+      }
+      scrollId = resp.scrollId();
+      final String finalScrollId = scrollId;
+      ScrollRequest scrollRequest = ScrollRequest.of(sr -> sr.scrollId(finalScrollId).scroll(Time.of(t -> t.time("1m"))));
+      resp = ElasticService.getClient().scroll(scrollRequest, Void.class);
     }
 
-    while (true) {
-      String scrollId = resp.getScrollId();
-      SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
-      scrollRequest.scroll(TimeValue.timeValueSeconds(60));
-      resp = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
-      if (resp.getHits().getHits().length == 0) {
-        break;
-      }
-      for (final SearchHit hit : resp.getHits()) {
-        ids.add(hit.getId());
-      }
-    }
-
-    ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
-    clearScrollRequest.addScrollId(resp.getScrollId());
-    ClearScrollResponse response = ElasticService.getClient().clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+    String finalLastScrollId = scrollId;
+    ClearScrollRequest clearScrollRequest = ClearScrollRequest.of(csr -> csr.scrollId(finalLastScrollId));
+    ClearScrollResponse response = ElasticService.getClient().clearScroll(clearScrollRequest);
 
     return ids;
   }

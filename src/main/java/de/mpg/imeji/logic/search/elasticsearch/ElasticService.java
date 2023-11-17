@@ -1,13 +1,13 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
 
-import java.net.URI;
-
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestClient;
 
-import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
+import java.net.URI;
 
 /**
  * elasticsearch service for spot!
@@ -16,7 +16,8 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
  *
  */
 public class ElasticService {
-  private static RestHighLevelClient client;
+  private static ElasticsearchClient client;
+  private static RestClient restClient;
 
   static final String SETTINGS_DEFAULT = "elasticsearch/Settings.json";
   private static final Logger LOGGER = LogManager.getLogger(ElasticService.class);
@@ -25,6 +26,8 @@ public class ElasticService {
    * The Index where all data are indexed
    */
   public static String DATA_ALIAS = "data";
+
+
 
   /**
    * The Types in Elasticsearch
@@ -110,12 +113,20 @@ public class ElasticService {
     keyword;
   }
 
-  public static RestHighLevelClient getClient() {
+  public static ElasticsearchClient getClient() {
     return client;
   }
 
-  public static void setClient(RestHighLevelClient client) {
+  public static void setClient(ElasticsearchClient client) {
     ElasticService.client = client;
+  }
+
+  public static RestClient getRestClient() {
+    return restClient;
+  }
+
+  public static void setRestClient(RestClient restClient) {
+    ElasticService.restClient = restClient;
   }
   /*
    * static Node getNODE() { return NODE; }

@@ -1,11 +1,15 @@
 package de.mpg.imeji.logic.doi.util;
 
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.doi.models.*;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.model.Person;
+import org.apache.http.HttpStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -15,22 +19,12 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.doi.models.DOICollection;
-import de.mpg.imeji.logic.doi.models.DOICreator;
-import de.mpg.imeji.logic.doi.models.DOIIdentifier;
-import de.mpg.imeji.logic.doi.models.DOIResourceType;
-import de.mpg.imeji.logic.doi.models.DOITitle;
-import de.mpg.imeji.logic.model.CollectionImeji;
-import de.mpg.imeji.logic.model.Person;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Utility Class for DOI Service
@@ -120,7 +114,7 @@ public class DOIUtil {
       LOGGER.info("Draft DOI {} sucessfully created by DOXI.", responseEntity);
     } else {
       LOGGER.error("Error occured, when contacting DOXI. StatusCode = {} - Parameters: URL = {}, XML = \n{}", statusCode, url, xml);
-      throw new ImejiException("Error creating DOI. StatusCode=" + statusCode + " - " + HttpStatus.getStatusText(statusCode) + " - "
+      throw new ImejiException("Error creating DOI. StatusCode=" + statusCode + " - " + response.getStatusInfo().getReasonPhrase() + " - "
           + responseEntity + ". Please contact your admin!");
     }
 
@@ -159,7 +153,7 @@ public class DOIUtil {
     } else {
       LOGGER.error("Error occured, when contacting DOXI. StatusCode = {} - Parameters: DOI = {}, URL = {}, Body = \n{}", statusCode, doi,
           url, body);
-      throw new ImejiException("Error updatig DOI. StatusCode=" + statusCode + " - " + HttpStatus.getStatusText(statusCode) + " - "
+      throw new ImejiException("Error updatig DOI. StatusCode=" + statusCode + " - " + response.getStatusInfo().getReasonPhrase() + " - "
           + responseEntity + ". Please contact your admin!");
     }
 

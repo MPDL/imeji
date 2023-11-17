@@ -6,9 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.config.util.ProxyHelper;
@@ -17,6 +14,12 @@ import de.mpg.imeji.logic.storage.Storage;
 import de.mpg.imeji.logic.storage.administrator.StorageAdministrator;
 import de.mpg.imeji.logic.util.StorageUtils;
 import de.mpg.imeji.logic.util.TempFileUtil;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.checkerframework.common.reflection.qual.GetMethod;
 
 /**
  * The {@link Storage} implementation for external Storages. Can only read files (if the files are
@@ -28,7 +31,7 @@ import de.mpg.imeji.logic.util.TempFileUtil;
  */
 public class ExternalStorage implements Storage {
   private static final long serialVersionUID = -5808761436385828641L;
-  private final HttpClient client;
+  private final CloseableHttpClient client;
 
   /**
    * Default constructor
@@ -66,19 +69,19 @@ public class ExternalStorage implements Storage {
   @Override
   public void read(String url, OutputStream out, boolean close) throws ImejiException {
 
-    GetMethod get = StorageUtils.newGetMethod(client, url);
-    get.setFollowRedirects(true);
-    try {
+    HttpGet get = StorageUtils.newGetMethod(url);
+
+    //get.setFollowRedirects(true);
+    try (CloseableHttpResponse response = ProxyHelper.executeMethod(client, get)) {
       // client.executeMethod(get);
-      ProxyHelper.executeMethod(client, get);
-      if (get.getStatusCode() == 302) {
-        // Login in escidoc is not valid anymore, log in again an read again
-        get.releaseConnection();
-        get = StorageUtils.newGetMethod(client, url);
-        // client.executeMethod(get);
-        ProxyHelper.executeMethod(client, get);
-      }
-      StorageUtils.writeInOut(get.getResponseBodyAsStream(), out, close);
+      //if (response.getStatusLine().getStatusCode() == 302) {
+      // Login in escidoc is not valid anymore, log in again an read again
+      //get.releaseConnection();
+      //get = StorageUtils.newGetMethod(url);
+      // client.executeMethod(get);
+      //response = ProxyHelper.executeMethod(client, get);
+      //}
+      StorageUtils.writeInOut(response.getEntity().getContent(), out, close);
     } catch (final Exception e) {
       // throw new RuntimeException("Error reading " + url, e);
       throw new UnprocessableError("Error reading " + url + " (" + e.getMessage() + ")", e);

@@ -161,7 +161,8 @@ public class RetryQueue {
    */
   public synchronized void shutDown() {
 
-    if (this.retryQueueThread.isAlive()) {
+    LOGGER.info("Shut down retry Queue" + retryQueueThread);
+    if (this.retryQueueThread != null && this.retryQueueThread.isAlive()) {
       // terminate thread
       this.retryQueueThread.interrupt();
     }
@@ -174,6 +175,7 @@ public class RetryQueue {
         LOGGER.error("Could not save requests to file. Requests are lost.");
       }
     }
+    LOGGER.info("Shut down retry Queue successful");
   }
 
   // ------------- interface for producers (adding requests) --------------------------------

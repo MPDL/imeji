@@ -1,24 +1,10 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.lucene.queryparser.classic.QueryParserBase;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.ExistsQueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.sort.SortBuilder;
-
+import co.elastic.clients.elasticsearch._types.FieldSort;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch.core.GetResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
@@ -30,6 +16,10 @@ import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticSortFactory;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
 import de.mpg.imeji.logic.search.model.SortCriterion;
 import de.mpg.imeji.logic.security.usergroup.UserGroupService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Utility Class for ElasticSearch Contains common search options for ElasticSearch
@@ -49,14 +39,15 @@ public class ElasticSearchFactoryUtil {
    * @return
    */
   public static String readFieldAsString(String id, ElasticFields field, String dataType, String index) {
-    GetRequest getRequest = new GetRequest();
-    getRequest.index(index).type(dataType).id(id);
-    GetResponse getResponse;
+    //GetRequest getRequest = new GetRequest();
+    //getRequest.index(index).type(dataType).id(id);
+    GetResponse<ObjectNode> getResponse;
     try {
-      getResponse = ElasticService.getClient().get(getRequest, RequestOptions.DEFAULT);
-      final Map<String, Object> sourceMap = getResponse.getSource();
-      if (sourceMap != null) {
-        final Object obj = sourceMap.get(field.field());
+      getResponse = ElasticService.getClient().get(g -> g.index(index).id(id), ObjectNode.class);
+      final ObjectNode rootNode = getResponse.source();
+      //final Map<String, Object> sourceMap = getResponse.source();
+      if (rootNode != null) {
+        final Object obj = rootNode.get(field.field());
         return obj != null ? obj.toString() : "";
       }
     } catch (Exception e) {
@@ -129,11 +120,11 @@ public class ElasticSearchFactoryUtil {
    * @param sortCriteria
    * @return SearchRequestBuilder with single or multilevel sorting
    */
-  public static SearchRequestBuilder addSorting(SearchRequestBuilder searchRequestBuilder, List<SortCriterion> sortCriteria) {
+  public static SearchRequest.Builder addSorting(SearchRequest.Builder searchRequestBuilder, List<SortCriterion> sortCriteria) {
 
-    List<SortBuilder> sortBuilders = ElasticSortFactory.build(sortCriteria);
-    for (SortBuilder sortBuilder : sortBuilders) {
-      searchRequestBuilder.addSort(sortBuilder);
+    List<SortOptions> sortBuilders = ElasticSortFactory.build(sortCriteria);
+    for (SortOptions sortBuilder : sortBuilders) {
+      searchRequestBuilder.sort(sortBuilder);
     }
     return searchRequestBuilder;
   }
@@ -196,7 +187,30 @@ public class ElasticSearchFactoryUtil {
    * @param s
    * @return
    */
+  /*
   public static String escape(String s) {
     return QueryParserBase.escape(s).replace("\\*", "*").replace("\\?", "?").replace("\\\"", "\"");
+  }
+  
+   */
+
+
+  /**
+   * Returns a String where those characters that Lucene QueryParser expects to be escaped are
+   * escaped by a preceding <code>\</code>. Wildcard symbols *, ? and " should not be escaped
+   */
+
+  public static String escape(String s) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      // These characters are part of the query syntax and must be escaped
+      if (c == '\\' || c == '+' || c == '-' || c == '!' || c == '(' || c == ')' || c == ':' || c == '^' || c == '[' || c == ']' || c == '{'
+          || c == '}' || c == '~' || c == '|' || c == '&' || c == '/') {
+        sb.append('\\');
+      }
+      sb.append(c);
+    }
+    return sb.toString();
   }
 }

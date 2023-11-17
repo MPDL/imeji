@@ -1,5 +1,15 @@
 package de.mpg.imeji.logic.config.util;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.client.CloseableHttpClient;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -9,9 +19,6 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethod;
 
 public class ProxyHelper {
   private static String proxyHost = null;
@@ -28,16 +35,18 @@ public class ProxyHelper {
    * @param url url
    * @throws Exception
    */
-  private static void setProxy(final HttpClient httpClient, final String url) {
+  public static RequestConfig getRequestConfigProxy(final RequestConfig requestConfig, final String url) {
     getProxyProperties();
     if (proxyHost != null) {
-      final org.apache.commons.httpclient.HostConfiguration hc = httpClient.getHostConfiguration();
+
       if (findUrlInNonProxyHosts(url)) {
-        hc.setProxyHost(null);
+        return RequestConfig.copy(requestConfig).build();
       } else {
-        hc.setProxy(proxyHost, Integer.valueOf(proxyPort));
+        return RequestConfig.copy(requestConfig).setProxy(new HttpHost(proxyHost, Integer.valueOf(proxyPort))).build();
+        //hc.setProxy(proxyHost, Integer.valueOf(proxyPort));
       }
     }
+    return requestConfig;
   }
 
   /**
@@ -65,9 +74,9 @@ public class ProxyHelper {
    * @throws IOException
    * @throws HttpException
    */
-  public static int executeMethod(HttpClient client, HttpMethod method) throws HttpException, IOException {
-    setProxy(client, method.getURI().toString());
-    return client.executeMethod(method);
+  public static CloseableHttpResponse executeMethod(CloseableHttpClient client, HttpRequestBase method) throws IOException {
+    method.setConfig(getRequestConfigProxy(method.getConfig(), method.getURI().toString()));
+    return client.execute(method);
   }
 
   /**

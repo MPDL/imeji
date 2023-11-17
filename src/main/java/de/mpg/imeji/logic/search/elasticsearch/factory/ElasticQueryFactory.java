@@ -1,19 +1,8 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.search.join.ScoreMode;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchAllQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.join.query.JoinQueryBuilders;
-
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.json.JsonData;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -26,21 +15,20 @@ import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import de.mpg.imeji.logic.search.elasticsearch.factory.util.ElasticSearchFactoryUtil;
 import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
-import de.mpg.imeji.logic.search.model.SearchCollectionMetadata;
-import de.mpg.imeji.logic.search.model.SearchElement;
-import de.mpg.imeji.logic.search.model.SearchGroup;
-import de.mpg.imeji.logic.search.model.SearchLogicalRelation;
+import de.mpg.imeji.logic.search.model.*;
 import de.mpg.imeji.logic.search.model.SearchLogicalRelation.LOGICAL_RELATIONS;
-import de.mpg.imeji.logic.search.model.SearchMetadata;
-import de.mpg.imeji.logic.search.model.SearchOperators;
-import de.mpg.imeji.logic.search.model.SearchPair;
-import de.mpg.imeji.logic.search.model.SearchQuery;
-import de.mpg.imeji.logic.search.model.SearchTechnicalMetadata;
 import de.mpg.imeji.logic.search.util.SearchUtils;
 import de.mpg.imeji.logic.security.user.UserService;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateFormatter;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Factory to create an ElasticSearch query from the {@link SearchQuery}
@@ -82,14 +70,14 @@ public class ElasticQueryFactory {
    * @return
    * @return
    */
-  public QueryBuilder build() {
+  public Query build() {
 
-    final BoolQueryBuilder booleanQuery = QueryBuilders.boolQuery();
-    final QueryBuilder searchQuery = buildSearchQuery(query, user);
-    final QueryBuilder containerQuery = buildContainerFilter(folderUri, !emptyQuery);
-    final QueryBuilder securityQuery = new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
-    final QueryBuilder statusQuery = buildStatusQuery(query, user);
-    final QueryBuilder filterQuery = buildSearchQuery(query != null ? query.getFilterElements() : new ArrayList<>(), user);
+    final BoolQuery.Builder booleanQuery = new BoolQuery.Builder();
+    final Query searchQuery = buildSearchQuery(query, user);
+    final Query containerQuery = buildContainerFilter(folderUri, !emptyQuery);
+    final Query securityQuery = new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
+    final Query statusQuery = buildStatusQuery(query, user);
+    final Query filterQuery = buildSearchQuery(query != null ? query.getFilterElements() : new ArrayList<>(), user);
 
     if (!isMatchAll(searchQuery)) {
       booleanQuery.must(searchQuery);
@@ -104,7 +92,7 @@ public class ElasticQueryFactory {
       booleanQuery.must(filterQuery);
     }
     if ((emptyQuery && searchForCollection) || !includeSubcollections) {
-      booleanQuery.mustNot(QueryBuilders.existsQuery(ElasticFields.FOLDER.field()));
+      booleanQuery.mustNot(ExistsQuery.of(eq -> eq.field(ElasticFields.FOLDER.field()))._toQuery());
     }
     if (!searchForUsers && !isMatchAll(statusQuery)) {
       booleanQuery.must(statusQuery);
@@ -113,16 +101,16 @@ public class ElasticQueryFactory {
      * parent-child relations use the join_field !!! we need to exclude the content
      * docs
      */
-    booleanQuery.mustNot(QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "content"));
-    return booleanQuery;
+    booleanQuery.mustNot(TermQuery.of(tq -> tq.field(ElasticFields.JOIN_FIELD.field()).value("content"))._toQuery());
+    return booleanQuery.build()._toQuery();
   }
 
-  public QueryBuilder buildBaseQuery() {
+  public Query buildBaseQuery() {
     if (query == null || query.isEmpty()) {
-      final BoolQueryBuilder booleanQuery = QueryBuilders.boolQuery();
-      final QueryBuilder containerQuery = buildContainerFilter(folderUri, true);
-      final QueryBuilder securityQuery = new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
-      final QueryBuilder statusQuery = buildStatusQuery(query, user);
+      final BoolQuery.Builder booleanQuery = new BoolQuery.Builder();
+      final Query containerQuery = buildContainerFilter(folderUri, true);
+      final Query securityQuery = new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).build();
+      final Query statusQuery = buildStatusQuery(query, user);
       if (!isMatchAll(containerQuery)) {
         booleanQuery.must(containerQuery);
       }
@@ -133,7 +121,7 @@ public class ElasticQueryFactory {
         booleanQuery.must(statusQuery);
       }
 
-      return booleanQuery;
+      return booleanQuery.build()._toQuery();
     }
     return null;
   }
@@ -144,8 +132,8 @@ public class ElasticQueryFactory {
    * @param q
    * @return
    */
-  private boolean isMatchAll(QueryBuilder q) {
-    return q instanceof MatchAllQueryBuilder;
+  private boolean isMatchAll(Query q) {
+    return q.isMatchAll();
   }
 
   /**
@@ -154,9 +142,9 @@ public class ElasticQueryFactory {
    * @param query
    * @return
    */
-  private QueryBuilder buildSearchQuery(SearchQuery query, User user) {
+  private Query buildSearchQuery(SearchQuery query, User user) {
     if (query == null || query.getElements().isEmpty()) {
-      return QueryBuilders.matchAllQuery();
+      return new MatchAllQuery.Builder().build()._toQuery();
     }
     return buildSearchQuery(query.getElements(), user);
   }
@@ -168,13 +156,13 @@ public class ElasticQueryFactory {
    * @param user
    * @return
    */
-  private QueryBuilder buildStatusQuery(SearchQuery query, User user) {
+  private Query buildStatusQuery(SearchQuery query, User user) {
     if (user == null) {
       // Not Logged in: can only view release objects
       return fieldQuery(ElasticFields.STATUS, Status.RELEASED.name(), SearchOperators.EQUALS, false);
     } else if (query != null && (hasStatusQuery(query.getElements()) || hasStatusQuery(query.getFilterElements()))) {
       // Don't filter, since it is done later via the searchquery
-      return QueryBuilders.matchAllQuery();
+      return new MatchAllQuery.Builder().build()._toQuery();
     } else {
       // Default = don't view discarded objects
       return fieldQuery(ElasticFields.STATUS, Status.WITHDRAWN.name(), SearchOperators.EQUALS, true);
@@ -204,13 +192,13 @@ public class ElasticQueryFactory {
    * @param elements
    * @return
    */
-  private QueryBuilder buildSearchQuery(List<SearchElement> elements, User user) {
+  private Query buildSearchQuery(List<SearchElement> elements, User user) {
 
     if (elements.isEmpty()) {
-      return QueryBuilders.matchAllQuery();
+      return new MatchAllQuery.Builder().build()._toQuery();
     }
     boolean OR = isORSearchGroup(elements);
-    final BoolQueryBuilder q = QueryBuilders.boolQuery();
+    final BoolQuery.Builder q = new BoolQuery.Builder();
     for (final SearchElement el : elements) {
       if (el instanceof SearchPair) {
         if (OR) {
@@ -229,7 +217,7 @@ public class ElasticQueryFactory {
         }
       }
     }
-    return q;
+    return q.build()._toQuery();
   }
 
   private boolean isORSearchGroup(List<SearchElement> elements) {
@@ -247,22 +235,23 @@ public class ElasticQueryFactory {
    * @param containerUri
    * @return
    */
-  private QueryBuilder buildContainerFilter(String containerUri, boolean addChildren) {
+  private Query buildContainerFilter(String containerUri, boolean addChildren) {
     if (containerUri == null) {
-      return QueryBuilders.matchAllQuery();
+      return new MatchAllQuery.Builder().build()._toQuery();
     }
-    BoolQueryBuilder bq = QueryBuilders.boolQuery();
+    BoolQuery.Builder bq = new BoolQuery.Builder();
     bq.should(fieldQuery(ElasticFields.FOLDER, containerUri, SearchOperators.EQUALS, false));
     if (addChildren) {
       List<String> subCollections = new HierarchyService().findAllSubcollections(containerUri);
-      bq.should(QueryBuilders.termsQuery(ElasticFields.FOLDER.field(), subCollections));
+      bq.should(TermsQuery.of(tq -> tq.field(ElasticFields.FOLDER.field())
+          .terms(t -> t.value(subCollections.stream().map(coll -> FieldValue.of(coll)).collect(Collectors.toList()))))._toQuery());
       /*
        * for (String uri : new HierarchyService().findAllSubcollections(containerUri))
        * { bq.should(fieldQuery(ElasticFields.FOLDER, uri, SearchOperators.EQUALS,
        * false)); }
        */
     }
-    return bq;
+    return bq.build()._toQuery();
   }
 
   /**
@@ -271,7 +260,7 @@ public class ElasticQueryFactory {
    * @param grants
    * @return
    */
-  private QueryBuilder buildGrantQuery(User user, GrantType role) {
+  private Query buildGrantQuery(User user, GrantType role) {
     return new SecurityQueryFactory().searchForCollection(searchForCollection).user(user).role(role).build();
   }
 
@@ -282,7 +271,7 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private QueryBuilder termQuery(SearchPair pair, User user) {
+  private Query termQuery(SearchPair pair, User user) {
     if (pair instanceof SearchMetadata) {
       return metadataFilter((SearchMetadata) pair);
     } else if (pair instanceof SearchCollectionMetadata) {
@@ -401,7 +390,7 @@ public class ElasticQueryFactory {
    * @param md
    * @return
    */
-  private QueryBuilder collectionMetadataFilter(SearchCollectionMetadata md) {
+  private Query collectionMetadataFilter(SearchCollectionMetadata md) {
     return collectionMetadataQuery(fieldQuery(ElasticFields.INFO_TEXT, md.getValue(), md.getOperator(), md.isNot()), md.getLabel());
   }
 
@@ -413,7 +402,7 @@ public class ElasticQueryFactory {
    * @param md
    * @return
    */
-  private QueryBuilder metadataFilter(SearchMetadata md) {
+  private Query metadataFilter(SearchMetadata md) {
     if (md.getMetadataField() == null) {
       return metadataQuery(fieldQuery(ElasticFields.METADATA_TEXT, md.getValue(), md.getOperator(), md.isNot()), md.getIndex());
     }
@@ -454,7 +443,7 @@ public class ElasticQueryFactory {
    * @param operator
    * @return
    */
-  private QueryBuilder fieldQuery(ElasticFields field, String value, SearchOperators operator, boolean not) {
+  private Query fieldQuery(ElasticFields field, String value, SearchOperators operator, boolean not) {
     return fieldQuery(field.field(), value, operator, not);
   }
 
@@ -466,8 +455,8 @@ public class ElasticQueryFactory {
    * @param operator
    * @return
    */
-  private QueryBuilder fieldQuery(String fieldName, String value, SearchOperators operator, boolean not) {
-    QueryBuilder q = null;
+  private Query fieldQuery(String fieldName, String value, SearchOperators operator, boolean not) {
+    Query q = null;
 
     if (operator == null) {
       operator = SearchOperators.EQUALS;
@@ -501,8 +490,8 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private QueryBuilder timeQuery(String field, String dateString, SearchOperators operator, boolean not) {
-    QueryBuilder q = null;
+  private Query timeQuery(String field, String dateString, SearchOperators operator, boolean not) {
+    Query q = null;
     if (operator == null) {
       operator = SearchOperators.EQUALS;
     }
@@ -519,17 +508,17 @@ public class ElasticQueryFactory {
         String from = parseFromValue(dateString);
         String to = parseToValue(dateString);
         if (!StringHelper.isNullOrEmptyTrim(from) || !StringHelper.isNullOrEmptyTrim(to)) {
-          RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+          RangeQuery.Builder rq = new RangeQuery.Builder().field(field);
           if (!StringHelper.isNullOrEmptyTrim(from)) {
-            rq.gte(DateFormatter.getTime(from));
+            rq.gte(JsonData.of(DateFormatter.getTime(from)));
           }
           if (!StringHelper.isNullOrEmptyTrim(to)) {
-            rq.lte(DateFormatter.getTime(to));
+            rq.lte(JsonData.of(DateFormatter.getTime(to)));
           }
-          q = rq;
+          q = rq.build()._toQuery();
         } else {
-          q = QueryBuilders.rangeQuery(field).gte(Long.toString(DateFormatter.parseDate(dateString).getTime()))
-              .lte(Long.toString(DateFormatter.parseDate2(dateString).getTime()));
+          q = RangeQuery.of(rq -> rq.field(field).gte(JsonData.of(Long.toString(DateFormatter.parseDate(dateString).getTime())))
+              .lte(JsonData.of(Long.toString(DateFormatter.parseDate2(dateString).getTime()))))._toQuery();
           // q = QueryBuilders.termQuery(field, DateFormatter.getTime(dateString));
         }
         break;
@@ -546,8 +535,8 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private QueryBuilder numberQuery(String field, String number, SearchOperators operator, boolean not) {
-    QueryBuilder q = null;
+  private Query numberQuery(String field, String number, SearchOperators operator, boolean not) {
+    Query q = null;
     if (operator == null) {
       operator = SearchOperators.EQUALS;
     }
@@ -564,16 +553,16 @@ public class ElasticQueryFactory {
         String from = parseFromValue(number);
         String to = parseToValue(number);
         if (!StringHelper.isNullOrEmptyTrim(from) || !StringHelper.isNullOrEmptyTrim(to)) {
-          RangeQueryBuilder rq = QueryBuilders.rangeQuery(field);
+          RangeQuery.Builder rq = new RangeQuery.Builder().field(field);
           if (!StringHelper.isNullOrEmptyTrim(from)) {
-            rq.gte(from);
+            rq.gte(JsonData.of(from));
           }
           if (!StringHelper.isNullOrEmptyTrim(to)) {
-            rq.lte(to);
+            rq.lte(JsonData.of(to));
           }
-          q = rq;
+          q = rq.build()._toQuery();
         } else {
-          q = QueryBuilders.termQuery(field, number);
+          q = TermQuery.of(tq -> tq.field(field).value(number))._toQuery();
         }
         break;
     }
@@ -613,18 +602,31 @@ public class ElasticQueryFactory {
    * @param statement
    * @return
    */
-  private QueryBuilder metadataQuery(QueryBuilder valueQuery, String statement) {
+  private Query metadataQuery(Query valueQuery, String statement) {
+    return NestedQuery.of(nq -> nq.path(ElasticFields.METADATA.field()).query(BoolQuery
+        .of(bq -> bq.must(valueQuery).must(fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)))._toQuery()))
+        ._toQuery();
+    /*
     return QueryBuilders.nestedQuery(ElasticFields.METADATA.field(),
         QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.METADATA_INDEX, statement, SearchOperators.EQUALS, false)),
         ScoreMode.Avg);
-
+    */
   }
 
 
-  private QueryBuilder collectionMetadataQuery(QueryBuilder valueQuery, String statement) {
+  private Query collectionMetadataQuery(Query valueQuery, String statement) {
+
+    return NestedQuery
+        .of(nq -> nq.path(ElasticFields.INFO.field()).query(BoolQuery
+            .of(bq -> bq.must(valueQuery).must(fieldQuery(ElasticFields.INFO_LABEL, statement, SearchOperators.EQUALS, false)))._toQuery()))
+        ._toQuery();
+
+    /*
     return QueryBuilders.nestedQuery(ElasticFields.INFO.field(),
         QueryBuilders.boolQuery().must(valueQuery).must(fieldQuery(ElasticFields.INFO_LABEL, statement, SearchOperators.EQUALS, false)),
         ScoreMode.Avg);
+    
+     */
 
   }
 
@@ -636,11 +638,20 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private QueryBuilder technicalMetadataQuery(SearchTechnicalMetadata tmd) {
+  private Query technicalMetadataQuery(SearchTechnicalMetadata tmd) {
+
+    return NestedQuery.of(nq -> nq.path(ElasticFields.TECHNICAL.field())
+        .query(BoolQuery.of(bq -> bq.must(fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS, false))
+            .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(), tmd.isNot())))._toQuery()))
+        ._toQuery();
+
+    /*
     return contentQuery(QueryBuilders.nestedQuery(ElasticFields.TECHNICAL.field(),
         QueryBuilders.boolQuery().must(fieldQuery(ElasticFields.TECHNICAL_NAME, tmd.getLabel(), SearchOperators.EQUALS, false))
             .must(fieldQuery(ElasticFields.TECHNICAL_VALUE, tmd.getValue(), tmd.getOperator(), tmd.isNot())),
         ScoreMode.Avg));
+    
+     */
   }
 
   /**
@@ -650,13 +661,16 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private QueryBuilder matchFieldQuery(String fieldName, String value) {
+  private Query matchFieldQuery(String fieldName, String value) {
 
     if (ElasticFields.ALL.field().equalsIgnoreCase(fieldName)) {
-      return QueryBuilders.queryStringQuery(fieldName + ":" + value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
+      return QueryStringQuery.of(qs -> qs.query(fieldName + ":" + value + " " + ElasticFields.NAME.field() + ".suggest:" + value))
+          ._toQuery();
+      //return QueryBuilders.queryStringQuery(fieldName + ":" + value + " " + ElasticFields.NAME.field() + ".suggest:" + value);
     }
 
-    return QueryBuilders.queryStringQuery(fieldName + ":" + value);
+    return QueryStringQuery.of(qs -> qs.query(fieldName + ":" + value))._toQuery();
+    //return QueryBuilders.queryStringQuery(fieldName + ":" + value);
   }
 
   /**
@@ -666,9 +680,10 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private QueryBuilder greaterThanQuery(String fieldName, String value) {
+  private Query greaterThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
-      return QueryBuilders.rangeQuery(fieldName).gte(Double.parseDouble(value));
+      return RangeQuery.of(rq -> rq.field(fieldName).gte(JsonData.of(Double.parseDouble(value))))._toQuery();
+      //return QueryBuilders.rangeQuery(fieldName).gte(Double.parseDouble(value));
     }
     return matchNothing();
   }
@@ -680,22 +695,30 @@ public class ElasticQueryFactory {
    * @param value
    * @return
    */
-  private QueryBuilder lessThanQuery(String fieldName, String value) {
+  private Query lessThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
-      return QueryBuilders.rangeQuery(fieldName).lte(Double.parseDouble(value));
+      return RangeQuery.of(rq -> rq.field(fieldName).lte(JsonData.of(Double.parseDouble(value))))._toQuery();
+      //return QueryBuilders.rangeQuery(fieldName).lte(Double.parseDouble(value));
     }
     return matchNothing();
   }
 
-  private QueryBuilder geoQuery(String value) {
+  private Query geoQuery(String value) {
     final String[] values = value.split(",");
-    String distance = "1cm";
+    String distance = null;
     final double lat = Double.parseDouble(values[0]);
     final double lon = Double.parseDouble(values[1]);
     if (values.length == 3) {
       distance = (values[2].equals("0") || values[2].matches("[0]+[a-zA-Z]{1,2}$")) ? distance : values[2];
+    } else {
+      distance = "1cm";
     }
-    return QueryBuilders.geoDistanceQuery(ElasticFields.METADATA_LOCATION.field()).distance(distance).point(lat, lon);
+
+    final String dist = distance;
+    return GeoDistanceQuery.of(gd -> gd.field(ElasticFields.METADATA_LOCATION.field()).distance(dist)
+        .location(gl -> gl.latlon(latLon -> latLon.lat(lat).lon(lon))))._toQuery();
+
+    //return QueryBuilders.geoDistanceQuery(ElasticFields.METADATA_LOCATION.field()).distance(distance).point(lat, lon);
   }
 
   /**
@@ -705,8 +728,8 @@ public class ElasticQueryFactory {
    * @param not
    * @return
    */
-  private QueryBuilder negate(QueryBuilder f, boolean not) {
-    return not ? QueryBuilders.boolQuery().mustNot(f) : f;
+  private Query negate(Query f, boolean not) {
+    return not ? BoolQuery.of(bq -> bq.mustNot(f))._toQuery() : f;
   }
 
   /**
@@ -715,7 +738,7 @@ public class ElasticQueryFactory {
    * @param f
    * @return
    */
-  private QueryBuilder negate(QueryBuilder f) {
+  private Query negate(Query f) {
     return negate(f, true);
   }
 
@@ -724,8 +747,8 @@ public class ElasticQueryFactory {
    *
    * @return
    */
-  private QueryBuilder matchNothing() {
-    return QueryBuilders.boolQuery().mustNot(QueryBuilders.matchAllQuery());
+  private Query matchNothing() {
+    return BoolQuery.of(bq -> bq.mustNot(new MatchAllQuery.Builder().build()._toQuery()))._toQuery();
   }
 
   /**
@@ -735,12 +758,12 @@ public class ElasticQueryFactory {
    * @param email
    * @return
    */
-  private QueryBuilder collaboratorQuery(String email) {
+  private Query collaboratorQuery(String email) {
     try {
       User user = new UserService().retrieve(email, Imeji.adminUser);
-      QueryBuilder creatorQuery = fieldQuery(ElasticFields.CREATOR, user.getId().toString(), SearchOperators.EQUALS, false);
-      QueryBuilder roleQuery = new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).role(GrantType.READ).build();
-      return QueryBuilders.boolQuery().must(roleQuery).mustNot(creatorQuery);
+      Query creatorQuery = fieldQuery(ElasticFields.CREATOR, user.getId().toString(), SearchOperators.EQUALS, false);
+      Query roleQuery = new SecurityQueryFactory().user(user).searchForCollection(searchForCollection).role(GrantType.READ).build();
+      return BoolQuery.of(bq -> bq.must(roleQuery).mustNot(creatorQuery))._toQuery();
     } catch (Exception e) {
       LOGGER.error("Error building collaborator query", e);
       return matchNothing();
@@ -753,13 +776,13 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private QueryBuilder allQuery(SearchPair pair) {
-    final BoolQueryBuilder f =
-        QueryBuilders.boolQuery().should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.EQUALS, false));
+  private Query allQuery(SearchPair pair) {
+    final BoolQuery.Builder f =
+        new BoolQuery.Builder().should(fieldQuery(ElasticFields.ALL, pair.getValue(), SearchOperators.EQUALS, false));
     if (NumberUtils.isNumber(pair.getValue())) {
       f.should(fieldQuery(ElasticFields.METADATA_NUMBER, pair.getValue(), SearchOperators.EQUALS, false));
     }
-    return negate(f, pair.isNot());
+    return negate(f.build()._toQuery(), pair.isNot());
   }
 
   /**
@@ -768,8 +791,9 @@ public class ElasticQueryFactory {
    * @param q
    * @return
    */
-  private QueryBuilder contentQuery(QueryBuilder q) {
-    return JoinQueryBuilders.hasChildQuery("content", q, ScoreMode.None);
+  private Query contentQuery(Query q) {
+    return HasChildQuery.of(hcq -> hcq.type("content").query(q).scoreMode(ChildScoreMode.None))._toQuery();
+    //return JoinQueryBuilders.hasChildQuery("content", q, ScoreMode.None);
   }
 
   /**
@@ -778,21 +802,22 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private QueryBuilder licenseQuery(SearchPair pair) {
-    final BoolQueryBuilder licenseQuery = QueryBuilders.boolQuery();
+  private Query licenseQuery(SearchPair pair) {
+    final BoolQuery.Builder licenseQuery = new BoolQuery.Builder();
     for (final String licenseName : pair.getValue().split(" OR ")) {
       if ("*".equals(licenseName)) {
         licenseQuery.mustNot(fieldQuery(ElasticFields.LICENSE, ImejiLicenses.NO_LICENSE, SearchOperators.EQUALS, false));
-        licenseQuery.should(QueryBuilders.existsQuery(ElasticFields.LICENSE.field()));
+        licenseQuery.should(ExistsQuery.of(eq -> eq.field(ElasticFields.LICENSE.field()))._toQuery());
       } else {
         licenseQuery.should(fieldQuery(ElasticFields.LICENSE, licenseName, SearchOperators.EQUALS, false));
       }
     }
-    return licenseQuery;
+    return licenseQuery.build()._toQuery();
   }
 
-  private QueryBuilder parentCollectionQuery(QueryBuilder qb) {
-    return JoinQueryBuilders.hasParentQuery(ElasticIndices.folders.name(), qb, emptyQuery);
+  private Query parentCollectionQuery(Query qb) {
+    return HasParentQuery.of(hpq -> hpq.parentType(ElasticIndices.folders.name()).query(qb).ignoreUnmapped(emptyQuery))._toQuery();
+    //return JoinQueryBuilders.hasParentQuery(ElasticIndices.folders.name(), qb, emptyQuery);
   }
 
   /**
@@ -801,13 +826,13 @@ public class ElasticQueryFactory {
    * @param pair
    * @return
    */
-  private QueryBuilder fileTypeQuery(SearchPair pair) {
-    final BoolQueryBuilder filetypeQuery = QueryBuilders.boolQuery();
+  private Query fileTypeQuery(SearchPair pair) {
+    final BoolQuery.Builder filetypeQuery = new BoolQuery.Builder();
     for (final String ext : SearchUtils.parseFileTypesAsExtensionList(pair.getValue().replace("\"", ""))) {
 
       filetypeQuery.should(fieldQuery(ElasticFields.NAME.field() + ".suggest", "*." + ext + "", SearchOperators.EQUALS, false));
     }
-    return filetypeQuery;
+    return filetypeQuery.build()._toQuery();
 
   }
 
@@ -841,4 +866,6 @@ public class ElasticQueryFactory {
   public void setIncludeSubcollections(boolean includeSubcollections) {
     this.includeSubcollections = includeSubcollections;
   }
+
+
 }

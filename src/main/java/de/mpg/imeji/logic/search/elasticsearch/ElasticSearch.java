@@ -1,27 +1,24 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.Time;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.elasticsearch.core.*;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
+import co.elastic.clients.elasticsearch.core.search.ResponseBody;
+import co.elastic.clients.elasticsearch.core.search.TrackHits;
+import co.elastic.clients.json.JsonpUtils;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.LogManager;
-import org.elasticsearch.action.search.ClearScrollRequest;
-import org.elasticsearch.action.search.ClearScrollResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchScrollRequest;
+
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregator;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;
@@ -116,47 +113,48 @@ public class ElasticSearch implements Search {
     // construct request
     final ElasticQueryFactory factory = new ElasticQueryFactory(query, this.indices).folderUri(folderUri).user(user);
     factory.setIncludeSubcollections(includeSubcollections);
-    final QueryBuilder q = factory.build();
-    final QueryBuilder f = factory.buildBaseQuery();
+    final Query q = factory.build();
+    final Query f = factory.buildBaseQuery();
     /*
      * SearchRequestBuilder request =
      * ElasticService.getClient().prepareSearch(ElasticService.DATA_ALIAS).
      * setNoFields() .setTypes(getTypes()).addSort("_type", SortOrder.ASC); request
      * = ElasticSearchFactoryUtil.addSorting(request, sortCriteria);
      */
-    SearchRequest searchRequest = new SearchRequest();
-    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-    searchSourceBuilder.trackTotalHits(true);
+    SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
+    //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    searchRequestBuilder.trackTotalHits(th -> th.enabled(true));
+    //searchSourceBuilder.trackTotalHits(true);
     if (f != null) {
-      searchSourceBuilder.query(f).postFilter(q);
+      searchRequestBuilder.query(f).postFilter(q);
     } else {
-      searchSourceBuilder.query(q);
+      searchRequestBuilder.query(q);
     }
     if (addFacets) {
-      searchSourceBuilder = addAggregations(searchSourceBuilder, folderUri);
+      searchRequestBuilder = addAggregations(searchRequestBuilder, folderUri);
     }
 
     // single page or scroll search
     if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
-      searchSourceBuilder.from(from).size(size);
-      for (SortBuilder sb : ElasticSortFactory.build(sortCriteria)) {
+      searchRequestBuilder.from(from).size(size);
+      for (SortOptions sb : ElasticSortFactory.build(sortCriteria)) {
         if (sb != null) {
-          searchSourceBuilder.sort(sb);
+          searchRequestBuilder.sort(sb);
         }
       }
-      searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
+      searchRequestBuilder.index(Arrays.asList(this.indicesNames));
       //LOGGER.info(searchSourceBuilder.toString());
-      return searchSinglePage(searchRequest, query);
+      return searchSinglePage(searchRequestBuilder.build(), query);
     } else {
-      searchSourceBuilder.size(SEARCH_SCROLL_INTERVALL);
-      for (SortBuilder sb : ElasticSortFactory.build(sortCriteria)) {
+      searchRequestBuilder.size(SEARCH_SCROLL_INTERVALL);
+      for (SortOptions sb : ElasticSortFactory.build(sortCriteria)) {
         if (sb != null) {
-          searchSourceBuilder.sort(sb);
+          searchRequestBuilder.sort(sb);
         }
       }
-      searchRequest.indices(this.indicesNames).source(searchSourceBuilder).scroll(TimeValue.timeValueSeconds(30));
+      searchRequestBuilder.index(Arrays.asList(this.indicesNames)).scroll(Time.of(t -> t.time("30s")));
 
-      return searchWithScroll(searchRequest, query, from, size);
+      return searchWithScroll(searchRequestBuilder.build(), query, from, size);
     }
   }
 
@@ -168,8 +166,8 @@ public class ElasticSearch implements Search {
    * @return
    */
 
-  private SearchSourceBuilder addAggregations(SearchSourceBuilder request, String folderUri) {
-    final List<AbstractAggregationBuilder> aggregations = ElasticAggregationFactory.build(this.types);
+  private SearchRequest.Builder addAggregations(SearchRequest.Builder request, String folderUri) {
+    final Map<String, Aggregation> aggregations = ElasticAggregationFactory.build(this.types);
     if (folderUri != null) {
       /*
       aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS,
@@ -177,17 +175,49 @@ public class ElasticSearch implements Search {
             QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS).must(QueryBuilders.termQuery("folder", folderUri))
                 .must(QueryBuilders.typeQuery(ElasticService.ElasticIndices.items.name())))));
                 */
+
+      aggregations.put(Facet.COLLECTION_ITEMS, Aggregation.of(agg -> agg.filters(
+          filterAgg -> filterAgg.keyed(true).filters(filter -> filter.keyed(Collections.singletonMap(Facet.COLLECTION_ITEMS, BoolQuery
+              .of(bq -> bq.queryName(Facet.COLLECTION_ITEMS).must(q -> q.term(tq -> tq.field("folder").value(folderUri))))._toQuery()))))));
+
+
+      /*
       aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ITEMS, new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ITEMS,
           QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ITEMS).must(QueryBuilders.termQuery("folder", folderUri)))));
+      */
 
+      aggregations
+          .put(Facet.COLLECTION_ROOT_ITEMS,
+              Aggregation
+                  .of(agg -> agg
+                      .filters(
+                          filterAgg -> filterAgg
+                              .keyed(
+                                  true)
+                              .filters(filter -> filter.keyed(Collections.singletonMap(Facet.COLLECTION_ROOT_ITEMS,
+                                  BoolQuery
+                                      .of(bq -> bq.queryName(Facet.COLLECTION_ROOT_ITEMS)
+                                          .must(q -> q.term(tq -> tq.field("folder").value(folderUri)))
+                                          .must(q -> q.term(tq -> tq.field(ElasticFields.JOIN_FIELD.field()).value("item"))))
+                                      ._toQuery()))))));
+      /*
       aggregations.add(AggregationBuilders.filters(Facet.COLLECTION_ROOT_ITEMS,
           new FiltersAggregator.KeyedFilter(Facet.COLLECTION_ROOT_ITEMS,
               QueryBuilders.boolQuery().queryName(Facet.COLLECTION_ROOT_ITEMS).must(QueryBuilders.termQuery("folder", folderUri))
                   .queryName(Facet.COLLECTION_ROOT_ITEMS).must(QueryBuilders.termQuery(ElasticFields.JOIN_FIELD.field(), "item")))));
+      
+      
+       */
     }
-    for (AbstractAggregationBuilder agg : aggregations) {
-      request.aggregation(agg);
+
+
+
+    request.aggregations(aggregations);
+    /*
+    for (Map.Entry<String, Aggregation> agg : aggregations.entrySet()) {
+     request.aggregation(agg);
     }
+    */
     return request;
   }
 
@@ -206,13 +236,13 @@ public class ElasticSearch implements Search {
   private SearchResult searchSinglePage(SearchRequest request, SearchQuery query) {
 
     // send request to ElasticSearch
-    LOGGER.debug(request.source().toString());
-    SearchResponse resp;
+    LOGGER.debug(request.toString());
+    SearchResponse<ObjectNode> resp;
     try {
-      resp = ElasticService.getClient().search(request, RequestOptions.DEFAULT);
+      resp = ElasticService.getClient().search(request, ObjectNode.class);
       SearchResult elasticSearchResult = getSearchResultFromElasticSearchResponse(resp, query);
       return elasticSearchResult;
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOGGER.error("error getting search response", e);
     }
     return null;
@@ -235,12 +265,12 @@ public class ElasticSearch implements Search {
     // add scroll search
     // request = request.setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC));
 
-    LOGGER.debug(request.source().toString());
-    SearchResponse searchResponse;
+    LOGGER.debug(request.toString());
+    SearchResponse<ObjectNode> searchResponse;
     try {
-      searchResponse = ElasticService.getClient().search(request, RequestOptions.DEFAULT);
-      if (searchResponse.getShardFailures().length > 0) {
-        LOGGER.error("Error during search: " + searchResponse.getShardFailures().toString());
+      searchResponse = ElasticService.getClient().search(request, ObjectNode.class);
+      if (searchResponse.shards().failures().size() > 0) {
+        LOGGER.error("Error during search: " + searchResponse.shards().failures().toString());
       }
       SearchResult result = getSearchResultFromElasticSearchResponse(searchResponse, query);
       List<String> retrievedIDs = new ArrayList<String>();
@@ -255,10 +285,10 @@ public class ElasticSearch implements Search {
       result.setResults(retrievedIDs);
 
       //Clear scroll
-      if (searchResponse.getScrollId() != null) {
-        ClearScrollRequest csr = new ClearScrollRequest();
-        csr.addScrollId(searchResponse.getScrollId());
-        ClearScrollResponse clearScrollResp = ElasticService.getClient().clearScroll(csr, RequestOptions.DEFAULT);
+      if (searchResponse.scrollId() != null) {
+        ClearScrollRequest csr = ClearScrollRequest.of(cs -> cs.scrollId(searchResponse.scrollId()));
+        //csr.addScrollId(searchResponse.getScrollId());
+        ClearScrollResponse clearScrollResp = ElasticService.getClient().clearScroll(csr);
       }
 
 
@@ -278,7 +308,7 @@ public class ElasticSearch implements Search {
    * @param amountOfResults
    * @return
    */
-  private List<String> scrollWithSizeUpperBound(SearchResponse searchResponse, int from, int amountOfResults) {
+  private List<String> scrollWithSizeUpperBound(ResponseBody<ObjectNode> searchResponse, int from, int amountOfResults) {
 
     // get results of first query
     List<String> hitIds = new ArrayList<>(getIDsFromScrollSearchResponse(searchResponse));
@@ -286,15 +316,16 @@ public class ElasticSearch implements Search {
     // search until results with index range [0, from+ amountOfResults] are
     // retrieved
     while (hitIds.size() < from + amountOfResults) {
-      String scrollId = searchResponse.getScrollId();
-      SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
-      scrollRequest.scroll(TimeValue.timeValueSeconds(30));
+      String scrollId = searchResponse.scrollId();
+      ScrollRequest scrollRequest = ScrollRequest.of(sr -> sr.scrollId(scrollId).scroll(Time.of(t -> t.time("30s"))));
+      //SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+      //scrollRequest.scroll(TimeValue.timeValueSeconds(30));
       try {
-        searchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
+        searchResponse = ElasticService.getClient().scroll(scrollRequest, ObjectNode.class);
       } catch (IOException e) {
         LOGGER.error("Error during search: ", e);
       }
-      if (searchResponse.getHits().getHits().length == 0) {
+      if (searchResponse.hits().hits().size() == 0) {
         break;
       }
       hitIds.addAll(getIDsFromScrollSearchResponse(searchResponse));
@@ -321,7 +352,7 @@ public class ElasticSearch implements Search {
    *        query)
    * @return list with UIDs of retrieved objects
    */
-  private List<String> scrollAllResults(SearchResponse searchResponse, int from) {
+  private List<String> scrollAllResults(ResponseBody<ObjectNode> searchResponse, int from) {
 
     List<String> retrievedIDs = new ArrayList<>(getIDsFromScrollSearchResponse(searchResponse));
     do {
@@ -330,17 +361,18 @@ public class ElasticSearch implements Search {
        * ElasticService.getClient().prepareSearchScroll(searchResponse.getScrollId())
        * .setScroll(new TimeValue(SCROLL_TIMEOUT_MSEC)).execute().actionGet();
        */
-      String scrollId = searchResponse.getScrollId();
-      SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
-      scrollRequest.scroll(TimeValue.timeValueSeconds(30));
+      String scrollId = searchResponse.scrollId();
+      ScrollRequest scrollRequest = ScrollRequest.of(sr -> sr.scrollId(scrollId).scroll(Time.of(t -> t.time("30s"))));
+      //SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+      //scrollRequest.scroll(TimeValue.timeValueSeconds(30));
       try {
-        searchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
+        searchResponse = ElasticService.getClient().scroll(scrollRequest, ObjectNode.class);
       } catch (IOException e) {
         LOGGER.error("Error during search: ", e);
       }
       List<String> retrievedIDsOfScroll = getIDsFromScrollSearchResponse(searchResponse);
       retrievedIDs.addAll(retrievedIDsOfScroll);
-    } while (searchResponse.getHits().getHits().length > 0);
+    } while (searchResponse.hits().hits().size() > 0);
 
     // cut indices at beginning [0,from]
     if (retrievedIDs.size() > from) {
@@ -350,31 +382,32 @@ public class ElasticSearch implements Search {
     }
   }
 
-  private ArrayList<String> getIDsFromScrollSearchResponse(SearchResponse searchResponse) {
+  private ArrayList<String> getIDsFromScrollSearchResponse(ResponseBody<ObjectNode> searchResponse) {
 
     final ArrayList<String> ids = new ArrayList<>(SEARCH_SCROLL_INTERVALL);
-    for (final SearchHit hit : searchResponse.getHits()) {
-      ids.add(hit.getId());
+    for (final Hit<ObjectNode> hit : searchResponse.hits().hits()) {
+      ids.add(hit.id());
     }
     return ids;
   }
 
   @Override
   public SearchResult searchString(String query, SortCriterion sort, User user, int from, int size) {
-    final QueryBuilder q = QueryBuilders.queryStringQuery(query);
-    SearchRequest searchRequest = new SearchRequest();
-    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-    searchSourceBuilder.trackTotalHits(true);
+    final Query q = QueryStringQuery.of(qs -> qs.query(query))._toQuery();
+    SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
+    searchRequestBuilder.trackTotalHits(th -> th.enabled(true));
+    //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    //searchSourceBuilder.trackTotalHits(true);
 
     // single page or scroll search
     if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
-      searchSourceBuilder.query(q).size(size).from(from).sort(ElasticSortFactory.build(sort));
-      searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
-      return searchSinglePage(searchRequest, null);
+      searchRequestBuilder.query(q).size(size).from(from).sort(ElasticSortFactory.build(sort));
+      searchRequestBuilder.index(Arrays.asList(this.indicesNames));
+      return searchSinglePage(searchRequestBuilder.build(), null);
     } else {
-      searchSourceBuilder.query(q).size(SEARCH_SCROLL_INTERVALL).from(from).sort(ElasticSortFactory.build(sort));
-      searchRequest.indices(this.indicesNames).source(searchSourceBuilder);
-      return searchWithScroll(searchRequest, null, from, size);
+      searchRequestBuilder.query(q).size(SEARCH_SCROLL_INTERVALL).from(from).sort(ElasticSortFactory.build(sort));
+      searchRequestBuilder.index(Arrays.asList(this.indicesNames));
+      return searchWithScroll(searchRequestBuilder.build(), null, from, size);
     }
 
     /*
@@ -402,54 +435,59 @@ public class ElasticSearch implements Search {
       int size) {
 
     List<String> fieldValues = new ArrayList<>();
-    final QueryBuilder q = QueryBuilders.queryStringQuery(query);
-    SearchRequest searchRequest = new SearchRequest();
-    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-    searchSourceBuilder.trackTotalHits(true);
+    final Query q = QueryStringQuery.of(qs -> qs.query(query))._toQuery();
+    SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
+    searchRequestBuilder.trackTotalHits(th -> th.enabled(true));
+    //SearchRequest searchRequest = new SearchRequest();
+    //SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+    //searchSourceBuilder.trackTotalHits(true);
 
     // single page search
     if (size != GET_ALL_RESULTS && size < SEARCH_INTERVALL_MAX_SIZE && from + size < SEARCH_TO_INDEX_LIMIT) {
-      searchSourceBuilder.docValueField(field).query(q).size(size).from(from).sort(ElasticSortFactory.build(sort));
-      searchRequest.indices(indexName).source(searchSourceBuilder);
-      SearchResponse singlePageSearchResponse;
+      searchRequestBuilder.docvalueFields(FieldAndFormat.of(fv -> fv.field(field))).query(q).size(size).from(from)
+          .sort(ElasticSortFactory.build(sort));
+      searchRequestBuilder.index(Arrays.asList(indexName));
+      SearchResponse<ObjectNode> singlePageSearchResponse;
       try {
-        singlePageSearchResponse = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
-        fieldValues = getFieldValuesOfSearchResponse(singlePageSearchResponse.getHits(), field);
+        singlePageSearchResponse = ElasticService.getClient().search(searchRequestBuilder.build(), ObjectNode.class);
+        fieldValues = getFieldValuesOfSearchResponse(singlePageSearchResponse.hits(), field);
       } catch (IOException e) {
         LOGGER.error("Error while searching", e);
       }
     }
     // scroll search
     else {
-      searchSourceBuilder.docValueField(field).query(q).size(SEARCH_INTERVALL_MAX_SIZE).from(from).sort(ElasticSortFactory.build(sort));
-      searchRequest.indices(indexName).scroll(TimeValue.timeValueSeconds(30)).source(searchSourceBuilder);
-      SearchResponse scrollSearchResponse = null;
+      searchRequestBuilder.docvalueFields(FieldAndFormat.of(fv -> fv.field(field))).query(q).size(SEARCH_INTERVALL_MAX_SIZE).from(from)
+          .sort(ElasticSortFactory.build(sort));
+      searchRequestBuilder.index(Arrays.asList(indexName)).scroll(t -> t.time("30s"));
+      ResponseBody<ObjectNode> scrollSearchResponse = null;
       try {
-        scrollSearchResponse = ElasticService.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        scrollSearchResponse = ElasticService.getClient().search(searchRequestBuilder.build(), ObjectNode.class);
       } catch (IOException e1) {
         LOGGER.error("Error while searching", e1);
       }
       // scroll until no more hits are returned. Zero hits marks the end of the scroll
       // and the while loop
       do {
-        List<String> fieldValuesOfScrollSearch = getFieldValuesOfSearchResponse(scrollSearchResponse.getHits(), field);
+        List<String> fieldValuesOfScrollSearch = getFieldValuesOfSearchResponse(scrollSearchResponse.hits(), field);
         fieldValues.addAll(fieldValuesOfScrollSearch);
-        String scrollId = scrollSearchResponse.getScrollId();
-        SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
-        scrollRequest.scroll(TimeValue.timeValueSeconds(30));
+        String scrollId = scrollSearchResponse.scrollId();
+        ScrollRequest scrollRequest = ScrollRequest.of(sr -> sr.scrollId(scrollId).scroll(t -> t.time("30s")));
+        //scrollRequest.scroll(TimeValue.timeValueSeconds(30));
         try {
-          scrollSearchResponse = ElasticService.getClient().scroll(scrollRequest, RequestOptions.DEFAULT);
+          scrollSearchResponse = ElasticService.getClient().scroll(scrollRequest, ObjectNode.class);
         } catch (IOException e) {
           LOGGER.error("Error while searching", e);
         }
-      } while (scrollSearchResponse.getHits().getHits().length != 0);
+      } while (scrollSearchResponse.hits().hits().size() != 0);
 
       //Clear scroll
-      if (scrollSearchResponse.getScrollId() != null) {
+      if (scrollSearchResponse.scrollId() != null) {
+        String scrollId = scrollSearchResponse.scrollId();
         try {
-          ClearScrollRequest csr = new ClearScrollRequest();
-          csr.addScrollId(scrollSearchResponse.getScrollId());
-          ClearScrollResponse clearScrollResp = ElasticService.getClient().clearScroll(csr, RequestOptions.DEFAULT);
+          ClearScrollRequest csr = ClearScrollRequest.of(cs -> cs.scrollId(scrollId));
+          //csr.addScrollId(scrollSearchResponse.getScrollId());
+          ClearScrollResponse clearScrollResp = ElasticService.getClient().clearScroll(csr);
         } catch (IOException e) {
           LOGGER.error("Error while clearing scroll request", e);
         }
@@ -469,14 +507,14 @@ public class ElasticSearch implements Search {
     return fieldValues;
   }
 
-  private static List<String> getFieldValuesOfSearchResponse(SearchHits searchHits, String field) {
+  private static List<String> getFieldValuesOfSearchResponse(HitsMetadata<ObjectNode> searchHits, String field) {
 
     List<String> fieldValues = new ArrayList<>();
-    for (final SearchHit hit : searchHits) {
+    for (final Hit<ObjectNode> hit : searchHits.hits()) {
       if (field.equals(ElasticFields.ID.field())) {
-        fieldValues.add(hit.getId());
+        fieldValues.add(hit.id());
       } else {
-        fieldValues.add(hit.field(field).getValue());
+        fieldValues.add(hit.fields().get(field).toString());
       }
     }
     return fieldValues;
@@ -500,12 +538,12 @@ public class ElasticSearch implements Search {
    * @param searchResponse
    * @return SearchResult
    */
-  private SearchResult getSearchResultFromElasticSearchResponse(SearchResponse searchResponse, SearchQuery query) {
+  private SearchResult getSearchResultFromElasticSearchResponse(ResponseBody<ObjectNode> searchResponse, SearchQuery query) {
 
-    final int totalNumberOfHitsForSearchQuery = Math.toIntExact(searchResponse.getHits().getTotalHits().value);
+    final int totalNumberOfHitsForSearchQuery = Math.toIntExact(searchResponse.hits().total().value());
     final List<String> ids = new ArrayList<String>(totalNumberOfHitsForSearchQuery);
-    for (final SearchHit hit : searchResponse.getHits()) {
-      ids.add(hit.getId());
+    for (final Hit hit : searchResponse.hits().hits()) {
+      ids.add(hit.id());
     }
 
     List<FacetResult> facets = AggregationsParser.parse(searchResponse, this.types);
@@ -515,27 +553,27 @@ public class ElasticSearch implements Search {
     return searchResult;
   }
 
-  private long getTotalNumberOfRecords(SearchResponse resp, List<FacetResult> facets) {
+  private long getTotalNumberOfRecords(ResponseBody resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals("all")).findAny().map(f -> f.getValues().get(0).getCount())
-        .orElse(resp.getHits().getTotalHits().value);
+        .orElse(resp.hits().total().value());
   }
 
-  private long getNumberOfItems(SearchResponse resp, List<FacetResult> facets) {
+  private long getNumberOfItems(ResponseBody resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.ITEMS)).findAny().map(f -> f.getValues().get(0).getCount())
-        .orElse(resp.getHits().getTotalHits().value);
+        .orElse(resp.hits().total().value());
   }
 
-  private long getNumberOfItemsOfCollection(SearchResponse resp, List<FacetResult> facets) {
+  private long getNumberOfItemsOfCollection(ResponseBody resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.COLLECTION_ITEMS)).findAny().map(f -> f.getValues().get(0).getCount())
-        .orElse(resp.getHits().getTotalHits().value);
+        .orElse(resp.hits().total().value());
   }
 
-  private long getNumberOfRootItemsOfCollection(SearchResponse resp, List<FacetResult> facets) {
+  private long getNumberOfRootItemsOfCollection(ResponseBody resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.COLLECTION_ROOT_ITEMS)).findAny().map(f -> f.getValues().get(0).getCount())
         .orElse((long) 0);
   }
 
-  private long getNumberOfSubcollections(SearchResponse resp, List<FacetResult> facets) {
+  private long getNumberOfSubcollections(ResponseBody resp, List<FacetResult> facets) {
     return facets.stream().filter(f -> f.getName().equals(Facet.SUBCOLLECTIONS)).findAny().map(f -> f.getValues().get(0).getCount())
         .orElse((long) 0);
   }

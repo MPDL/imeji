@@ -1,21 +1,13 @@
 package de.mpg.imeji.logic.db.indexretry.model;
 
+import co.elastic.clients.elasticsearch.core.bulk.OperationType;
+import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Calendar;
-
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessType;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.elasticsearch.action.DocWriteResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.update.UpdateResponse;
-
-import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 
 /**
  * Base class of retry requests. Stores basic information about objects that could not be written to
@@ -99,12 +91,12 @@ public abstract class RetryBaseRequest implements Serializable {
    * @param elasticSearchResponse
    * @return
    */
-  public static RetryBaseRequest getRetryBaseRequest(Object object, DocWriteResponse elasticSearchResponse) {
+  public static RetryBaseRequest getRetryBaseRequest(Object object, OperationType elasticSearchResponse) {
 
-    if (elasticSearchResponse instanceof IndexResponse || elasticSearchResponse instanceof UpdateResponse) {
+    if (elasticSearchResponse.equals(OperationType.Index) || elasticSearchResponse.equals(OperationType.Update)) {
       RetryBaseRequest retryIndexRequest = RetryIndexRequest.getRetryIndexRequest(object);
       return retryIndexRequest;
-    } else if (elasticSearchResponse instanceof DeleteResponse) {
+    } else if (elasticSearchResponse.equals(OperationType.Delete)) {
       RetryBaseRequest retryDeleteRequest = RetryDeleteFromIndexRequest.getRetryDeleteFromIndexRequest(object);
       return retryDeleteRequest;
     }

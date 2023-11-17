@@ -22,13 +22,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.model.ImejiLicenses;
 import de.mpg.imeji.logic.util.StringHelper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONValue;
 
 public class ImejiConfiguration {
 
@@ -196,7 +196,6 @@ public class ImejiConfiguration {
   /**
    * Load the imeji configuration from a {@link File}
    *
-   * @param f
    * @throws IOException
    * @throws ImejiException
    */
@@ -496,7 +495,7 @@ public class ImejiConfiguration {
     dataViewerUrl = str;
   }
 
-  public String fetchDataViewerFormats() throws JSONException {
+  public String fetchDataViewerFormats() {
     String connURL;
     if (dataViewerUrl.endsWith("/")) {
       connURL = dataViewerUrl + "api/explain/formats";
@@ -514,9 +513,10 @@ public class ImejiConfiguration {
         final HttpEntity entity = resp.getEntity();
         if (entity != null) {
           final String retSrc = EntityUtils.toString(entity);
-          final JSONArray array = new JSONArray(retSrc);
+          final Object obj = JSONValue.parse(retSrc);
+          final JSONArray array = (JSONArray) obj;
           int i = 0;
-          while (i < array.length()) {
+          while (i < array.size()) {
             str += array.get(i) + ", ";
             i++;
           }

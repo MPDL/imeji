@@ -9,10 +9,12 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.Application;
 
+import de.mpg.imeji.logic.security.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.AfterClass;
@@ -58,8 +60,11 @@ public class ImejiTestBase extends JerseyTest {
 
   @Override
   protected Application configure() {
+    enable(TestProperties.LOG_TRAFFIC);
+    enable(TestProperties.DUMP_ENTITY);
+
     if (app == null) {
-      app = new ImejiRestService();
+      app = new ImejiRestService(null);
     }
     return app;
   }
@@ -107,6 +112,8 @@ public class ImejiTestBase extends JerseyTest {
 
       collectionTO = s.create(collectionTO, JenaUtil.testUser);
       collectionId = collectionTO.getId();
+      //Update user
+      JenaUtil.testUser = new UserService().retrieve(JenaUtil.testUser.getId(), JenaUtil.testUser);
     } catch (Exception e) {
       LOGGER.error("Cannot init Collection", e);
     }
@@ -148,9 +155,13 @@ public class ImejiTestBase extends JerseyTest {
     try {
       itemTO = s.create(to, JenaUtil.testUser);
       itemId = itemTO.getId();
+
+      //Update user
+      JenaUtil.testUser = new UserService().retrieve(JenaUtil.testUser.getId(), JenaUtil.testUser);
     } catch (Exception e) {
       LOGGER.error("Cannot init Item", e);
     }
+
   }
 
   public static void addDummyLicenseToItem(DefaultItemTO item) {

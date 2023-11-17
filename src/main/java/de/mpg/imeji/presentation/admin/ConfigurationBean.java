@@ -1,19 +1,5 @@
 package de.mpg.imeji.presentation.admin;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.model.SelectItem;
-
-import org.codehaus.jettison.json.JSONException;
-
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.ImejiConfiguration.HtmlSnippet;
 import de.mpg.imeji.logic.config.ImejiConfiguration.ProtectedPassword;
@@ -24,6 +10,17 @@ import de.mpg.imeji.logic.storage.util.ImageMagickUtils;
 import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * JavaBean managing the imeji configuration which is made directly by the administrator from the
@@ -232,7 +229,7 @@ public class ConfigurationBean extends SuperBean {
     Imeji.CONFIG.setDataViewerUrl(str);
   }
 
-  public String fetchDataViewerFormats() throws JSONException {
+  public String fetchDataViewerFormats() {
     Imeji.CONFIG.fetchDataViewerFormats();
     return "";
   }

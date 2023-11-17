@@ -1,14 +1,13 @@
 package de.mpg.imeji.logic.util;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
+import de.mpg.imeji.exceptions.ImejiException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
-import de.mpg.imeji.exceptions.ImejiException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Static functions to manipulate {@link String}

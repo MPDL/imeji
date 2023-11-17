@@ -1,11 +1,11 @@
 package de.mpg.imeji.logic.search.elasticsearch;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.json.jsonb.JsonbJsonpMapper;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
+import de.mpg.imeji.logic.config.util.PropertyReader;
+import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -17,11 +17,12 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
 
-import de.mpg.imeji.logic.config.util.PropertyReader;
-import de.mpg.imeji.logic.search.elasticsearch.ElasticService.ElasticIndices;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Start/Stop elasticsearch
@@ -40,16 +41,19 @@ public class ElasticInitializer {
   public static void start() throws IOException, URISyntaxException {
     String url = PropertyReader.getProperty("elastic.url");
     LOGGER.info("Starting elasticsearch REST client for url " + url);
-    RestHighLevelClient rhlc = null;
-    RestClientBuilder local = RestClient.builder(HttpHost.create(url));
-    rhlc = new RestHighLevelClient(local);
-    start(rhlc);
+
+    RestClient restClient = RestClient.builder(HttpHost.create(url)).build();
+
+    start(restClient);
   }
 
 
-  public static void start(RestHighLevelClient client) throws IOException, URISyntaxException {
+  public static void start(RestClient restClient) throws IOException, URISyntaxException {
 
-    ElasticService.setClient(client);
+    ElasticService.setRestClient(restClient);
+    ElasticsearchClient elClient = new ElasticsearchClient(new RestClientTransport(restClient, new JacksonJsonpMapper()));
+    ElasticService.setClient(elClient);
+
     LOGGER.info("Add elasticsearch mappings...");
     for (final ElasticIndices index : ElasticIndices.values()) {
       initializeIndex(index);
@@ -62,8 +66,9 @@ public class ElasticInitializer {
   public static void shutdown() {
     LOGGER.info("SHUTTING DOWN ELASTICSEARCH...");
     if (ElasticService.getClient() != null) {
+
       try {
-        ElasticService.getClient().close();
+        ElasticService.getRestClient().close();
       } catch (IOException e) {
         LOGGER.error("Error shutting down elasticsearch", e);
       }
@@ -85,7 +90,7 @@ public class ElasticInitializer {
     Request req = new Request("HEAD", "/" + index.name());
     Response resp;
     try {
-      resp = ElasticService.getClient().getLowLevelClient().performRequest(req);
+      resp = ElasticService.getRestClient().performRequest(req);
       if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info("Using existing index: " + index.name());
         return index.name();
@@ -108,7 +113,7 @@ public class ElasticInitializer {
       final String indexName = createIndex(index.name());
       LOGGER.info("Adding Alias to index " + indexName);
       Request req = new Request("PUT", "/" + indexName + "/_alias/" + index.name());
-      Response resp = ElasticService.getClient().getLowLevelClient().performRequest(req);
+      Response resp = ElasticService.getRestClient().performRequest(req);
       if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
         return indexName;
       }
@@ -175,7 +180,7 @@ public class ElasticInitializer {
       HttpEntity entity = new InputStreamEntity(Files.newInputStream(settingsJson), ContentType.APPLICATION_JSON);
       Request req = new Request("PUT", "/" + indexName);
       req.setEntity(entity);
-      Response resp = ElasticService.getClient().getLowLevelClient().performRequest(req);
+      Response resp = ElasticService.getRestClient().performRequest(req);
       if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info("successfully created " + indexName + " " + EntityUtils.toString(resp.getEntity()));
       }

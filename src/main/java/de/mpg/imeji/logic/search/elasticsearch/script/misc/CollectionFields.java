@@ -1,23 +1,18 @@
 package de.mpg.imeji.logic.search.elasticsearch.script.misc;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import de.mpg.imeji.logic.model.CollectionImeji;
+import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
+import de.mpg.imeji.logic.util.ObjectHelper;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.elasticsearch.common.document.DocumentField;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.nodes.Node;
-
-import de.mpg.imeji.logic.model.CollectionImeji;
-import de.mpg.imeji.logic.search.elasticsearch.model.ElasticFields;
-import de.mpg.imeji.logic.util.ObjectHelper;
 
 /**
  * Class to store collection informations with items in ElasticSearch
@@ -39,6 +34,7 @@ public class CollectionFields {
     this.titleWithId = this.titleWithIdOfCollection(c.getTitle(), ObjectHelper.getId(URI.create(c.getId().toString())));
   }
 
+  /*
   public CollectionFields(DocumentField authorsField, DocumentField organizationsField, DocumentField id, DocumentField title) {
     this.authors =
         authorsField != null ? authorsField.getValues().stream().map(Object::toString).collect(Collectors.toList()) : new ArrayList<>();
@@ -47,10 +43,11 @@ public class CollectionFields {
             : new ArrayList<>();
     this.titleWithId = this.titleWithIdOfCollection((String) title.getValue(), ObjectHelper.getId(URI.create(id.getValue().toString())));
   }
+   */
 
-  public CollectionFields(byte[] sourceAsBytes) throws IOException {
-    ObjectMapper mapper = new ObjectMapper();
-    JsonNode sourceNode = mapper.readTree(sourceAsBytes);
+  public CollectionFields(JsonNode sourceNode) throws IOException {
+    //ObjectMapper mapper = new ObjectMapper();
+    //JsonNode sourceNode = mapper.readTree(sourceAsBytes);
     ArrayList<String> authorNames = new ArrayList<>();
     ArrayList<String> authorOrganizations = new ArrayList<>();
     JsonNode authorNode = sourceNode.get("author");
@@ -113,11 +110,27 @@ public class CollectionFields {
     return id;
   }
 
-  public XContentBuilder toXContentBuilder() throws IOException {
+
+  public ObjectNode toJsonNode() throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode rootNode = mapper.createObjectNode();
+    rootNode.putArray(ElasticFields.AUTHORS_OF_COLLECTION.field())
+        .addAll(authors.stream().map(auth -> new TextNode(auth)).collect(Collectors.toList()));
+    rootNode.putArray(ElasticFields.ORGANIZATION_OF_COLLECTION.field())
+        .addAll(organizations.stream().map(auth -> new TextNode(auth)).collect(Collectors.toList()));
+    rootNode.put(ElasticFields.TITLE_WITH_ID_OF_COLLECTION.field(), titleWithId);
+    return rootNode;
+
+
+
+    /*
     return XContentFactory.jsonBuilder().startObject().field(ElasticFields.AUTHORS_OF_COLLECTION.field(), authors)
         .field(ElasticFields.ORGANIZATION_OF_COLLECTION.field(), organizations)
         .field(ElasticFields.TITLE_WITH_ID_OF_COLLECTION.field(), titleWithId).endObject();
+        */
+
   }
+
 
   public List<String> getAuthors() {
     return authors;

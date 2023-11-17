@@ -12,20 +12,9 @@ import de.mpg.imeji.logic.search.SearchIndexer;
  */
 public class JenaIndexer implements SearchIndexer {
 
-  @Override
-  public void index(Object obj) {
-    // No indexation needed, since search is done directly on jena Database with
-    // sparql queries
-  }
 
   @Override
   public void indexBatch(List<?> l) {
-    // No indexation needed, since search is done directly on jena Database with
-    // sparql queries
-  }
-
-  @Override
-  public void delete(Object obj) {
     // No indexation needed, since search is done directly on jena Database with
     // sparql queries
   }
