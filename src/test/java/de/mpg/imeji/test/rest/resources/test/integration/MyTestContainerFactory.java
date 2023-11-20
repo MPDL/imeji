@@ -3,6 +3,8 @@ package de.mpg.imeji.test.rest.resources.test.integration;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Servlet;
 import javax.ws.rs.ProcessingException;
@@ -15,6 +17,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.test.DeploymentContext;
+import org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainer;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -30,6 +33,8 @@ import com.google.common.collect.ImmutableMap;
  *
  */
 public class MyTestContainerFactory implements TestContainerFactory {
+
+  private static final Logger LOGGER = Logger.getLogger(MyTestContainerFactory.class.getName());
 
   public static final String REST_CONTEXT_PATH = "/rest";
   public static final String STATIC_CONTEXT_PATH = "/static";
@@ -67,7 +72,13 @@ public class MyTestContainerFactory implements TestContainerFactory {
 
       @Override
       public void stop() {
-        this.server.shutdownNow();
+        if (this.server.isStarted()) {
+          LOGGER.log(Level.FINE, "Stopping GrizzlyTestContainer...");
+          this.server.shutdownNow();
+        } else {
+          LOGGER.log(Level.WARNING, "Ignoring stop request - GrizzlyTestContainer is already stopped.");
+        }
+
       }
     };
 
