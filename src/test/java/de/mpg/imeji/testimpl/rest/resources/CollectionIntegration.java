@@ -3,7 +3,6 @@ package de.mpg.imeji.testimpl.rest.resources;
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static de.mpg.imeji.rest.process.RestProcessUtils.buildJSONFromObject;
 import static de.mpg.imeji.rest.process.RestProcessUtils.jsonToPOJO;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -57,7 +56,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CollectionIntegration.class);
 
-  private static String pathPrefix = "/rest/collections";
+  private static String pathPrefix = "/collections";
   private static String updateJSON;
 
   @Before
@@ -67,7 +66,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
   @Test
   public void test_1_CreateCollection() throws IOException, ImejiException {
-    String jsonString = getStringFromPath(STATIC_CONTEXT_REST + "/collection.json");
+    String jsonString = getStringFromPath("src/test/resources/rest/collection.json");
     Response response = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
         .post(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
     assertEquals(response.getStatus(), CREATED.getStatusCode());
@@ -79,7 +78,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
   @Test
   public void test_1_CreateCollection_5_NoAuth() throws IOException {
-    String jsonString = getStringFromPath(STATIC_CONTEXT_REST + "/collection.json");
+    String jsonString = getStringFromPath("src/test/resources/rest/collection.json");
     Response response = target(pathPrefix).register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)
         .post(Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE));
     assertEquals(UNAUTHORIZED.getStatusCode(), response.getStatus());
@@ -374,7 +373,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
   @Test
   public void test_6_CreateCollection_1_AdditionalInfos() throws ImejiException, UnsupportedEncodingException, IOException {
-    String originalJsonString = getStringFromPath(STATIC_CONTEXT_REST + "/collection.json");
+    String originalJsonString = getStringFromPath("src/test/resources/rest/collection.json");
 
     String jsonString = originalJsonString;
     jsonString = jsonString.replace("\"label\": \"Label1\",", "");
@@ -403,7 +402,7 @@ public class CollectionIntegration extends ImejiTestBase {
 
   @Test
   public void test_6_UpdateCollection_1_AdditionalInfos() throws ImejiException, UnsupportedEncodingException, IOException {
-    String originalJsonString = getStringFromPath(STATIC_CONTEXT_REST + "/collection.json");
+    String originalJsonString = getStringFromPath("src/test/resources/rest/collection.json");
 
     // Create the collection
     Response response = target(pathPrefix).register(authAsUser).register(MultiPartFeature.class).request(MediaType.APPLICATION_JSON_TYPE)

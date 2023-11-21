@@ -32,7 +32,7 @@ public class ItemRead extends ItemTestBase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemRead.class);
 
-  private static final String PATH_PREFIX = "/rest/items";
+  private static final String PATH_PREFIX = "/items";
 
   @Before
   public void specificSetup() throws Exception {

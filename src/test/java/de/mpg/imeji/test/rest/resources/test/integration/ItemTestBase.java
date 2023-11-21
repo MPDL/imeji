@@ -36,7 +36,7 @@ public class ItemTestBase extends ImejiTestBase {
   private static final Logger LOGGER = LogManager.getLogger(ItemTestBase.class);
 
   public static Item item;
-  private static final String TARGET_PATH_PREFIX = "/rest/items";
+  private static final String TARGET_PATH_PREFIX = "/items";
 
   protected static void createItem() throws Exception {
     CollectionService cc = new CollectionService();

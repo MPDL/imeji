@@ -20,7 +20,7 @@ import de.mpg.imeji.util.JenaUtil;
 
 public class ItemDelete extends ImejiTestBase {
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemDelete.class);
-  private static final String pathPrefix = "/rest/items";
+  private static final String pathPrefix = "/items";
 
   @BeforeClass
   public static void specificSetup() throws Exception {

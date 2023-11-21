@@ -2,7 +2,6 @@ package de.mpg.imeji.testimpl.rest.resources.item;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static de.mpg.imeji.rest.process.RestProcessUtils.jsonToPOJO;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_PATH;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -46,7 +45,7 @@ public class ItemCreate extends ItemTestBase {
 
   private static String itemJSON;
 
-  private static final String pathPrefix = "/rest/items";
+  private static final String pathPrefix = "/items";
 
   @BeforeClass
   public static void specificSetup() throws Exception {

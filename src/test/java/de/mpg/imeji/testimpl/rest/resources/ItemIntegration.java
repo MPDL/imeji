@@ -3,8 +3,6 @@ package de.mpg.imeji.testimpl.rest.resources;
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static de.mpg.imeji.logic.util.StorageUtils.calculateChecksum;
 import static de.mpg.imeji.rest.process.RestProcessUtils.jsonToPOJO;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_PATH;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -61,7 +59,7 @@ public class ItemIntegration extends ItemTestBase {
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemIntegration.class);
   private static String itemJSON;
   private static String updateJSON;
-  private static final String PATH_PREFIX = "/rest/items";
+  private static final String PATH_PREFIX = "/items";
   private static final String UPDATED_FILE_NAME = "updated_filename.png";
   private static String storedFileURL;
 
@@ -70,7 +68,7 @@ public class ItemIntegration extends ItemTestBase {
     initCollection();
     initItem();
     itemJSON = getStringFromPath("src/test/resources/rest/itemCreateBasic.json");
-    updateJSON = getStringFromPath(STATIC_CONTEXT_REST + "/item.json");
+    updateJSON = getStringFromPath("src/test/resources/rest/item.json");
   }
 
   @Test
@@ -267,7 +265,7 @@ public class ItemIntegration extends ItemTestBase {
   @Test
   public void createItem_WithFile_Fetched() throws IOException {
     initCollection();
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test3.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test3.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.field("json", itemJSON.replace("___COLLECTION_ID___", collectionId).replace("___FETCH_URL___", fileURL)
@@ -283,7 +281,7 @@ public class ItemIntegration extends ItemTestBase {
   @Test
   public void createItem_WithFile_Fetched_WithEmptyFileName() throws IOException {
     initCollection();
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test7.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test7.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.field("json",
@@ -532,7 +530,7 @@ public class ItemIntegration extends ItemTestBase {
 
     initCollection();
     initItem();
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test2.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test2.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.field("json", getStringFromPath(updateJSON).replace("___FILE_NAME___", UPDATED_FILE_NAME).replace("___FETCH_URL___", fileURL)
@@ -574,7 +572,7 @@ public class ItemIntegration extends ItemTestBase {
 
     File newFile = ImejiTestResources.getTestPng();
 
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test.jpg";
 
     FileDataBodyPart filePart = new FileDataBodyPart("file", newFile);
 
@@ -624,7 +622,7 @@ public class ItemIntegration extends ItemTestBase {
   @Test
   public void test_1_UpdateItem_6_WithFile_Fetched_Referenced() throws IOException, ImejiException {
 
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.field("json", getStringFromPath(updateJSON).replace("___FILE_NAME___", UPDATED_FILE_NAME).replace("___FETCH_URL___", fileURL)
@@ -653,7 +651,7 @@ public class ItemIntegration extends ItemTestBase {
     File newFile = ImejiTestResources.getTest1Jpg();
     FileDataBodyPart filePart = new FileDataBodyPart("file", newFile);
 
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test1.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test1.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);

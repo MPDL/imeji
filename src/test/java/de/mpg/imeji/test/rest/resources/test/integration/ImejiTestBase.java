@@ -1,10 +1,10 @@
 package de.mpg.imeji.test.rest.resources.test.integration;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.ws.rs.core.Application;
@@ -12,9 +12,16 @@ import javax.ws.rs.core.Application;
 import de.mpg.imeji.logic.security.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.servlet.ServletContainer;
+import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.TestProperties;
+import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.AfterClass;
@@ -42,6 +49,12 @@ import de.mpg.imeji.util.JenaUtil;
  */
 public class ImejiTestBase extends JerseyTest {
 
+  public static final String STATIC_SERVER_URL = "http://localhost:9999";
+  public static final String STATIC_CONTEXT_PATH = "/static";
+  public static final String STATIC_CONTEXT_STORAGE = "src/test/resources/storage";
+  public static final String STATIC_CONTEXT_REST = "src/test/resources/rest";
+
+  private static HttpServer staticServer;
   protected static HttpAuthenticationFeature authAsUser = HttpAuthenticationFeature.basic(JenaUtil.TEST_USER_EMAIL, JenaUtil.TEST_USER_PWD);
   protected static HttpAuthenticationFeature authAsUser2 =
       HttpAuthenticationFeature.basic(JenaUtil.TEST_USER_EMAIL_2, JenaUtil.TEST_USER_PWD);
@@ -63,21 +76,33 @@ public class ImejiTestBase extends JerseyTest {
     enable(TestProperties.LOG_TRAFFIC);
     enable(TestProperties.DUMP_ENTITY);
 
-    if (app == null) {
-      app = new ImejiRestService(null);
-    }
-    return app;
+    return new ImejiRestService(null);
   }
 
   @Override
-  protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
-    return new MyTestContainerFactory();
+  protected DeploymentContext configureDeployment() {
+    return ServletDeploymentContext.forServlet(new ServletContainer(new ImejiRestService(null))).servletPath("rest").build();
   }
+
+
+
+  @Override
+  protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
+    return new GrizzlyWebTestContainerFactory();
+  }
+
+
 
   @BeforeClass
   public static void setup() throws IOException, URISyntaxException {
     ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
+    //Start a server for the static content
+    staticServer = GrizzlyHttpServerFactory.createHttpServer(new URI(STATIC_SERVER_URL));
+    staticServer.getServerConfiguration().addHttpHandler(new StaticHttpHandler(STATIC_CONTEXT_REST, STATIC_CONTEXT_STORAGE),
+        STATIC_CONTEXT_PATH);
+    staticServer.start();
+
   }
 
   @AfterClass
@@ -85,6 +110,7 @@ public class ImejiTestBase extends JerseyTest {
     ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
+    staticServer.shutdownNow();
     app = null;
   }
 
@@ -108,7 +134,7 @@ public class ImejiTestBase extends JerseyTest {
     CollectionAPIService s = new CollectionAPIService();
     try {
       collectionTO =
-          (CollectionTO) RestProcessUtils.buildTOFromJSON(getStringFromPath(STATIC_CONTEXT_REST + "/collection.json"), CollectionTO.class);
+          (CollectionTO) RestProcessUtils.buildTOFromJSON(getStringFromPath("src/test/resources/rest/collection.json"), CollectionTO.class);
 
       collectionTO = s.create(collectionTO, JenaUtil.testUser);
       collectionId = collectionTO.getId();

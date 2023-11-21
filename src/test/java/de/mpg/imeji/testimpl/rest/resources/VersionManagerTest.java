@@ -20,7 +20,7 @@ import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
 public class VersionManagerTest extends ImejiTestBase {
 
   private static String pathPrefixWithVersion = "/rest/vXXX_VERSION_XXX/collections";
-  private static String pathPrefix = "/rest/collections";
+  private static String pathPrefix = "/collections";
 
   @Test
   public void testDeprecatedVersion() throws IOException {

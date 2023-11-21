@@ -23,7 +23,7 @@ import de.mpg.imeji.test.rest.resources.test.integration.ImejiTestBase;
 public class StorageIntegration extends ImejiTestBase {
   private static final Logger LOGGER = LoggerFactory.getLogger(StorageIntegration.class);
 
-  private final String PATH_PREFIX = "/rest/storage";
+  private final String PATH_PREFIX = "/storage";
 
   @Test
   public void test_1_uploadFormats() throws IOException {

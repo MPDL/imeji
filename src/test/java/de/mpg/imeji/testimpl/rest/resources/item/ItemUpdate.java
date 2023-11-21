@@ -1,7 +1,6 @@
 package de.mpg.imeji.testimpl.rest.resources.item;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -42,17 +41,16 @@ public class ItemUpdate extends ItemTestBase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemUpdate.class);
 
-  private static String updateJSON;
-  private static final String PATH_PREFIX = "/rest/items";
+  //private static String updateJSON;
+  private static final String PATH_PREFIX = "/items";
   private static final String UPDATED_FILE_NAME = "updated_filename.png";
-  private final String UPDATE_ITEM_FILE_JSON = STATIC_CONTEXT_REST + "/item.json";
   private static final String referenceUrl = "http://th03.deviantart.net/fs71/PRE/i/2012/242/1/f/png_moon_by_paradise234-d5czhdo.png";
 
   @BeforeClass
   public static void specificSetup() throws Exception {
     initCollection();
     createItem();
-    updateJSON = getStringFromPath(STATIC_CONTEXT_REST + "/item.json");
+    //updateJSON = getStringFromPath(STATIC_CONTEXT_REST + "/item.json");
   }
 
   @Test

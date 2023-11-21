@@ -2,8 +2,6 @@ package de.mpg.imeji.testimpl.rest.resources.item;
 
 import static de.mpg.imeji.logic.util.ResourceHelper.getStringFromPath;
 import static de.mpg.imeji.logic.util.StorageUtils.calculateChecksum;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_PATH;
-import static de.mpg.imeji.test.rest.resources.test.integration.MyTestContainerFactory.STATIC_CONTEXT_REST;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -48,10 +46,10 @@ import de.mpg.imeji.util.ImejiTestResources;
 public class ItemUpdateFile extends ImejiTestBase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ItemUpdateFile.class);
-  private static final String PATH_PREFIX = "/rest/items";
+  private static final String PATH_PREFIX = "/items";
   private static final String UPDATED_FILE_NAME = "updated_filename.png";
   private static String storedFileURL;
-  private final String UPDATE_ITEM_FILE_JSON = STATIC_CONTEXT_REST + "/item.json";
+  private final String UPDATE_ITEM_FILE_JSON = "/rest/item.json";
 
   @BeforeClass
   public static void specificSetup() throws Exception {
