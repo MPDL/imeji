@@ -163,7 +163,7 @@ public class ItemCreate extends ItemTestBase {
     Response response = target(pathPrefix).register(MultiPartFeature.class).register(JacksonFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
     Response response2 = target(pathPrefix).register(authAsUserFalse).register(MultiPartFeature.class).register(JacksonFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(multiPart, multiPart.getMediaType()));

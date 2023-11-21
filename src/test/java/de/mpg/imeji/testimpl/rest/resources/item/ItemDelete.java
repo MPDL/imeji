@@ -38,7 +38,7 @@ public class ItemDelete extends ImejiTestBase {
     Form form = new Form();
     form.param("id", itemId);
     Response response = target(pathPrefix).path("/" + itemId).request(MediaType.APPLICATION_JSON_TYPE).delete();
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
     Response response2 = target(pathPrefix).register(authAsUserFalse).path("/" + itemId).request(MediaType.APPLICATION_JSON_TYPE).delete();
     assertEquals(Status.UNAUTHORIZED.getStatusCode(), response2.getStatus());

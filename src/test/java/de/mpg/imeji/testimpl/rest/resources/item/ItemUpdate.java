@@ -100,7 +100,7 @@ public class ItemUpdate extends ItemTestBase {
     multiPart.field("json", RestProcessUtils.buildJSONFromObject(itemTO));
     Response response = target(PATH_PREFIX).path("/" + itemId).register(MultiPartFeature.class).register(JacksonFeature.class)
         .request(MediaType.APPLICATION_JSON_TYPE).put(Entity.entity(multiPart, multiPart.getMediaType()));
-    assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    assertEquals(FORBIDDEN.getStatusCode(), response.getStatus());
 
     Response response2 = target(PATH_PREFIX).path("/" + itemId).register(authAsUserFalse).register(MultiPartFeature.class)
         .register(JacksonFeature.class).request(MediaType.APPLICATION_JSON_TYPE).put(Entity.entity(multiPart, multiPart.getMediaType()));

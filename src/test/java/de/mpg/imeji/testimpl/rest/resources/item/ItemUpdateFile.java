@@ -49,7 +49,7 @@ public class ItemUpdateFile extends ImejiTestBase {
   private static final String PATH_PREFIX = "/items";
   private static final String UPDATED_FILE_NAME = "updated_filename.png";
   private static String storedFileURL;
-  private final String UPDATE_ITEM_FILE_JSON = "/rest/item.json";
+  private final String UPDATE_ITEM_FILE_JSON = "src/test/resources/rest/item.json";
 
   @BeforeClass
   public static void specificSetup() throws Exception {
@@ -84,7 +84,7 @@ public class ItemUpdateFile extends ImejiTestBase {
 
     initCollection();
     initItem();
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test2.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test2.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.field("json", getStringFromPath(UPDATE_ITEM_FILE_JSON).replace("___FILE_NAME___", UPDATED_FILE_NAME)
@@ -126,7 +126,7 @@ public class ItemUpdateFile extends ImejiTestBase {
 
     File newFile = ImejiTestResources.getTestPng();
 
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test.jpg";
 
     FileDataBodyPart filePart = new FileDataBodyPart("file", newFile);
 
@@ -176,7 +176,7 @@ public class ItemUpdateFile extends ImejiTestBase {
   @Test
   public void test_1_UpdateItem_6_WithFile_Fetched_Referenced() throws IOException, ImejiException {
 
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.field("json",
@@ -206,7 +206,7 @@ public class ItemUpdateFile extends ImejiTestBase {
     File newFile = ImejiTestResources.getTest1Jpg();
     FileDataBodyPart filePart = new FileDataBodyPart("file", newFile);
 
-    final String fileURL = target().getUri() + STATIC_CONTEXT_PATH.substring(1) + "/test1.jpg";
+    final String fileURL = STATIC_SERVER_URL + STATIC_CONTEXT_PATH + "/test1.jpg";
 
     FormDataMultiPart multiPart = new FormDataMultiPart();
     multiPart.bodyPart(filePart);
