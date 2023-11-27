@@ -101,7 +101,7 @@ public class ElasticIndexer implements SearchIndexer {
       try {
         LOGGER.info("+++ index request " + indexName + "  " + getId(obj));
         final IndexOperation indexOperation;
-        if (obj instanceof ResourceLastModified) {
+        if (obj instanceof ResourceLastModified && ((ResourceLastModified) obj).getModified() != null) {
           long timestamp = ((ResourceLastModified) obj).getModified().getTimeInMillis();
           indexOperation = getIndexOperation(getId(obj), toJson(obj, dataType, indexName), getParent(obj), dataType, timestamp);
         } else {
