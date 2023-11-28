@@ -102,8 +102,7 @@ public class AggregationsParser {
         facetResult.getValues().add(new FacetResultValue(bucket.key().stringValue(), bucket.docCount()));
       }
 
-    }
-    else if (terms.isStats()) {
+    } else if (terms.isStats()) {
       FacetResultValue result = new FacetResultValue(key, terms.stats().count());
       double max = terms.stats().max();
       double min = terms.stats().min();
