@@ -1,9 +1,7 @@
 package de.mpg.imeji.logic.search.elasticsearch.factory.util;
 
 import co.elastic.clients.elasticsearch._types.aggregations.*;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.ResponseBody;
-import co.elastic.clients.json.JsonpUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 import de.mpg.imeji.logic.search.elasticsearch.factory.ElasticAggregationFactory;
@@ -40,66 +38,9 @@ public class AggregationsParser {
    * @return
    */
   public static List<FacetResult> parse(ResponseBody<ObjectNode> resp, SearchObjectTypes... types) {
-    /*
-    if (SearchObjectTypes.ITEM.equals(types[0])) {
-      return parseForItemFacets(resp);
-    } else if (SearchObjectTypes.COLLECTION.equals(types[0])) {
-      return parseForCollectionFacets(resp);
-    }
-    
-    
-    return new ArrayList<FacetResult>();
-    */
     return parseForItemFacets(resp);
 
   }
-
-  /*
-  public static List<FacetResult> parseForCollectionFacets(SearchResponse resp) {
-    LOGGER.info("Parse for collection facets");
-  
-      
-      List<FacetResult> facetResults = new ArrayList<>();
-      if (resp != null && resp.getAggregations() != null) {
-        Nested metadata = resp.getAggregations().get("info");
-        if (metadata != null) {
-          for (Aggregation mdAgg : metadata.getAggregations()) {
-            FacetResult facetResult = new FacetResult(getFacetName(mdAgg.getName()), mdAgg.getName());
-            if (mdAgg instanceof Filter) {
-              Aggregation terms = ((Filter) mdAgg).getAggregations().asList().get(0);
-              fillResult(terms, facetResult);
-            }
-  
-  
-            facetResults.add(facetResult);
-          }
-          Filters system = resp.getAggregations().get("system");
-          if (system != null) {
-            Bucket systemBucket = system.getBucketByKey("all");
-            for (Aggregation agg : systemBucket.getAggregations()) {
-              FacetResult facetResult = new FacetResult(getFacetName(agg.getName()), agg.getName());
-              if (agg instanceof Filters) {
-                for (Filters.Bucket bucket : ((Filters) agg).getBuckets()) {
-                  facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
-                }
-              } else if (agg instanceof ParsedStringTerms) {
-                for (Terms.Bucket bucket : ((ParsedStringTerms) agg).getBuckets()) {
-                  facetResult.getValues().add(new FacetResultValue(bucket.getKeyAsString(), bucket.getDocCount()));
-                }
-  
-              }
-              facetResults.add(facetResult);
-            }
-          }
-      
-      
-      
-      
-      
-    return facetResults;
-  
-  }
-  */
 
   public static List<FacetResult> parseForItemFacets(ResponseBody<ObjectNode> resp) {
 
@@ -111,7 +52,6 @@ public class AggregationsParser {
           FacetResult facetResult = new FacetResult(getFacetName(mdAgg.getKey()), mdAgg.getKey());
           if (mdAgg.getValue().isFilter()) {
             Aggregate terms = mdAgg.getValue().filter().aggregations().values().iterator().next();
-            //Aggregation terms = ((Filter) mdAgg).getAggregations().asList().get(0);
             fillResult(mdAgg.getKey(), terms, facetResult);
           }
 
@@ -158,16 +98,11 @@ public class AggregationsParser {
 
   private static void fillResult(String key, Aggregate terms, FacetResult facetResult) {
     if (terms.isSterms()) {
-      for (Map.Entry<String, StringTermsBucket> bucket : terms.sterms().buckets().keyed().entrySet()) {
-        facetResult.getValues().add(new FacetResultValue(bucket.getKey(), bucket.getValue().docCount()));
+      for (StringTermsBucket bucket : terms.sterms().buckets().array()) {
+        facetResult.getValues().add(new FacetResultValue(bucket.key().stringValue(), bucket.docCount()));
       }
 
-    } /*else if (terms.isStats()) {
-      FacetResultValue result = new FacetResultValue(key, terms.stats().count());
-      result.setMax(terms.stats().maxAsString());
-      result.setMin(terms.stats().minAsString());
-      facetResult.getValues().add(result);
-      }*/
+    }
     else if (terms.isStats()) {
       FacetResultValue result = new FacetResultValue(key, terms.stats().count());
       double max = terms.stats().max();
