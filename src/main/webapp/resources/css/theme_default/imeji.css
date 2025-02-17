@@ -1140,33 +1140,6 @@ select.imj_metadataEditText {
   clear: both;
 }
 
-.imj_startpageFooter {
-  clear: both;
-  width: 100%;
-  padding: 1em 0;
-}
-.imj_startpageFooter img {
-  margin: 0 1%;
-}
-.imj_startpageFooter .imj_startpageFooterLogos {
-  width: 100%;
-  padding: 1em 1.25em 1.25em 1em;
-  text-align: center;
-}
-.imj_startpageFooter .imj_community_logo {
-  padding: 1%;
-  margin-right: 5%;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  -ms-border-radius: 2px;
-  -o-border-radius: 2px;
-  border-radius: 2px;
-}
-.imj_startpageFooter .imj_institution_logo {
-  padding: 1%;
-  max-height: 70px;
-}
-
 .imj_startpageFooterLogos .imj_poweredby_imprint {
   width: 50%;
   margin: 0 auto;
@@ -3764,33 +3737,6 @@ select.imj_metadataEditText {
   content: " ";
   float: none;
   clear: both;
-}
-
-.imj_startpageFooter {
-  clear: both;
-  width: 100%;
-  padding: 1em 0;
-}
-.imj_startpageFooter img {
-  margin: 0 1%;
-}
-.imj_startpageFooter .imj_startpageFooterLogos {
-  width: 100%;
-  padding: 1em 1.25em 1.25em 1em;
-  text-align: center;
-}
-.imj_startpageFooter .imj_community_logo {
-  padding: 1%;
-  margin-right: 5%;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  -ms-border-radius: 2px;
-  -o-border-radius: 2px;
-  border-radius: 2px;
-}
-.imj_startpageFooter .imj_institution_logo {
-  padding: 1%;
-  max-height: 70px;
 }
 
 .imj_startpageFooterLogos .imj_poweredby_imprint {
