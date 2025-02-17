@@ -62,9 +62,8 @@ public class RequestHelper {
     }
 
     this.requestQueryString = request.getQueryString() != null ? request.getQueryString() : "";
-    if(!requestQueryString.isEmpty() && !requestQueryString.startsWith("?"))
-    {
-      this.requestQueryString= "?" + requestQueryString;
+    if (!requestQueryString.isEmpty() && !requestQueryString.startsWith("?")) {
+      this.requestQueryString = "?" + requestQueryString;
     }
     addParameters(requestQueryString);
   }

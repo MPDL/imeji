@@ -227,7 +227,7 @@ public class SecurityFilter implements Filter {
     String url = NAVIGATION.getApplicationUri() + RequestHelper.getCurrentInstance(request).getPrettyRequestURL().toString();
     Map<String, List<String>> params = RequestHelper.getCurrentInstance(request).getRequestQueryParameters();
     String urlToRedirect = serv.getServletContext().getContextPath() + "/login?redirect="
-            + URLEncoder.encode(url + HistoryUtil.paramsMapToString(params), "UTF-8");
+        + URLEncoder.encode(url + HistoryUtil.paramsMapToString(params), "UTF-8");
     ((HttpServletResponse) resp).sendRedirect(urlToRedirect);
 
   }

@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class StatisticsService {
 
   private static final Logger LOGGER = LogManager.getLogger(StatisticsService.class);
+
   /**
    * Return the all institute names (define by the suffix of emails users)
    *
@@ -45,7 +46,7 @@ public class StatisticsService {
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     LOGGER.info(result);
     if (result.size() == 1 && result.get(0) != null) {
-      final String size = result.get(0).replace("^^xsd:integer", "").replace("\"","");
+      final String size = result.get(0).replace("^^xsd:integer", "").replace("\"", "");
       return Long.parseLong(size);
     }
     return 0;
@@ -57,7 +58,7 @@ public class StatisticsService {
         s.searchString(JenaCustomQueries.selectFileSizeForAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
             .getResults();
     if (result.size() == 1 && result.get(0) != null) {
-      final String size = result.get(0).replace("^^xsd:integer", "").replace("\"","");;
+      final String size = result.get(0).replace("^^xsd:integer", "").replace("\"", "");;
       return Long.parseLong(size);
     }
     return 0;
