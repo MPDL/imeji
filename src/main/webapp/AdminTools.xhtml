@@ -195,6 +195,23 @@
 									</h:panelGroup>
 								</h:form>
 							</div>
+							<div class="imj_content">
+								<div class="imj_headline">
+									<h2>
+										<h:outputText value="FACES: Delete all users with no user groups and older than one month" />
+									</h2>
+								</div>
+								<h:form>
+									<h:panelGroup layout="block" styleClass="imj_adminEditPanel">
+										<h:selectBooleanCheckbox value="#{AdminBean.dryRunDeleteUsersWithoutGroups}"/>
+										Dry run (see log)
+										<h:commandButton action="#{AdminBean.deleteAllUsersWithoutGrant}"
+														 value="Delete all users with no user groups"
+														 styleClass="imj_submitButton">
+										</h:commandButton>
+									</h:panelGroup>
+								</h:form>
+							</div>
 						</h:panelGroup>
 
 					</div>

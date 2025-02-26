@@ -34,6 +34,9 @@ import javax.faces.bean.ViewScoped;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +53,7 @@ public class AdminBean extends SuperBean {
   private static final Logger LOGGER = LogManager.getLogger(AdminBean.class);
 
   private String sparqlUpdateQuery;
+  private boolean dryRunDeleteUsersWithoutGroups = true;
 
   /**
    * Refresh the file size of all items
@@ -198,4 +202,85 @@ public class AdminBean extends SuperBean {
 
   }
 
+
+
+  public String deleteAllUsersWithoutGrant() {
+    LOGGER.info(dryRunDeleteUsersWithoutGroups ? "DRY RUN -- " : "" + " Deleting all users without user groups and default permissions");
+    final UserService controller = new UserService();
+    List<User> allUsers = new ArrayList<>();
+    try {
+          allUsers = controller.retrieveAll();
+      } catch (ImejiException e) {
+         LOGGER.error("Error retrieving all users", e);
+      }
+    int count = 0;
+      for (User fullUser: allUsers) {
+      //LOGGER.info(user.getEmail() + user.getGroups() + user.getGrants());
+        try {
+          LocalDate modDate = LocalDate.ofInstant(fullUser.getModified().getTime().toInstant(), ZoneId.systemDefault());
+          LocalDate today = LocalDate.now();
+          boolean isOlderThan1Month = modDate.isBefore(today.minusMonths(1));
+          //LOGGER.info("User " + fullUser.getEmail() + " ("+ fullUser.getPerson().getCompleteName()+") " + fullUser.getGrants() + " " + fullUser.getGroups() + " "+ isOlderThan1Month);
+          if (fullUser.getGrants().size() == 2
+                  && (fullUser.getGrants().stream().anyMatch(i -> i.equals("READ,http://imeji.org/")))
+                  && (fullUser.getGrants().stream().anyMatch(i -> i.startsWith("ADMIN,http://imeji.org/user/")))
+                  && (fullUser.getGroups() == null || fullUser.getGroups().isEmpty())
+                  && isOlderThan1Month) {
+
+            if(dryRunDeleteUsersWithoutGroups) {
+              LOGGER.info("DRY RUN DELETE USER: " + fullUser.getEmail() + "; "+ fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
+            }
+            else
+            {
+              controller.delete(fullUser);
+              LOGGER.info("Successfully deleted user " + fullUser.getEmail() + "; "+ fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
+            }
+
+            count++;
+          }
+        } catch (Exception e) {
+          String userMessage = "Error deleting user: " + fullUser.getEmail() + "; "+ fullUser.getPerson().getCompleteName() + "; " + fullUser.getId();
+          LOGGER.error(userMessage, e);
+        }
+
+
+
+    }
+    String userMessage = count + " users deleted successfully";
+    BeanHelper.info(userMessage);
+    LOGGER.info(userMessage);
+
+    /*
+    final String email = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("email");
+    final UserService controller = new UserService();
+    try {
+      controller.delete(controller.retrieve(email, getSessionUser()));
+      reload();
+    } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
+      String userMessage = "Error deleting user: " + exceptionWithMessage.getUserMessage(getLocale());
+      BeanHelper.error(userMessage);
+      if (exceptionWithMessage.getMessage() != null) {
+        LOGGER.error(exceptionWithMessage.getMessage(), exceptionWithMessage);
+      } else {
+        LOGGER.error(userMessage, exceptionWithMessage);
+      }
+    } catch (final Exception e) {
+      BeanHelper.error("Error deleting user");
+      LOGGER.error("Error deleting user", e);
+    }
+
+     */
+    return "";
+
+
+  }
+
+
+    public boolean isDryRunDeleteUsersWithoutGroups() {
+        return dryRunDeleteUsersWithoutGroups;
+    }
+
+    public void setDryRunDeleteUsersWithoutGroups(boolean dryRunDeleteUsersWithoutGroups) {
+        this.dryRunDeleteUsersWithoutGroups = dryRunDeleteUsersWithoutGroups;
+    }
 }
