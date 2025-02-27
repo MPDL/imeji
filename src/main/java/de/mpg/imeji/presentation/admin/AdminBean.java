@@ -203,46 +203,42 @@ public class AdminBean extends SuperBean {
   }
 
 
-
   public String deleteAllUsersWithoutGrant() {
-    LOGGER.info(dryRunDeleteUsersWithoutGroups ? "DRY RUN -- " : "" + " Deleting all users without user groups and default permissions");
+    LOGGER.info((dryRunDeleteUsersWithoutGroups ? "DRY RUN -- " : "") + " Deleting all users without user groups and default permissions");
     final UserService controller = new UserService();
     List<User> allUsers = new ArrayList<>();
     try {
-          allUsers = controller.retrieveAll();
-      } catch (ImejiException e) {
-         LOGGER.error("Error retrieving all users", e);
-      }
+      allUsers = controller.retrieveAll();
+    } catch (ImejiException e) {
+      LOGGER.error("Error retrieving all users", e);
+    }
     int count = 0;
-      for (User fullUser: allUsers) {
+    for (User fullUser : allUsers) {
       //LOGGER.info(user.getEmail() + user.getGroups() + user.getGrants());
-        try {
-          LocalDate modDate = LocalDate.ofInstant(fullUser.getModified().getTime().toInstant(), ZoneId.systemDefault());
-          LocalDate today = LocalDate.now();
-          boolean isOlderThan1Month = modDate.isBefore(today.minusMonths(1));
-          //LOGGER.info("User " + fullUser.getEmail() + " ("+ fullUser.getPerson().getCompleteName()+") " + fullUser.getGrants() + " " + fullUser.getGroups() + " "+ isOlderThan1Month);
-          if (fullUser.getGrants().size() == 2
-                  && (fullUser.getGrants().stream().anyMatch(i -> i.equals("READ,http://imeji.org/")))
-                  && (fullUser.getGrants().stream().anyMatch(i -> i.startsWith("ADMIN,http://imeji.org/user/")))
-                  && (fullUser.getGroups() == null || fullUser.getGroups().isEmpty())
-                  && isOlderThan1Month) {
+      try {
+        LocalDate modDate = LocalDate.ofInstant(fullUser.getModified().getTime().toInstant(), ZoneId.systemDefault());
+        LocalDate today = LocalDate.now();
+        boolean isOlderThan1Month = modDate.isBefore(today.minusMonths(1));
+        //LOGGER.info("User " + fullUser.getEmail() + " ("+ fullUser.getPerson().getCompleteName()+") " + fullUser.getGrants() + " " + fullUser.getGroups() + " "+ isOlderThan1Month);
+        if (fullUser.getGrants().size() == 2
+                && (fullUser.getGrants().stream().anyMatch(i -> i.equals("READ,http://imeji.org/")))
+                && (fullUser.getGrants().stream().anyMatch(i -> i.startsWith("ADMIN,http://imeji.org/user/")))
+                && (fullUser.getGroups() == null || fullUser.getGroups().isEmpty())
+                && isOlderThan1Month) {
 
-            if(dryRunDeleteUsersWithoutGroups) {
-              LOGGER.info("DRY RUN DELETE USER: " + fullUser.getEmail() + "; "+ fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
-            }
-            else
-            {
-              controller.delete(fullUser);
-              LOGGER.info("Successfully deleted user " + fullUser.getEmail() + "; "+ fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
-            }
-
-            count++;
+          if (dryRunDeleteUsersWithoutGroups) {
+            LOGGER.info("DRY RUN DELETE USER: " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
+          } else {
+            controller.delete(fullUser);
+            LOGGER.info("Successfully deleted user " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
           }
-        } catch (Exception e) {
-          String userMessage = "Error deleting user: " + fullUser.getEmail() + "; "+ fullUser.getPerson().getCompleteName() + "; " + fullUser.getId();
-          LOGGER.error(userMessage, e);
-        }
 
+          count++;
+        }
+      } catch (Exception e) {
+        String userMessage = "Error deleting user: " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; " + fullUser.getId();
+        LOGGER.error(userMessage, e);
+      }
 
 
     }
