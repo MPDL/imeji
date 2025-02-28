@@ -9,6 +9,10 @@ import java.util.Calendar;
 
 import javax.xml.bind.annotation.XmlEnum;
 
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -27,12 +31,23 @@ import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+
+@MappedSuperclass
+
 @j2jResource("http://imeji.org/terms/properties")
 public class Properties implements Serializable, ResourceLastModified, AccessMember {
   private static final long serialVersionUID = 6874979775433576816L;
+
+
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id;
+
+  @Id
+  private String dbId;
+  //@Convert(converter = HibernateURIConverter.class)
   @j2jResource(ImejiNamespaces.CREATOR)
   private URI createdBy = URI.create("");
+  //@Convert(converter = HibernateURIConverter.class)
   @j2jResource(ImejiNamespaces.MODIFIED_BY)
   private URI modifiedBy = URI.create("");;
   @j2jLiteral(ImejiNamespaces.DATE_CREATED)
@@ -41,6 +56,7 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
   private Calendar versionDate;
   @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
   private Calendar modified = Calendar.getInstance();
+  //@Convert(converter = HibernateURIConverter.class)
   @j2jResource(ImejiNamespaces.STATUS)
   private URI status = URI.create(Status.PENDING.getUriString());
   @j2jLiteral(ImejiNamespaces.DISCARD_COMMENT)
@@ -48,7 +64,16 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
 
   private static final Logger LOGGER = LogManager.getLogger(Properties.class);
 
-  @XmlEnum(String.class)
+    public String getDbId() {
+        return dbId;
+    }
+
+    public void setDbId(String dbId) {
+        this.dbId = dbId;
+    }
+
+
+    @XmlEnum(String.class)
   public enum Status {
     PENDING(new String(ImejiNamespaces.STATUS + "#PENDING")),
     RELEASED(new String(ImejiNamespaces.STATUS + "#RELEASED")),
@@ -171,7 +196,8 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
   }
 
   public void setId(URI id) {
-    this.id = id;
+      this.id = id;
+      this.dbId = id.toString();
   }
 
   public URI getId() {
@@ -222,6 +248,9 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
     }
     return ret;
   }
+
+
+
 
 
 

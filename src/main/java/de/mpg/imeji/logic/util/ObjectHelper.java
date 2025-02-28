@@ -36,6 +36,11 @@ public class ObjectHelper {
   public enum ObjectType {
     COLLECTION,
     ITEM,
+    CONTENT,
+    USER,
+    USERGROUP,
+    STATEMENT,
+    FACET,
     SYSTEM;
   }
 

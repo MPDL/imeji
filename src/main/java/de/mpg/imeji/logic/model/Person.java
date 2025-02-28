@@ -9,7 +9,9 @@ import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import jakarta.persistence.Convert;
 
 /**
  * a foaf person
@@ -22,6 +24,7 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class Person implements Cloneable, Serializable {
   private static final long serialVersionUID = 2030269396417009337L;
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id;
   @j2jLiteral("http://purl.org/escidoc/metadata/terms/0.1/family-name")
   private String familyName;

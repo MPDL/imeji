@@ -6,8 +6,10 @@ import java.net.URI;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateHelper;
+import jakarta.persistence.Convert;
 
 /**
  * A License for imeji objects
@@ -19,6 +21,7 @@ import de.mpg.imeji.util.DateHelper;
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class License implements Serializable {
   private static final long serialVersionUID = -966062330323435843L;
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id;
   @j2jLiteral("http://imeji.org/terms/label")
   private String label;

@@ -7,7 +7,14 @@ import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import jakarta.persistence.*;
+
+
+//@Entity
+@Table(name = "item")
+@Access(AccessType.FIELD)
 
 @j2jResource("http://imeji.org/terms/subscription")
 @j2jModel("subscription")
@@ -21,6 +28,8 @@ public class Subscription implements Serializable {
     UPLOAD;
   }
 
+
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id = IdentifierUtil.newURI(Subscription.class, "universal");
   // The type of the subscription
   @j2jLiteral("http://imeji.org/terms/subscriptionType")
@@ -31,6 +40,9 @@ public class Subscription implements Serializable {
   // The id of the object which is observed
   @j2jLiteral("http://imeji.org/terms/objectId")
   private String objectId;
+
+  @Id
+  private String dbId;
 
   /**
    * @return the type
@@ -85,7 +97,9 @@ public class Subscription implements Serializable {
    * @param id the id to set
    */
   public void setId(URI id) {
+
     this.id = id;
+    this.dbId = id.toString();
   }
 
 }

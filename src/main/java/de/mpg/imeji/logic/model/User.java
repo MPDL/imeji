@@ -11,6 +11,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +28,8 @@ import de.mpg.imeji.logic.model.aspects.CloneURI;
 import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.URIListHelper;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * imeji user
@@ -34,6 +38,10 @@ import de.mpg.imeji.logic.util.URIListHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@Entity
+@Table(name = "users")
+@Access(AccessType.FIELD)
+
 @j2jResource("http://imeji.org/terms/user")
 @j2jModel("user")
 @j2jId(getMethod = "getId", setMethod = "setId")
@@ -43,15 +51,27 @@ public class User implements Serializable, ResourceLastModified, CloneURI, Acces
   private String email;
   @j2jLiteral("http://xmlns.com/foaf/0.1/password")
   private String encryptedPassword;
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jLiteral("http://xmlns.com/foaf/0.1/person")
   private Person person = new Person();
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/terms/grant")
   private List<String> grants = new ArrayList<String>();
   @j2jLiteral("http://imeji.org/terms/quota")
   private long quota = -1;
   @j2jLiteral("http://imeji.org/terms/apiKey")
+  @Column(length = 1024)
   private String apiKey;
-  private URI id = IdentifierUtil.newURI(User.class);
+
+
+  //@Convert(converter = HibernateURIConverter.class)
+  private URI id;
+
+  @OneToMany(fetch = FetchType.EAGER)
   private List<UserGroup> groups = new ArrayList<>();
 
   // User properties for registration
@@ -63,13 +83,22 @@ public class User implements Serializable, ResourceLastModified, CloneURI, Acces
   private Calendar modified;
 
   @j2jResource(ImejiNamespaces.USER_STATUS)
+  //@Convert(converter = HibernateURIConverter.class)
   private URI userStatus = URI.create(UserStatus.ACTIVE.getUriString());
 
   @j2jLiteral("http://imeji.org/terms/registrationToken")
   private String registrationToken;
 
+  @Id
+  private String dbId;
+
 
   private static final Logger LOGGER = LogManager.getLogger(User.class);
+
+  public User() {
+    this.id = IdentifierUtil.newURI(User.class);
+    this.dbId = id.toString();
+  }
 
   @Override
   public Object cloneURI() {
@@ -123,7 +152,9 @@ public class User implements Serializable, ResourceLastModified, CloneURI, Acces
   }
 
   public void setId(URI id) {
+
     this.id = id;
+    this.dbId = id.toString();
   }
 
   public URI getId() {

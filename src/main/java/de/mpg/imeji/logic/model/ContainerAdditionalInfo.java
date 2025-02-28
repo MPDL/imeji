@@ -6,6 +6,8 @@ import java.net.URI;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.Convert;
 
 /**
  * Additional Information for container metadata
@@ -17,6 +19,8 @@ import de.mpg.imeji.j2j.annotations.j2jResource;
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class ContainerAdditionalInfo implements Serializable {
   private static final long serialVersionUID = -1920870551000242907L;
+
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id;// = IdentifierUtil.newURI(ContainerAdditionalInfo.class, "universal");
   @j2jLiteral("http://www.w3.org/2000/01/rdf-schema#label")
   private String label;

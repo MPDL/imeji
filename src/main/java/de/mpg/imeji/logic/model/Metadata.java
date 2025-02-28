@@ -6,7 +6,9 @@ import java.net.URI;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import jakarta.persistence.Convert;
 
 /**
  * A metadata for imeji object
@@ -18,6 +20,7 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
 @j2jId(getMethod = "getUri", setMethod = "setUri")
 public class Metadata implements Serializable {
   private static final long serialVersionUID = 8758936270562178555L;
+  //@Convert(converter = HibernateURIConverter.class)
   private URI uri = IdentifierUtil.newURI(Metadata.class, "universal");
   @j2jLiteral("http://imeji.org/terms/statement")
   private String index;

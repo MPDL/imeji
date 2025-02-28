@@ -15,6 +15,6 @@ public class ReaderFactory {
    * @return
    */
   public static Reader create(String modelURI) {
-    return new JenaReader(modelURI);
+    return new DbReader(modelURI);
   }
 }

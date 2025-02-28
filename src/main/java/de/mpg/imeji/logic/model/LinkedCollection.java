@@ -8,6 +8,8 @@ import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jReferencedResource;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.Convert;
 
 /**
  * A collection can be linked to other collections that belong to the same experiment, study similar
@@ -44,6 +46,7 @@ public class LinkedCollection implements Serializable {
   /**
    * Will be set by Jena
    */
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id;
 
   @j2jLiteral("http://purl.org/dc/terms/type")

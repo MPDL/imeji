@@ -8,6 +8,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
 import de.mpg.imeji.logic.util.StorageUtils;
 import org.apache.jena.atlas.lib.AlarmClock;
 
@@ -82,10 +83,12 @@ public class ImejiInitializer {
    */
   public static void init() {
     try {
+      EntityManagerHelper.factory.createEntityManager();
       Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
       ElasticInitializer.start();
       ImejiInitializer.init(Imeji.tdbPath);
       NIGHTLY_EXECUTOR.start();
+
     } catch (final Exception e) {
       LOGGER.fatal("Error initializing imeji", e);
     }

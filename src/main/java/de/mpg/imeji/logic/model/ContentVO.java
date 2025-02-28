@@ -12,6 +12,10 @@ import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Content of an Item
@@ -19,22 +23,36 @@ import de.mpg.imeji.logic.ImejiNamespaces;
  * @author saquet
  *
  */
+
+@Entity
+@Table(name = "content")
+@Access(AccessType.FIELD)
+
 @j2jResource("http://imeji.org/terms/content")
 @j2jModel("content")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class ContentVO implements Serializable {
   private static final long serialVersionUID = -7906584876989077898L;
+
+
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id;
   @j2jLiteral("http://imeji.org/terms/itemId")
   private String itemId;
   @j2jLazyLiteral("http://imeji.org/terms/fulltext")
   private String fulltext;
+
+
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
   private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();
+  @Column(name = "thumbnailResolution")
   @j2jLiteral("http://imeji.org/terms/thumbnail")
   private String thumbnail;
+  @Column(name = "previewResolution")
   @j2jLiteral("http://imeji.org/terms/preview")
   private String preview;
+  @Column(name = "fullResolution")
   @j2jLiteral("http://imeji.org/terms/full")
   private String full;
   @j2jLiteral("http://imeji.org/terms/original")
@@ -45,6 +63,9 @@ public class ContentVO implements Serializable {
   private long width;
   @j2jLiteral("http://www.w3.org/2003/12/exif/ns#height")
   private long height;
+
+  @Id
+  private String dbId;
 
   public ContentVO() {
 
@@ -62,6 +83,7 @@ public class ContentVO implements Serializable {
    */
   public void setId(URI id) {
     this.id = id;
+    this.dbId = id.toString();
   }
 
   /**

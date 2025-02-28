@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,6 +25,8 @@ import de.mpg.imeji.logic.model.aspects.CloneURI;
 import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.URIListHelper;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * A User group
@@ -31,23 +35,44 @@ import de.mpg.imeji.logic.util.URIListHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+
+@Entity
+@Table(name = "user-group")
+@Access(AccessType.FIELD)
+
 @j2jResource("http://imeji.org/terms/userGroup")
 @j2jModel("userGroup")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class UserGroup implements Serializable, ResourceLastModified, CloneURI, AccessMember {
   private static final long serialVersionUID = 7770992777121385741L;
-  private URI id = IdentifierUtil.newURI(UserGroup.class);
+
+  //@Convert(converter = HibernateURIConverter.class)
+  private URI id;
   @j2jLiteral("http://xmlns.com/foaf/0.1/name")
   private String name;
+
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/terms/grant")
   private Collection<String> grants = new ArrayList<String>();
+
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://xmlns.com/foaf/0.1/member")
   private Collection<URI> users = new ArrayList<URI>();
   @j2jLiteral(ImejiNamespaces.LAST_MODIFICATION_DATE)
   private Calendar modified;
 
+  @Id
+  private String dbId;
   private static final Logger LOGGER = LogManager.getLogger(UserGroup.class);
 
+  public UserGroup() {
+    this.id = IdentifierUtil.newURI(UserGroup.class);
+    this.dbId = this.id.toString();
+  }
 
   @Override
   public UserGroup cloneURI() {
@@ -163,7 +188,9 @@ public class UserGroup implements Serializable, ResourceLastModified, CloneURI, 
    * @param id the id to set
    */
   public void setId(URI id) {
+
     this.id = id;
+    this.dbId = id.toString();
   }
 
 

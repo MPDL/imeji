@@ -8,6 +8,11 @@ import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
 
 @j2jModel("facet")
 @j2jId(getMethod = "getUri", setMethod = "setUri")
@@ -25,10 +30,12 @@ public class Facet implements Serializable {
    */
   @j2jLiteral("http://imeji.org/terms/objecttype")
   private String objectType = OBJECTTYPE_ITEM;
-  private URI uri = IdentifierUtil.newURI(Facet.class);
+  private URI uri;
   @j2jLiteral("http://imeji.org/terms/position")
   private int position = 0;
 
+  @Id
+  private String dbUri;
 
   public static final String OBJECTTYPE_ITEM = "item";
   public static final String OBJECTTYPE_COLLECTION = "collection";
@@ -53,6 +60,10 @@ public class Facet implements Serializable {
    */
   public static final String COLLECTION_ROOT_ITEMS = "count_all_collection_root_items";
 
+  public Facet() {
+    this.uri = IdentifierUtil.newURI(Facet.class);
+    this.dbUri = this.uri.toString();
+  }
   /**
    * @return the name
    */
@@ -106,7 +117,9 @@ public class Facet implements Serializable {
    * @param uri the uri to set
    */
   public void setUri(URI uri) {
+
     this.uri = uri;
+    this.dbUri = this.uri.toString();
   }
 
   public String getIdString() {

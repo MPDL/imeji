@@ -1,0 +1,150 @@
+package de.mpg.imeji.logic.db.reader;
+
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.j2j.helper.J2JHelper;
+import de.mpg.imeji.j2j.transaction.CRUDTransaction;
+import de.mpg.imeji.j2j.transaction.OperationType;
+import de.mpg.imeji.j2j.transaction.Transaction;
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.AuthService;
+import de.mpg.imeji.logic.db.repositories.DbRepository;
+import de.mpg.imeji.logic.db.writer.DbWriter;
+import de.mpg.imeji.logic.db.writer.JenaWriter;
+import de.mpg.imeji.logic.model.User;
+import org.apache.jena.Jena;
+import org.apache.jena.rdf.model.Model;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * imeji READ operations in {@link Jena} <br/>
+ * - Use {@link CRUDTransaction} to load objects <br/>
+ * - Implements lazy loading ({@link List} contained in objects are then no loaded), for faster load
+ * <br/>
+ * - For WRITE operations, uses {@link JenaWriter}
+ *
+ * @author saquet (initial creation)
+ * @author $Author$ (last modification)
+ * @version $Revision$ $LastChangedDate$
+ */
+public class DbReader implements Reader {
+  private final String modelURI;
+  private final boolean lazy = false;
+  private final DbRepository dbRepository;
+  protected static Logger LOGGER = LogManager.getLogger(DbWriter.class);
+  /**
+   * imeji object loader for one {@link Model}
+   *
+   * @param modelURI
+   */
+  public DbReader(String modelURI) {
+    this.modelURI = modelURI;
+    LOGGER.info("Creating Reader for " + modelURI);
+    this.dbRepository = DbRepository.getRepositoryForModel(modelURI);
+  }
+
+  /**
+   * Load lazy one {@link Object} according to its uri <br/>
+   * Faster than load method, but contained {@link List} are skipped for loading
+   *
+   * @param uri
+   * @param user
+   * @param o
+   * @return
+   * @throws Exception
+   */
+  @Override
+  public Object readLazy(String uri, User user, Object o) throws ImejiException {
+    return read(uri, user, o, true);
+  }
+
+  /**
+   * Load a object from {@link Jena} within one {@link CRUDTransaction}
+   *
+   * @param uri
+   * @param user
+   * @param o
+   * @return
+   * @throws Exception
+   */
+  @Override
+  public Object read(String uri, User user, Object o) throws ImejiException {
+    return read(uri, user, o, false);
+  }
+
+  /**
+   * Load a list of objects within one {@link CRUDTransaction}
+   *
+   * @param objects
+   * @param user
+   * @return
+   * @throws Exception
+   */
+  @Override
+  public List<Object> read(List<Object> objects, User user) throws ImejiException {
+    return read(objects, user, false);
+  }
+
+  /**
+   * Load a {@link List} of {@link Object} within one {@link CRUDTransaction} <br/>
+   * Faster than load method, but contained {@link List} are skipped for loading
+   *
+   * @param objects
+   * @param user
+   * @return
+   * @throws Exception
+   */
+  @Override
+  public List<Object> readLazy(List<Object> objects, User user) throws ImejiException {
+    return read(objects, user, true);
+  }
+
+  private Object read(String uri, User user, Object o, boolean lazy) throws ImejiException {
+    J2JHelper.setId(o, URI.create(uri));
+    final List<Object> objects = new ArrayList<Object>();
+    objects.add(o);
+    final List<Object> l = read(objects, user, lazy);
+    if (l.size() > 0) {
+      return l.get(0);
+    }
+    return null;
+  }
+
+  /**
+   * Accesses Jena.
+   * 
+   * @param objects
+   * @param user
+   * @param lazy
+   * @return
+   * @throws ImejiException
+   */
+  private List<Object> read(List<Object> objects, User user, boolean lazy) throws ImejiException {
+
+
+    AuthService as = new AuthService(user, objects, OperationType.READ);
+    as.checkLogin();
+    as.checkSecurityForWriteOperations();
+    List<Object> readObjects = new ArrayList<>();
+    for (Object o : objects) {
+      as.checkObjectStatus(dbRepository, o, OperationType.READ);
+      String id = J2JHelper.getId(o).toString();
+      Object res = dbRepository.read(id);
+      readObjects.add(res);
+    }
+    as.checkSecurityForReadOperations();
+    return readObjects;
+
+    /*
+    final Transaction crudTransaction = new CRUDTransaction(objects, OperationType.READ, user, modelURI, lazy);
+    crudTransaction.start(Imeji.dataset);
+    crudTransaction.rethrowException();
+    return objects;
+
+     */
+  }
+}

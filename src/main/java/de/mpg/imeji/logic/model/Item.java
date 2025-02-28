@@ -6,6 +6,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +23,8 @@ import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * imeji item. Can be an image, a video, a sound, etc.
@@ -29,11 +33,17 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+
+@Entity
+@Table(name = "item")
+@Access(AccessType.FIELD)
+
 @j2jResource("http://imeji.org/terms/item")
 @j2jModel("item")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class Item extends Properties implements Serializable, CollectionElement, CloneURI, AccessMember {
   private static final long serialVersionUID = 3989965275269803885L;
+  //@Convert(converter = HibernateURIConverter.class)
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
   @j2jLiteral("http://imeji.org/terms/filename")
@@ -42,8 +52,13 @@ public class Item extends Properties implements Serializable, CollectionElement,
   private String filetype;
   @j2jLiteral("http://imeji.org/terms/fileSize")
   private long fileSize;
+
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jLazyList("http://imeji.org/terms/license")
   private List<License> licenses = new ArrayList<>();
+
+
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jLazyList("http://imeji.org/terms/metadata")
   private List<Metadata> metadata = new ArrayList<>();
 

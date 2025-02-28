@@ -12,8 +12,12 @@ import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import de.mpg.imeji.logic.model.util.StatementUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Define the properties of a {@link Metadata}. {@link Statement} are defined in a
@@ -23,12 +27,19 @@ import de.mpg.imeji.logic.util.ObjectHelper;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+
+@Entity
+@Table(name = "statement")
+@Access(AccessType.FIELD)
+
 @j2jResource("http://imeji.org/terms/statement")
 @j2jModel("statement")
 @j2jId(getMethod = "getUri", setMethod = "setUri")
 public class Statement implements Serializable, Cloneable {
   private static final long serialVersionUID = -7950561563075491540L;
   private StatementType type = StatementType.TEXT;
+
+  //@Convert(converter = HibernateURIConverter.class)
   private URI uri;
   @j2jLiteral("http://imeji.org/terms/index")
   private String index;
@@ -36,10 +47,16 @@ public class Statement implements Serializable, Cloneable {
   private String typeString = type.name();
   @j2jLiteral("http://imeji.org/terms/namespace")
   private String namespace;
+  //@Convert(converter = HibernateURIConverter.class)
   @j2jResource("http://purl.org/dc/dcam/VocabularyEncodingScheme")
   private URI vocabulary;
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/terms/literalConstraint")
   private Collection<String> literalConstraints = new ArrayList<String>();
+  @Id
+  private String dbId;
 
   public Statement() {
 
@@ -129,7 +146,9 @@ public class Statement implements Serializable, Cloneable {
   }
 
   public void setUri(URI uri) {
+
     this.uri = uri;
+    this.dbId = uri.toString();
   }
 
   public URI getUri() {

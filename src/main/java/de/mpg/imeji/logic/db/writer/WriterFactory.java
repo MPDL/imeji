@@ -15,6 +15,6 @@ public class WriterFactory {
    * @return
    */
   public static Writer create(String modelURI) {
-    return new JenaWriter(modelURI);
+    return new DbWriter(modelURI);
   }
 }

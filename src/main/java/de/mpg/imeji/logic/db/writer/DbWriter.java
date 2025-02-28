@@ -1,25 +1,39 @@
 package de.mpg.imeji.logic.db.writer;
 
+import de.mpg.imeji.exceptions.*;
+import de.mpg.imeji.j2j.authorization.JenaAuthorization;
+import de.mpg.imeji.j2j.controler.ResourceController;
+import de.mpg.imeji.j2j.helper.J2JHelper;
+import de.mpg.imeji.j2j.queries.Queries;
+import de.mpg.imeji.j2j.transaction.*;
+import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.AuthService;
+import de.mpg.imeji.logic.db.reader.JenaReader;
+import de.mpg.imeji.logic.db.repositories.*;
+import de.mpg.imeji.logic.init.ImejiInitializer;
+import de.mpg.imeji.logic.model.Properties;
+import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.aspects.ChangeMember;
+import de.mpg.imeji.logic.model.aspects.CloneURI;
+import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
+import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.security.authorization.Authorization;
+import de.mpg.imeji.logic.util.ObjectHelper;
+import de.mpg.imeji.logic.workflow.WorkflowValidator;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.jena.Jena;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.net.URI;
+import java.security.Security;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.apache.jena.Jena;
-import org.apache.jena.rdf.model.Model;
-
-import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.j2j.transaction.CRUDTransaction;
-import de.mpg.imeji.j2j.transaction.ElementsTransaction;
-import de.mpg.imeji.j2j.transaction.OperationType;
-import de.mpg.imeji.j2j.transaction.ThreadedTransaction;
-import de.mpg.imeji.j2j.transaction.Transaction;
-import de.mpg.imeji.logic.config.Imeji;
-import de.mpg.imeji.logic.db.reader.JenaReader;
-import de.mpg.imeji.logic.model.User;
-import de.mpg.imeji.logic.model.aspects.ChangeMember;
-import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
-import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 
 /**
  * imeji WRITE operations (create/delete/update) in {@link Jena} <br/>
@@ -32,20 +46,22 @@ import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
-public class JenaWriter implements Writer {
+public class DbWriter implements Writer {
   private final String modelURI;
   private static final ExecutorService WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
-  private DbWriter dbWriter;
+  protected static Logger LOGGER = LogManager.getLogger(DbWriter.class);
 
+  private DbRepository dbRepository;
   /**
-   * Construct one {@link JenaWriter} for one {@link Model}
+   * Construct one {@link DbWriter} for one {@link Model}
    *
    * @param modelURI
    */
-  public JenaWriter(String modelURI) {
+  public DbWriter(String modelURI) {
 
     this.modelURI = modelURI;
-    this.dbWriter = new DbWriter(modelURI);
+    LOGGER.info("Creating Writer for " + modelURI);
+    this.dbRepository = DbRepository.getRepositoryForModel(modelURI);
   }
 
   /**
@@ -57,8 +73,17 @@ public class JenaWriter implements Writer {
    */
   @Override
   public List<Object> create(List<Object> objects, User user) throws ImejiException {
-    List<Object> createdObjects = runCRUDTransaction(objects, OperationType.CREATE, user, false);
-    dbWriter.create(objects, user);
+
+    AuthService as = new AuthService(user, objects, OperationType.CREATE);
+    as.checkLogin();
+    as.checkSecurityForWriteOperations();
+    List<Object> createdObjects = new ArrayList<>();
+    for (Object o : objects) {
+      as.checkObjectStatus(dbRepository, o, OperationType.CREATE);
+      dbRepository.create(o);
+      createdObjects.add(o);
+    }
+    as.checkSecurityForReadOperations();
     return createdObjects;
   }
 
@@ -71,14 +96,17 @@ public class JenaWriter implements Writer {
    */
   @Override
   public void delete(List<Object> objects, User user) throws ImejiException {
-    runCRUDTransaction(objects, OperationType.DELETE, user, false);
-    dbWriter.delete(objects, user);
-    for (final Object o : objects) {
-      final URI uri = WriterFacade.extractID(o);
-      if (uri != null) {
-        ImejiSPARQL.execUpdate(JenaCustomQueries.updateRemoveGrantsFor(uri.toString()));
-      }
+
+    AuthService as = new AuthService(user, objects, OperationType.DELETE);
+    as.checkLogin();
+    as.checkSecurityForWriteOperations();
+    List<Object> createdObjects = new ArrayList<>();
+    for (Object o : objects) {
+      as.checkObjectStatus(dbRepository, o, OperationType.DELETE);
+      dbRepository.delete(o);
+      //createdObjects.add(o);
     }
+    as.checkSecurityForReadOperations();
   }
 
   /**
@@ -90,9 +118,18 @@ public class JenaWriter implements Writer {
    */
   @Override
   public List<Object> update(List<Object> objects, User user) throws ImejiException {
-    List<Object> updatedObjects = runCRUDTransaction(objects, OperationType.UPDATE, user, false);
-    dbWriter.update(objects, user);
-    return updatedObjects;
+    AuthService as = new AuthService(user, objects, OperationType.UPDATE);
+    as.checkLogin();
+    as.checkSecurityForWriteOperations();
+    List<Object> createdObjects = new ArrayList<>();
+    for (Object o : objects) {
+      as.checkObjectStatus(dbRepository, o, OperationType.UPDATE);
+      dbRepository.update(o);
+      createdObjects.add(o);
+    }
+    as.checkSecurityForReadOperations();
+    return createdObjects;
+
   }
 
   /**
@@ -106,9 +143,7 @@ public class JenaWriter implements Writer {
    */
   @Override
   public List<Object> updateLazy(List<Object> objects, User user) throws ImejiException {
-    List<Object> updatedObjects = runCRUDTransaction(objects, OperationType.UPDATE, user, true);
-    dbWriter.updateLazy(objects, user);
-    return updatedObjects;
+    return this.update(objects, user);
   }
 
   @Override
@@ -133,6 +168,15 @@ public class JenaWriter implements Writer {
     ThreadedTransaction.run(new ThreadedTransaction(crudTransaction, Imeji.tdbPath), WRITE_EXECUTOR);
     return crudTransaction.getResults();
   }
+
+
+
+
+
+
+
+
+
 
 
 }

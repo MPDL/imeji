@@ -8,7 +8,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import de.mpg.imeji.logic.util.IdentifierUtil;
+import jakarta.persistence.Convert;
 
 /**
  * An organization
@@ -21,6 +23,7 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class Organization implements Cloneable, Serializable {
   private static final long serialVersionUID = -7541779415288019910L;
+  //@Convert(converter = HibernateURIConverter.class)
   private URI id;
   @j2jLiteral("http://purl.org/dc/terms/title")
   private String name;

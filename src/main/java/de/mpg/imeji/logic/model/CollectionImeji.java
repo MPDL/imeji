@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import jakarta.persistence.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +22,8 @@ import de.mpg.imeji.logic.model.aspects.ChangeMember;
 import de.mpg.imeji.logic.model.aspects.ChangeMember.ActionType;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
 import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * imeji collection has one {@link MetadataProfile} and contains {@link Item}
@@ -28,6 +32,11 @@ import de.mpg.imeji.logic.util.ObjectHelper.ObjectType;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+
+@Entity
+@Table(name = "collection")
+@Access(AccessType.FIELD)
+
 @j2jResource("http://imeji.org/terms/collection")
 @j2jModel("collection")
 @j2jId(getMethod = "getId", setMethod = "setId")
@@ -39,18 +48,31 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   private String title;
   @j2jLiteral("http://purl.org/dc/elements/1.1/description")
   private String description;
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://xmlns.com/foaf/0.1/person")
   protected Collection<Person> persons = new ArrayList<Person>();
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/AdditionalInfo")
   private List<ContainerAdditionalInfo> additionalInformations = new ArrayList<>();
+
   @j2jLiteral("http://imeji.org/terms/doi")
   private String doi;
   @j2jResource("http://imeji.org/terms/logoUrl")
   private URI logoUrl;
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://purl.org/dc/terms/type")
   private List<String> types = new ArrayList<>();
-  private Collection<URI> images = new ArrayList<URI>();
 
+  //private Collection<URI> images = new ArrayList<URI>();
+
+  
+  @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/linkedCollection")
   private List<LinkedCollection> linkedCollections = new ArrayList<LinkedCollection>();
 
@@ -149,16 +171,17 @@ public class CollectionImeji extends Properties implements Serializable, Collect
     return doi;
   }
 
+  /*
   public void setImages(Collection<URI> images) {
     this.images = images;
   }
-
+  
   @Deprecated
   // TODO remove
   public Collection<URI> getImages() {
     return images;
   }
-
+  */
   /**
    * @return the collection
    */
