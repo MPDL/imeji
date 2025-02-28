@@ -14,13 +14,17 @@ import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import de.mpg.imeji.logic.model.aspects.AccessMember;
 import de.mpg.imeji.logic.model.aspects.ChangeMember;
 import de.mpg.imeji.logic.model.aspects.CloneURI;
+import de.mpg.imeji.logic.model.aspects.ResourceLastModified;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.security.authorization.Authorization;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.jena.Jena;
 import org.apache.jena.query.Dataset;
@@ -31,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 import java.net.URI;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -61,7 +66,8 @@ public class DbWriter implements Writer {
 
     this.modelURI = modelURI;
     LOGGER.info("Creating Writer for " + modelURI);
-    this.dbRepository = DbRepository.getRepositoryForModel(modelURI);
+    ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
+    this.dbRepository = DbRepository.getRepositoryForModel(type);
   }
 
   /**
@@ -79,7 +85,8 @@ public class DbWriter implements Writer {
     as.checkSecurityForWriteOperations();
     List<Object> createdObjects = new ArrayList<>();
     for (Object o : objects) {
-      as.checkObjectStatus(dbRepository, o, OperationType.CREATE);
+      AuthService.checkObjectStatus(dbRepository, o, OperationType.CREATE);
+      setTimestamp(o);
       dbRepository.create(o);
       createdObjects.add(o);
     }
@@ -102,8 +109,9 @@ public class DbWriter implements Writer {
     as.checkSecurityForWriteOperations();
     List<Object> createdObjects = new ArrayList<>();
     for (Object o : objects) {
-      as.checkObjectStatus(dbRepository, o, OperationType.DELETE);
-      dbRepository.delete(o);
+      Object objFromDb = dbRepository.read(J2JHelper.getId(o).toString());
+      AuthService.checkObjectStatus(dbRepository, objFromDb, OperationType.DELETE);
+      dbRepository.delete(J2JHelper.getId(objFromDb).toString());
       //createdObjects.add(o);
     }
     as.checkSecurityForReadOperations();
@@ -123,7 +131,10 @@ public class DbWriter implements Writer {
     as.checkSecurityForWriteOperations();
     List<Object> createdObjects = new ArrayList<>();
     for (Object o : objects) {
-      as.checkObjectStatus(dbRepository, o, OperationType.UPDATE);
+      AuthService.checkObjectStatus(dbRepository, o, OperationType.UPDATE);
+      Object current = dbRepository.read(J2JHelper.getId(o).toString());
+      checkModified(o, current);
+      //setTimestamp(o);
       dbRepository.update(o);
       createdObjects.add(o);
     }
@@ -148,9 +159,65 @@ public class DbWriter implements Writer {
 
   @Override
   public List<Object> editElements(List<ChangeMember> changeElements, User issuingUser) throws ImejiException {
-    final ElementsTransaction multitypesTransaction = new ElementsTransaction(changeElements, issuingUser);
-    ThreadedTransaction.run(new ThreadedTransaction(multitypesTransaction, Imeji.tdbPath), WRITE_EXECUTOR);
-    return multitypesTransaction.getResults();
+
+    // check if all operations specified in ChangeMembers are valid
+    List<Object> objectsToChangeInDatabase = ChangeMember.getChangeObjects(changeElements);
+
+    AuthService as = new AuthService(issuingUser, objectsToChangeInDatabase, OperationType.UPDATE);
+    as.checkLogin();
+    as.checkSecurityForWriteOperations();
+
+    for (Object objectToChange : objectsToChangeInDatabase) {
+      //setModel(objectToChange);
+      ObjectHelper.ObjectType ot = ObjectHelper.getObjectType(J2JHelper.getId(objectToChange));
+      DbRepository dbRepository = DbRepository.getRepositoryForModel(ot);;
+      AuthService.checkObjectStatus(dbRepository, objectToChange, OperationType.UPDATE);
+    }
+
+    EntityManager em = EntityManagerHelper.factory.createEntityManager();
+    EntityTransaction transaction = em.getTransaction();
+    List<Object> updatedList = new ArrayList<>();
+    try {
+      transaction.begin();
+      for (ChangeMember changeMember : changeElements) {
+
+        if (changeMember.getImejiDataObject() instanceof CloneURI) {
+
+          Object emptyObjectWithURI = ((CloneURI) changeMember.getImejiDataObject()).cloneURI();
+          URI objectId = J2JHelper.getId(emptyObjectWithURI);
+          //String model = J2JHelper.getModel(objectId);
+          //DbRepository dbRepository = DbRepository.getRepositoryForModel(model)
+
+          Object dataObjectInStore = em.find(changeMember.getImejiDataObject().getClass(),objectId.toString());
+
+          if (dataObjectInStore instanceof AccessMember) {
+            ((AccessMember) dataObjectInStore).accessMember(changeMember);
+            checkModified(changeMember.getImejiDataObject(), dataObjectInStore);
+            Object newObject = em.merge(dataObjectInStore);
+            updatedList.add(newObject);
+          }
+        }
+        else
+        {
+          throw new UnprocessableError(
+                  "Could not update member of " + J2JHelper.getId(changeMember.getImejiDataObject()).getPath().replace("imeji/", "")
+                          + ". Reason: Required interfaces not implemented.");
+        }
+      }
+      //work.accept(entityManager);
+      transaction.commit();
+    } catch (Exception e) {
+      if (transaction.isActive())
+        transaction.rollback();
+      throw new ImejiException("Error with database",e);
+    } finally {
+      em.close();
+    }
+
+
+    as.checkSecurityForReadOperations();
+    return updatedList;
+
   }
 
 
@@ -170,6 +237,36 @@ public class DbWriter implements Writer {
   }
 
 
+protected void setTimestamp(Object imejiDataObject) {
+  if (imejiDataObject instanceof ResourceLastModified) {
+    Calendar now = Calendar.getInstance();
+    ((ResourceLastModified) imejiDataObject).setModified(now);
+  }
+}
+
+
+private void checkModified(Object imejiDataObject, Object currentDbObject) throws ReloadBeforeSaveException, NotFoundException {
+  // Throw ReloadBeforeSaveException in case that object in Jena has been modified since we last read it.
+  if (imejiDataObject instanceof ResourceLastModified) {
+    if (imejiDataObject instanceof CloneURI) {
+
+      //Object currentObjectInJena = this.read(((CloneURI) imejiDataObject).cloneURI());
+      Calendar lastModifiedInDatabase = ((ResourceLastModified) currentDbObject).getModified();
+      Calendar imejiDataObjectLastModified = ((ResourceLastModified) imejiDataObject).getModified();
+      if (lastModifiedInDatabase != null && imejiDataObjectLastModified != null) {
+        if (lastModifiedInDatabase.getTimeInMillis() != imejiDataObjectLastModified.getTimeInMillis()) {
+          throw new ReloadBeforeSaveException(currentDbObject);
+        }
+      } else {
+        throw new NotImplementedException("Could not process update request, no timestamp for data synchronization available");
+      }
+    } else {
+      throw new NotImplementedException(
+              "Could not process update request, interface CloneURI not implemented (but needs to be) for class "
+                      + imejiDataObject.getClass());
+    }
+  }
+}
 
 
 

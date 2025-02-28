@@ -3,12 +3,14 @@ package de.mpg.imeji.logic.search.facet.controller;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.generic.ImejiControllerAbstract;
+import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 
@@ -25,15 +27,19 @@ public class FacetController extends ImejiControllerAbstract<Facet> {
   @Override
   public List<Facet> retrieveBatch(List<String> ids, User user) throws ImejiException {
     List<Facet> facets = initializeEmtpyList(ids);
-    READER.read(toObjectList(facets), user);
-    return facets;
+    List<Object> res = READER.read(toObjectList(facets), user);
+    return res.stream()
+            .map(e -> (Facet) e)
+            .collect(Collectors.toList());
   }
 
   @Override
   public List<Facet> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
     List<Facet> facets = initializeEmtpyList(ids);
-    READER.readLazy(toObjectList(facets), user);
-    return facets;
+    List<Object> res = READER.readLazy(toObjectList(facets), user);
+    return res.stream()
+            .map(e -> (Facet) e)
+            .collect(Collectors.toList());
   }
 
   @Override

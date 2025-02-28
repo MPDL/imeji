@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import de.mpg.imeji.logic.db.repositories.ContentDbRepository;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -358,8 +359,9 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   }
 
   @Override
-  public List<String> searchAll() {
-    return ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
+  public List<String> searchAll() throws ImejiException{
+    return new ContentDbRepository().retrieveAllIds();
+    //return ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
 
   }
 

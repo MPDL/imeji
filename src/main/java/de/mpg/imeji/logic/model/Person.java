@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
@@ -20,6 +21,7 @@ import jakarta.persistence.Convert;
  * @author $Author$ (last modification)
  * @version $Revision$ $LastChangedDate$
  */
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @j2jResource("http://xmlns.com/foaf/0.1/person")
 @j2jId(getMethod = "getId", setMethod = "setId")
 public class Person implements Cloneable, Serializable {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -340,8 +341,9 @@ public class CollectionService extends SearchServiceAbstract<CollectionImeji> {
   }
 
   @Override
-  public List<String> searchAll() {
-    return ImejiSPARQL.exec(JenaCustomQueries.selectCollectionAll(), Imeji.collectionModel);
+  public List<String> searchAll() throws ImejiException {
+    return new CollectionsDbRepository().retrieveAllIds();
+    //return ImejiSPARQL.exec(JenaCustomQueries.selectCollectionAll(), Imeji.collectionModel);
   }
 
   /**

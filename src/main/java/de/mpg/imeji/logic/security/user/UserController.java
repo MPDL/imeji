@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -116,12 +117,16 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
    * @throws ImejiException
    */
   public List<User> retrieveAll() throws ImejiException {
+    return new UserDbRepository().retrieveAll();
+    /*
     final List<String> uris = ImejiSPARQL.exec(JenaCustomQueries.selectUserAll(), Imeji.userModel);
     final List<User> users = new ArrayList<>();
     for (final String uri : uris) {
       users.add(retrieve(URI.create(uri), Imeji.adminUser));
     }
     return users;
+
+     */
   }
 
   /**

@@ -304,7 +304,7 @@ public class WriterFacade {
       if (execExept.getCause() instanceof ImejiException) {
         throw (ImejiException) execExept.getCause();
       } else {
-        throw new ImejiException(execExept.getMessage());
+        throw new ImejiException(execExept.getMessage(), execExept);
       }
     }
     return objectsInDatabase;

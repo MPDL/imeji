@@ -37,8 +37,9 @@ public class SubscriptionController extends ImejiControllerAbstract<Subscription
   @Override
   public List<Subscription> retrieveBatch(List<String> ids, User user) throws ImejiException {
     List<Subscription> subscriptions = emtyListFactory(ids);
-    READER.read(J2JHelper.cast2ObjectList(subscriptions), Imeji.adminUser);
-    return subscriptions.stream().filter(s -> SecurityUtil.authorization().read(user, s)).collect(Collectors.toList());
+    List<Object> res = READER.read(J2JHelper.cast2ObjectList(subscriptions), Imeji.adminUser);
+
+    return res.stream().map(o -> (Subscription)o).filter(s -> SecurityUtil.authorization().read(user, s)).collect(Collectors.toList());
   }
 
   @Override

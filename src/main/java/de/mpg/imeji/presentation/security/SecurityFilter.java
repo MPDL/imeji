@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response.Status;
 
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
 import de.mpg.imeji.presentation.rewrite.RequestHelper;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -149,12 +151,17 @@ public class SecurityFilter implements Filter {
    * @throws NotFoundException
    */
   private boolean isPublic(URI uri) throws NotFoundException {
-    List<String> result = ImejiSPARQL.exec(JenaCustomQueries.selectStatus(uri.toString()), Imeji.collectionModel);
-    if (result.size() < 1) {
-      throw new NotFoundException(uri.getPath() + " not found");
-    } else {
-      return StatusUtil.parseStatus(result.get(0)) != PENDING;
-    }
+      try {
+          CollectionImeji coll  = new CollectionsDbRepository().read(uri.toString());
+          //List<String> result = ImejiSPARQL.exec(JenaCustomQueries.selectStatus(uri.toString()), Imeji.collectionModel);
+          if (coll==null) {
+            throw new NotFoundException(uri.getPath() + " not found");
+          } else {
+            return coll.getStatus() != PENDING;
+          }
+      } catch (ImejiException e) {
+          throw new NotFoundException(e);
+      }
   }
 
   /**

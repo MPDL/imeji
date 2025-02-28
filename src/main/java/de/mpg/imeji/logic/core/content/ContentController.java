@@ -10,6 +10,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.generic.ImejiControllerAbstract;
+import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
@@ -58,15 +59,19 @@ class ContentController extends ImejiControllerAbstract<ContentVO> {
   @Override
   public List<ContentVO> retrieveBatch(List<String> ids, User user) throws ImejiException {
     List<ContentVO> contents = initializeEmptyList(ids);
-    READER.read(toObjectList(contents), Imeji.adminUser);
-    return contents;
+    List<Object> res = READER.read(toObjectList(contents), Imeji.adminUser);
+    return res.stream()
+            .map(e -> (ContentVO) e)
+            .collect(Collectors.toList());
   }
 
   @Override
   public List<ContentVO> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
     List<ContentVO> contents = initializeEmptyList(ids);
-    READER.readLazy(toObjectList(contents), Imeji.adminUser);
-    return contents;
+    List<Object> res = READER.readLazy(toObjectList(contents), Imeji.adminUser);
+    return res.stream()
+            .map(e -> (ContentVO) e)
+            .collect(Collectors.toList());
   }
 
   @Override

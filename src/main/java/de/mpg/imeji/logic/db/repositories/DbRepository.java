@@ -2,6 +2,8 @@ package de.mpg.imeji.logic.db.repositories;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
+import de.mpg.imeji.logic.model.Item;
+import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -11,6 +13,7 @@ import org.apache.jena.query.Dataset;
 import org.bouncycastle.math.raw.Mod;
 
 import java.net.URI;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -43,11 +46,11 @@ public abstract class DbRepository<ModelType> {
     }
 
 
-    public int delete(String id) throws ImejiException {
-        return inSession(em -> {
-            return em.createQuery("delete from " + classType.getSimpleName() + " where dbid = :id")
-                    .setParameter("id", id)
-                    .executeUpdate();
+    public void delete(String id) throws ImejiException {
+        inSession(em -> {
+            ModelType obj = em.find(classType, id);
+            em.remove(obj);
+            return null;
         });
     }
 
@@ -55,6 +58,22 @@ public abstract class DbRepository<ModelType> {
         inSession(em -> {
             em.remove(object);
             return null;
+        });
+    }
+
+    public List<ModelType> retrieveAll() throws ImejiException {
+        return inSession(em -> {
+            String className = classType.getSimpleName();
+            return em.createQuery("select u from " + className + " u", classType)
+                    .getResultList();
+        });
+    }
+
+    public List<String> retrieveAllIds() throws ImejiException {
+        return inSession(em -> {
+            String className = classType.getSimpleName();
+            return em.createQuery("select u.dbId from " + className + " u", String.class)
+                    .getResultList();
         });
     }
 
@@ -80,9 +99,9 @@ public abstract class DbRepository<ModelType> {
     }
 
 
-    public static DbRepository getRepositoryForModel(String modelURI)
+    public static DbRepository getRepositoryForModel(ObjectHelper.ObjectType type)
     {
-        ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
+
         //
         switch (type) {
             case ITEM: {
@@ -95,6 +114,9 @@ public abstract class DbRepository<ModelType> {
             }
             case COLLECTION: {
                 return new CollectionsDbRepository();
+            }
+            case CONTENT: {
+                return new ContentDbRepository();
             }
             case USER: {
                 return new UserDbRepository();

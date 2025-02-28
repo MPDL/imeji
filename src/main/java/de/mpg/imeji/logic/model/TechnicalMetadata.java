@@ -34,9 +34,6 @@ public class TechnicalMetadata implements Serializable {
   @j2jLiteral("http://imeji.org/terms/value")
   private String value;
 
-  @Id
-  private String dbId;
-
   public TechnicalMetadata() {
     // Default Constructor
   }
@@ -59,9 +56,7 @@ public class TechnicalMetadata implements Serializable {
   }
 
   public void setId(URI id) {
-
     this.id = id;
-    this.dbId = id.toString();
   }
 
 }

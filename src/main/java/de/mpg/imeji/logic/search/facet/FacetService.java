@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.mpg.imeji.logic.db.repositories.FacetDbRepository;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -117,8 +118,9 @@ public class FacetService extends SearchServiceAbstract<Facet> {
   }
 
   @Override
-  public List<String> searchAll() {
-    return ImejiSPARQL.exec(JenaCustomQueries.selectFacetAll(), Imeji.facetModel);
+  public List<String> searchAll() throws ImejiException {
+    return new FacetDbRepository().retrieveAllIds();
+    //return ImejiSPARQL.exec(JenaCustomQueries.selectFacetAll(), Imeji.facetModel);
   }
 
   private void resetCache(List<Facet> facets) {

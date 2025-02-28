@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.NotAllowedError;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.repositories.StatementDbRepository;
 import de.mpg.imeji.logic.events.MessageService;
 import de.mpg.imeji.logic.events.messages.Message.MessageType;
 import de.mpg.imeji.logic.events.messages.StatementMessage;
@@ -250,8 +251,9 @@ public class StatementService extends SearchServiceAbstract<Statement> {
   }
 
   @Override
-  public List<String> searchAll() {
-    return ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel);
+  public List<String> searchAll() throws ImejiException {
+    return new StatementDbRepository().retrieveAllIds();
+    //return ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel);
   }
 
   public List<Statement> retrieveNotUsedStatements() throws ImejiException {

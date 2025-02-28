@@ -113,15 +113,21 @@ class ItemController extends ImejiControllerAbstract<Item> {
   @Override
   public List<Item> retrieveBatch(List<String> ids, User user) throws ImejiException {
     final List<Item> items = initializeEmptyItems(ids);
-    READER.read(J2JHelper.cast2ObjectList(items), user);
-    return items;
+    List<Object> res = READER.read(J2JHelper.cast2ObjectList(items), user);
+    return res.stream()
+            .map(e -> (Item) e)
+            .collect(Collectors.toList());
+    //return items;
   }
 
   @Override
   public List<Item> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
     final List<Item> items = initializeEmptyItems(ids);
-    READER.readLazy(J2JHelper.cast2ObjectList(items), user);
-    return items;
+    List<Object> res = READER.readLazy(J2JHelper.cast2ObjectList(items), user);
+    return res.stream()
+            .map(e -> (Item) e)
+            .collect(Collectors.toList());
+    //return items;
   }
 
   @Override

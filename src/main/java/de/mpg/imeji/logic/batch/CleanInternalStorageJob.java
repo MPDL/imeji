@@ -81,7 +81,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * 
    * @return
    */
-  private HashSet<String> initSetOfStorageId() {
+  private HashSet<String> initSetOfStorageId() throws ImejiException {
     LOGGER.info("Initializing Set of storage Ids...");
     ContentService service = new ContentService();
     ContentService.RetrieveIterator iterator = service.iterateAll(20);

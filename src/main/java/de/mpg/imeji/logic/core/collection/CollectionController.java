@@ -12,6 +12,7 @@ import de.mpg.imeji.logic.generic.ImejiControllerAbstract;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Grant;
 import de.mpg.imeji.logic.model.Grant.GrantType;
+import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
@@ -40,16 +41,20 @@ class CollectionController extends ImejiControllerAbstract<CollectionImeji> {
 
   @Override
   public List<CollectionImeji> retrieveBatch(List<String> ids, User user) throws ImejiException {
-    final List<CollectionImeji> l = ids.stream().map(id -> ImejiFactory.newCollection().setUri(id).build()).collect(Collectors.toList());
-    READER.read(toObjectList(l), user);
-    return l;
+    List<CollectionImeji> l = ids.stream().map(id -> ImejiFactory.newCollection().setUri(id).build()).collect(Collectors.toList());
+    List<Object> res = READER.read(toObjectList(l), user);
+    return res.stream()
+            .map(e -> (CollectionImeji) e)
+            .collect(Collectors.toList());
   }
 
   @Override
   public List<CollectionImeji> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
     final List<CollectionImeji> l = ids.stream().map(id -> ImejiFactory.newCollection().setUri(id).build()).collect(Collectors.toList());
-    READER.readLazy(toObjectList(l), user);
-    return l;
+    List<Object> res = READER.readLazy(toObjectList(l), user);
+    return res.stream()
+            .map(e -> (CollectionImeji) e)
+            .collect(Collectors.toList());
   }
 
   @Override

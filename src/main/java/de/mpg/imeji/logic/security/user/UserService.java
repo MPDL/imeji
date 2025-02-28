@@ -11,6 +11,7 @@ import java.util.Map;
 import java.lang.reflect.Field;
 
 import de.mpg.imeji.exceptions.*;
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -532,7 +533,16 @@ public class UserService {
    * @throws ImejiException
    */
   public List<User> retrieveAllAdmins() {
-    final Search search = SearchFactory.create();
+
+      try {
+          return new UserDbRepository().retrieveAllAdmins();
+      } catch (ImejiException e) {
+        LOGGER.info("Could not retrieve any admin in the list. Something is wrong!", e);
+      }
+      return new ArrayList<>();
+
+      /*
+      final Search search = SearchFactory.create();
     final List<String> uris =
         search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
             .getResults();
@@ -545,6 +555,8 @@ public class UserService {
       }
     }
     return admins;
+
+       */
   }
 
   /**

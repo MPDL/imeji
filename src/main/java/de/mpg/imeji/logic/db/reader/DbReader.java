@@ -11,6 +11,7 @@ import de.mpg.imeji.logic.db.repositories.DbRepository;
 import de.mpg.imeji.logic.db.writer.DbWriter;
 import de.mpg.imeji.logic.db.writer.JenaWriter;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.util.ObjectHelper;
 import org.apache.jena.Jena;
 import org.apache.jena.rdf.model.Model;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +45,8 @@ public class DbReader implements Reader {
   public DbReader(String modelURI) {
     this.modelURI = modelURI;
     LOGGER.info("Creating Reader for " + modelURI);
-    this.dbRepository = DbRepository.getRepositoryForModel(modelURI);
+    ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
+    this.dbRepository = DbRepository.getRepositoryForModel(type);
   }
 
   /**
@@ -105,7 +107,7 @@ public class DbReader implements Reader {
 
   private Object read(String uri, User user, Object o, boolean lazy) throws ImejiException {
     J2JHelper.setId(o, URI.create(uri));
-    final List<Object> objects = new ArrayList<Object>();
+    final List<Object> objects = new ArrayList<>();
     objects.add(o);
     final List<Object> l = read(objects, user, lazy);
     if (l.size() > 0) {
@@ -136,6 +138,9 @@ public class DbReader implements Reader {
       Object res = dbRepository.read(id);
       readObjects.add(res);
     }
+    //objects.clear();
+    //objects.addAll(readObjects);
+    as.setReadAndWriteOperations(readObjects, OperationType.READ);
     as.checkSecurityForReadOperations();
     return readObjects;
 

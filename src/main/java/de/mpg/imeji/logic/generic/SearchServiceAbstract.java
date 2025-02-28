@@ -98,7 +98,7 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
    * 
    * @return
    */
-  public abstract List<String> searchAll();
+  public abstract List<String> searchAll() throws ImejiException;
 
   /**
    * Iterate over all elements of Type T. Should be prefer to retreiveAll to avoid to create huge
@@ -107,7 +107,7 @@ public abstract class SearchServiceAbstract<T> extends ImejiServiceAbstract {
    * @param stepSize
    * @return
    */
-  public RetrieveIterator iterateAll(int stepSize) {
+  public RetrieveIterator iterateAll(int stepSize) throws ImejiException {
     return new RetrieveIterator(searchAll(), Imeji.adminUser, stepSize);
   }
 

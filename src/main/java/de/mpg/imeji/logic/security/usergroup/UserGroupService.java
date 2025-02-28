@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.mpg.imeji.logic.db.repositories.UserGroupDbRepository;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -273,7 +274,8 @@ public class UserGroupService {
    * @throws ImejiException
    */
   public Collection<UserGroup> retrieveAll() throws ImejiException {
-    return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupAll(), Imeji.adminUser);
+    return new UserGroupDbRepository().retrieveAll();
+    //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupAll(), Imeji.adminUser);
   }
 
   /**

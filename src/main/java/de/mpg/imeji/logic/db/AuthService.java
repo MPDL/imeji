@@ -90,7 +90,7 @@ public class AuthService {
      * @throws NotFoundException
      * @throws WorkflowException
      */
-    public void checkObjectStatus(DbRepository dbRepository, Object object, OperationType operation)
+    public static void checkObjectStatus(DbRepository dbRepository, Object object, OperationType operation)
             throws NotFoundException, WorkflowException {
 
         if (object instanceof Properties) {
@@ -159,12 +159,13 @@ public class AuthService {
      * @return
      * @throws NotFoundException
      */
-    private Object getCorrespondingObjectInDatabase(Object clientImejiDataObject, DbRepository dbRepository)
+    private static Object getCorrespondingObjectInDatabase(Object clientImejiDataObject, DbRepository dbRepository)
             throws NotFoundException {
 
         if (clientImejiDataObject instanceof CloneURI) {
             try {
-                Object currentObjectInJena = dbRepository.read(((CloneURI) clientImejiDataObject).cloneURI().toString());
+                URI id = J2JHelper.getId(clientImejiDataObject);
+                Object currentObjectInJena = dbRepository.read(id.toString());
                 return currentObjectInJena;
             } catch (ImejiException e) {
                 throw new NotFoundException(e);
@@ -284,7 +285,7 @@ public class AuthService {
      * @param dataObjects
      * @param operation
      */
-    private void setReadAndWriteOperations(List<Object> dataObjects, OperationType operation) {
+    public void setReadAndWriteOperations(List<Object> dataObjects, OperationType operation) {
         if (operation == OperationType.READ) {
             this.readObjects = dataObjects;
         } else {

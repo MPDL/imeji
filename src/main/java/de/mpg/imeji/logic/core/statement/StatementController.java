@@ -11,6 +11,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.reader.ReaderFacade;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.generic.ImejiControllerAbstract;
+import de.mpg.imeji.logic.model.ContentVO;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.util.StringHelper;
@@ -34,8 +35,10 @@ class StatementController extends ImejiControllerAbstract<Statement> {
   @Override
   public List<Statement> retrieveBatch(List<String> ids, User user) throws ImejiException {
     final List<Statement> statements = initializeEmtpyList(ids);
-    READER.read(toObjectList(statements), user);
-    return statements;
+    List<Object> res = READER.read(toObjectList(statements), user);
+    return res.stream()
+            .map(e -> (Statement) e)
+            .collect(Collectors.toList());
   }
 
   @Override

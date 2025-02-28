@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -815,8 +816,9 @@ public class ItemService extends SearchServiceAbstract<Item> {
   }
 
   @Override
-  public List<String> searchAll() {
-    return ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
+  public List<String> searchAll() throws ImejiException {
+    return new ItemsDbRepository().retrieveAllIds();
+    //return ImejiSPARQL.exec(JenaCustomQueries.selectItemAll(), Imeji.imageModel);
   }
 
   /**
