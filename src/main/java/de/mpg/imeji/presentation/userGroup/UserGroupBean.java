@@ -13,6 +13,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.Cookie;
 
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -51,6 +52,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = -6501626930686020874L;
   private UserGroup userGroup = new UserGroup();
   private Collection<User> users;
+  Collection<User> allUsers;
   private static final Logger LOGGER = LogManager.getLogger(UserGroupsBean.class);
   private List<ShareListItem> roles = new ArrayList<ShareListItem>();
   private boolean edit = false;
@@ -75,7 +77,15 @@ public class UserGroupBean extends SuperBean implements Serializable {
         long endRetrUsers = System.currentTimeMillis() - startRetrUsers;
         LOGGER.info("Time USers: " + endRetrUsers);
 
+        long startRetrRoles = System.currentTimeMillis();
         this.roles = ShareUtil.getAllRoles(userGroup, getSessionUser(), getLocale());
+        long endRetrRoles = System.currentTimeMillis() - startRetrRoles;
+        LOGGER.info("Time Roles: " + endRetrRoles);
+
+        long startRetrAllUSers = System.currentTimeMillis();
+        this.allUsers = new UserService().retrieveAll();
+        long endRetrAllUSers = System.currentTimeMillis() - startRetrAllUSers;
+        LOGGER.info("Time all users: " + endRetrAllUSers);
 
       } catch (final ImejiExceptionWithUserMessage exceptionWithMessage) {
         String userMessage = "Error reading user group: " + exceptionWithMessage.getUserMessage(getLocale());
@@ -102,9 +112,18 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @return
    */
   public Collection<User> loadUsers(UserGroup group) {
+      try {
+          return new UserDbRepository().retrieveAllUsersForGroup(group.getId().toString());
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
+    /*
     final UserService c = new UserService();
     List<String> uris = group.getUsers().stream().map(i -> i.toString()).collect(Collectors.toList());
     return c.retrieveBatch(uris, 0);
+
+     */
   }
 
   /**
@@ -254,9 +273,11 @@ public class UserGroupBean extends SuperBean implements Serializable {
     this.users = users;
   }
 
+
   /**
    * @return the roles
    */
+
   public List<ShareListItem> getRoles() {
     return roles;
   }
@@ -264,9 +285,13 @@ public class UserGroupBean extends SuperBean implements Serializable {
   /**
    * @param roles the roles to set
    */
+
   public void setRoles(List<ShareListItem> roles) {
     this.roles = roles;
   }
+
+
+
 
   /**
    * @return the edit
@@ -291,7 +316,7 @@ public class UserGroupBean extends SuperBean implements Serializable {
   }
 
   public List<User> searchForIndex() throws ImejiException {
-    Collection<User> allUsers = (new UserService()).searchUserByName("");
+
     return allUsers.stream().filter(u -> filter(u, index))
         .sorted((u1, u2) -> u1.getPerson().getCompleteName().compareTo(u2.getPerson().getCompleteName())).collect(Collectors.toList());
   }

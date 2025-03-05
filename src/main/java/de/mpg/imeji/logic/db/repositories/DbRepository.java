@@ -69,6 +69,15 @@ public abstract class DbRepository<ModelType> {
         });
     }
 
+    public List<ModelType> retrieveByID(List<String> ids) throws ImejiException {
+        return inSession(em -> {
+            String className = classType.getSimpleName();
+            return em.createQuery("select u from " + className + " u WHERE u.dbId IN :ids", classType)
+                    .setParameter("ids", ids)
+                    .getResultList();
+        });
+    }
+
     public List<ModelType> readByCreator(String creatorId) throws ImejiException {
         return inSession(em -> {
             String className = classType.getSimpleName();
@@ -85,6 +94,8 @@ public abstract class DbRepository<ModelType> {
                     .getResultList();
         });
     }
+
+
 
     public long countAll() throws ImejiException {
         return inSession(em -> {

@@ -37,8 +37,8 @@ public class ObjectHelper {
     COLLECTION,
     ITEM,
     CONTENT,
-    USER,
     USERGROUP,
+    USER,
     STATEMENT,
     FACET,
     SYSTEM,
@@ -114,10 +114,11 @@ public class ObjectHelper {
    * @return
    */
   public static ObjectType getObjectType(URI uri) {
-    final String path = uri.getPath();
+    String path = uri.getPath();
     if (uri.toString().equals(baseUri)) {
       return ObjectType.SYSTEM;
     }
+    path = path.toLowerCase();
     for (final ObjectType type : ObjectType.values()) {
       if (path.contains("/" + type.name().toLowerCase())) {
         return type;

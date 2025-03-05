@@ -28,8 +28,8 @@ import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
 class UserGroupController implements AccessElement<UserGroup> {
 
   private static final Logger LOGGER = LogManager.getLogger(UserGroupController.class);
-  private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
-  private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel, SearchObjectTypes.USERGROUPS);
+  private static final ReaderFacade READER = new ReaderFacade(Imeji.userGroupModel);
+  private static final WriterFacade WRITER = new WriterFacade(Imeji.userGroupModel, SearchObjectTypes.USERGROUPS);
 
   /**
    * Create a {@link UserGroup}

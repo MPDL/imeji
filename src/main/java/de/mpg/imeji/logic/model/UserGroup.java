@@ -37,7 +37,7 @@ import org.hibernate.type.SqlTypes;
  */
 
 @Entity
-@Table(name = "user-group")
+@Table(name = "usergroup")
 @Access(AccessType.FIELD)
 
 @j2jResource("http://imeji.org/terms/userGroup")

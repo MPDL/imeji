@@ -6,6 +6,7 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mpg.imeji.logic.db.repositories.UserGroupDbRepository;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
@@ -48,6 +49,7 @@ public abstract class SecureTransaction extends Transaction {
   private List<ObjectOperation> writeOperations;
   private List<Object> readObjects;
 
+  private UserGroupDbRepository userGroupDbRepository = new UserGroupDbRepository();
 
   /**
    * Constructor
@@ -122,7 +124,7 @@ public abstract class SecureTransaction extends Transaction {
         throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
       }
       this.issuingUser = (User) userInDatabase;
-      //loadUsersUserGroups(userResourceController, dataset, userModelURI);
+      loadUsersUserGroups();
     }
 
     // (1b) check access rights of user
@@ -179,29 +181,31 @@ public abstract class SecureTransaction extends Transaction {
    * @throws NotFoundException
    */
 
-  /*
-  private void loadUsersUserGroups(ResourceController resourceController, Dataset dataset, String userModelName) throws NotFoundException {
 
-    String getUserGroupsOfUserQuery = JenaCustomQueries.selectUserGroupOfUser(this.issuingUser);
-    List<String> groupURIs = Queries.executeSPARQLQueryAndGetResults(getUserGroupsOfUserQuery, dataset, userModelName);
-    //List<UserGroup> groups = this.issuingUser.getGroups();
-    if (groupURIs.size() > 0) {
-      List<UserGroup> userGroupsWithUserInThem = new ArrayList<UserGroup>(groupURIs.size());
-      for (String groupURI : groupURIs) {
-        UserGroup groupToRead = new UserGroup();
-        groupToRead.setId(URI.create(groupURI));
-        Object readGroup = resourceController.read(groupToRead);
-        if (readGroup instanceof UserGroup) {
-          groupToRead = (UserGroup) readGroup;
-          userGroupsWithUserInThem.add(groupToRead);
+  private void loadUsersUserGroups() throws ImejiException {
+
+    List<UserGroup> groups = userGroupDbRepository.retrieveUserGroupsForUser(this.issuingUser.getId().toString());
+    this.issuingUser.setGroups(groups);
+       /*
+        String getUserGroupsOfUserQuery = JenaCustomQueries.selectUserGroupOfUser(this.issuingUser);
+        List<String> groupURIs = Queries.executeSPARQLQueryAndGetResults(getUserGroupsOfUserQuery, dataset, userModelName);
+        if (groupURIs.size() > 0) {
+            List<UserGroup> userGroupsWithUserInThem = new ArrayList<UserGroup>(groupURIs.size());
+            for (String groupURI : groupURIs) {
+                UserGroup groupToRead = new UserGroup();
+                groupToRead.setId(URI.create(groupURI));
+                Object readGroup = resourceController.read(groupToRead);
+                if (readGroup instanceof UserGroup) {
+                    groupToRead = (UserGroup) readGroup;
+                    userGroupsWithUserInThem.add(groupToRead);
+                }
+            }
+            this.issuingUser.setGroups(userGroupsWithUserInThem);
         }
-      }
-      this.issuingUser.setGroups(userGroupsWithUserInThem);
-    }
+
+        */
 
   }
-
-   */
 
   /**
    * Given a data object that has been manipulated by a client, read the corresponding data object

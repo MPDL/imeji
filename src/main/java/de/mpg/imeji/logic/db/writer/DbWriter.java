@@ -189,6 +189,13 @@ public class DbWriter implements Writer {
           //DbRepository dbRepository = DbRepository.getRepositoryForModel(model)
 
           Object dataObjectInStore = em.find(changeMember.getImejiDataObject().getClass(),objectId.toString());
+          if (dataObjectInStore instanceof UserGroup) {
+            for(URI uri : ((UserGroup) dataObjectInStore).getUsers()) {
+              LOGGER.info("Member " + uri);
+            }
+
+          }
+
 
           if (dataObjectInStore instanceof AccessMember) {
             ((AccessMember) dataObjectInStore).accessMember(changeMember);

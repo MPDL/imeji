@@ -13,9 +13,9 @@ public class CollectionsDbRepository extends DbRepository<CollectionImeji> {
     }
 
 
-    public List<String> retrieveAllSubCollectionIds() throws ImejiException {
+    public List<CollectionImeji> retrieveAllSubCollections() throws ImejiException {
         return inSession(em -> {
-            return em.createQuery("select i.dbId from CollectionImeji i WHERE i.collection IS NOT NULL", String.class)
+            return em.createQuery("select i from CollectionImeji i WHERE i.collection IS NOT NULL", CollectionImeji.class)
                     .getResultList();
         });
     }

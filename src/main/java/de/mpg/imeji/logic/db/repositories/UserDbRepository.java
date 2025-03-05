@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.db.repositories;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.User;
+import de.mpg.imeji.logic.model.UserGroup;
 
 import java.util.List;
 
@@ -26,6 +27,16 @@ public class UserDbRepository extends DbRepository<User> {
             String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
             return em.createNativeQuery("select * from Users where jsonb_exists(grants, :adminGrant);", User.class)
                     .setParameter("adminGrant", adminRule)
+                    .getResultList();
+        });
+    }
+
+    public List<User> retrieveAllUsersForGroup(String userGroupId) throws ImejiException {
+        return inSession(em -> {
+            //String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
+            UserGroup ug = em.find(UserGroup.class, userGroupId);
+            return em.createQuery("select u from User u where u.dbId IN :uIds", User.class)
+                    .setParameter("uIds", ug.getUsers().stream().map(uri -> uri.toString()).toList())
                     .getResultList();
         });
     }

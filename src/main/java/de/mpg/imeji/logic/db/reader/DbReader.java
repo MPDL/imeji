@@ -127,17 +127,18 @@ public class DbReader implements Reader {
    */
   private List<Object> read(List<Object> objects, User user, boolean lazy) throws ImejiException {
 
+    LOGGER.info("Reading " + objects.size() + " objects from " + modelURI);
 
     AuthService as = new AuthService(user, objects, OperationType.READ);
     as.checkLogin();
     as.checkSecurityForWriteOperations();
-    List<Object> readObjects = new ArrayList<>();
+    List<String> readObjectIds = new ArrayList<>();
     for (Object o : objects) {
       as.checkObjectStatus(dbRepository, o, OperationType.READ);
       String id = J2JHelper.getId(o).toString();
-      Object res = dbRepository.read(id);
-      readObjects.add(res);
+      readObjectIds.add(id);
     }
+    List<Object> readObjects = dbRepository.retrieveByID(readObjectIds);
     //objects.clear();
     //objects.addAll(readObjects);
     as.setReadAndWriteOperations(readObjects, OperationType.READ);

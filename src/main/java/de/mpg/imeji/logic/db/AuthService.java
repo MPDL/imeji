@@ -11,6 +11,7 @@ import de.mpg.imeji.j2j.transaction.SecureTransaction;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.repositories.DbRepository;
 import de.mpg.imeji.logic.db.repositories.UserDbRepository;
+import de.mpg.imeji.logic.db.repositories.UserGroupDbRepository;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.model.Properties;
@@ -23,6 +24,8 @@ import de.mpg.imeji.logic.workflow.WorkflowValidator;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
 import java.security.Security;
@@ -31,11 +34,14 @@ import java.util.List;
 
 public class AuthService {
 
+    private static final Logger LOGGER = LogManager.getLogger(AuthService.class);
+
     private User issuingUser;
     private List<ObjectOperation> writeOperations;
     private List<Object> readObjects;
 
     private UserDbRepository userDbRepository = new UserDbRepository();
+    private UserGroupDbRepository userGroupDbRepository = new UserGroupDbRepository();
 
     public AuthService(User issuingUser, List<Object> objectsToCheck, OperationType operation) {
         this.issuingUser = issuingUser;
@@ -67,7 +73,7 @@ public class AuthService {
                 throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
             }
             this.issuingUser = (User) userInDatabase;
-            //loadUsersUserGroups(userResourceController, dataset, userModelURI);
+            loadUsersUserGroups();
         }
 
         /*
@@ -126,9 +132,12 @@ public class AuthService {
      * @param user
      * @throws NotFoundException
      */
-    /*
-    private void loadUsersUserGroups(ResourceController resourceController, Dataset dataset, String userModelName) throws NotFoundException {
 
+    private void loadUsersUserGroups() throws ImejiException {
+
+       List<UserGroup> groups = userGroupDbRepository.retrieveUserGroupsForUser(this.issuingUser.getId().toString());
+       this.issuingUser.setGroups(groups);
+       /*
         String getUserGroupsOfUserQuery = JenaCustomQueries.selectUserGroupOfUser(this.issuingUser);
         List<String> groupURIs = Queries.executeSPARQLQueryAndGetResults(getUserGroupsOfUserQuery, dataset, userModelName);
         if (groupURIs.size() > 0) {
@@ -145,9 +154,11 @@ public class AuthService {
             this.issuingUser.setGroups(userGroupsWithUserInThem);
         }
 
+        */
+
     }
 
-     */
+
 
     /**
      * Given a data object that has been manipulated by a client, read the corresponding data object
@@ -225,12 +236,15 @@ public class AuthService {
 
             Authorization authorization = new DbAuthorization();
             for (Object dataObject : this.readObjects) {
+                LOGGER.info("Checking " + J2JHelper.getId(dataObject).toString() + " for auth with user " + this.issuingUser.getId().toString());
                 if (!authorization.read(this.issuingUser, dataObject)) {
+
                     final String id = J2JHelper.getId(dataObject).toString();
                     String message = "Not logged in";
                     if (this.issuingUser != null) {
                         message = this.issuingUser.getEmail() + " not allowed to read " + id;
                     }
+                    LOGGER.warn(message);
                     throw new NotAllowedError(message);
                 }
             }

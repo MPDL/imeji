@@ -14,7 +14,9 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import de.mpg.imeji.logic.db.repositories.ContentDbRepository;
 import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
+import de.mpg.imeji.logic.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,11 +32,6 @@ import de.mpg.imeji.logic.core.content.ContentService;
 import de.mpg.imeji.logic.core.facade.MoveFacade;
 import de.mpg.imeji.logic.core.facade.WorkflowFacade;
 import de.mpg.imeji.logic.generic.SearchServiceAbstract;
-import de.mpg.imeji.logic.model.CollectionImeji;
-import de.mpg.imeji.logic.model.Item;
-import de.mpg.imeji.logic.model.License;
-import de.mpg.imeji.logic.model.SearchFields;
-import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -271,6 +268,14 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
+    List<ContentVO> cl = new ContentDbRepository().retrieveAllContentWithFile(fileUrl);
+    if (cl!=null && !cl.isEmpty() && cl.get(0) != null) {
+      return retrieveLazy(URI.create(cl.get(0).getItemId()), user);
+    } else {
+      throw new NotFoundException("Can not find the resource requested");
+    }
+
+    /*
     final Search s = SearchFactory.create(SearchObjectTypes.ALL, SEARCH_IMPLEMENTATIONS.JENA);
     final List<String> r =
         s.searchString(JenaCustomQueries.selectItemOfFile(fileUrl), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
@@ -280,6 +285,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
     } else {
       throw new NotFoundException("Can not find the resource requested");
     }
+
+     */
   }
 
   /**

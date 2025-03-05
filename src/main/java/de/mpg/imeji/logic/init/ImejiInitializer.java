@@ -117,6 +117,7 @@ public class ImejiInitializer {
     Imeji.collectionModel = ImejiInitializer.getModelName(CollectionImeji.class);
     Imeji.imageModel = ImejiInitializer.getModelName(Item.class);
     Imeji.userModel = ImejiInitializer.getModelName(User.class);
+    Imeji.userGroupModel = ImejiInitializer.getModelName(UserGroup.class);
     Imeji.statementModel = ImejiInitializer.getModelName(Statement.class);
     Imeji.contentModel = ImejiInitializer.getModelName(ContentVO.class);
     Imeji.facetModel = ImejiInitializer.getModelName(Facet.class);

@@ -41,6 +41,8 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
   private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
   private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
 
+  private final UserDbRepository userDbRepository = new UserDbRepository();
+
   private static final Logger LOGGER = LogManager.getLogger(UserController.class);
   private static final Comparator<User> USER_COMPARATOR_BY_NAME = new Comparator<User>() {
     @Override
@@ -137,8 +139,16 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
    * @throws ImejiException
    */
   public List<User> retrieveBatchLazy(List<String> uris, int limit) {
-    final int max = limit < uris.size() && limit > 0 ? limit : uris.size();
-    final List<User> users = new ArrayList<User>(max);
+    try {
+      List<User> users =  userDbRepository.retrieveByID(uris);
+      Collections.sort(users, USER_COMPARATOR_BY_NAME);
+      return users;
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+
+      /*
+      final int max = limit < uris.size() && limit > 0 ? limit : uris.size();
     for (int i = 0; i < max; i++) {
       try {
         users.add((User) READER.readLazy(uris.get(i), Imeji.adminUser, new User()));
@@ -148,6 +158,8 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
     }
     Collections.sort(users, USER_COMPARATOR_BY_NAME);
     return users;
+
+       */
   }
 
   /**
@@ -158,6 +170,15 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
    * @throws ImejiException
    */
   public Collection<User> retrieveBatch(List<String> uris, int limit) {
+    try {
+      List<User> users =  userDbRepository.retrieveByID(uris);
+      Collections.sort(users, USER_COMPARATOR_BY_NAME);
+      return users;
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+
+    /*
     final int max = limit < uris.size() && limit > 0 ? limit : uris.size();
     final List<User> users = new ArrayList<User>(max);
     for (int i = 0; i < max; i++) {
@@ -169,6 +190,8 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
     }
     Collections.sort(users, USER_COMPARATOR_BY_NAME);
     return users;
+
+     */
   }
 
   /**

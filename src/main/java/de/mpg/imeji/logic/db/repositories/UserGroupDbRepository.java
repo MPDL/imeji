@@ -27,4 +27,14 @@ public class UserGroupDbRepository extends DbRepository<UserGroup> {
                     .getResultList();
         });
     }
+
+    public List<UserGroup> retrieveUserGroupsForUser(String userId) throws ImejiException {
+        return inSession(em -> {
+            return em.createNativeQuery("SELECT * FROM usergroup WHERE jsonb_exists(users, :userId)", UserGroup.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
+        });
+    }
+
+
 }

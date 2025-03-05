@@ -1,7 +1,11 @@
 package de.mpg.imeji.logic.storage.administrator.impl;
 
 import java.io.File;
+import java.util.List;
 
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.db.repositories.ContentDbRepository;
+import de.mpg.imeji.logic.model.ContentVO;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -106,11 +110,18 @@ public class InternalStorageAdministrator implements StorageAdministrator {
       if (f.isFile()) {
         final InternalStorageManager m = new InternalStorageManager();
         final String url = m.transformPathToUrl(f.getPath());
-        if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0) {
-          // file doesn't exist, remove it
-          m.removeFile(url);
-          deleted++;
-        }
+          try {
+              final List<ContentVO> contentList = new ContentDbRepository().retrieveAllContentWithFile(url);
+
+              //if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0) {
+              if (contentList.size() == 0) {
+                // file doesn't exist, remove it
+                m.removeFile(url);
+                deleted++;
+              }
+          } catch (ImejiException e) {
+              throw new RuntimeException(e);
+          }
       }
     }
     LOGGER.info("...done: " + deleted + " files deleted");

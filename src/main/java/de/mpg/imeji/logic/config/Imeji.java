@@ -22,6 +22,7 @@ public class Imeji {
   public static String collectionModel;
   public static String imageModel;
   public static String userModel;
+  public static String userGroupModel;
   public static String statementModel;
   public static String facetModel;
   public static String contentModel;

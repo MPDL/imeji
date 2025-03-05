@@ -35,7 +35,7 @@ public class Facet implements Serializable {
   private int position = 0;
 
   @Id
-  private String dbUri;
+  private String dbId;
 
   public static final String OBJECTTYPE_ITEM = "item";
   public static final String OBJECTTYPE_COLLECTION = "collection";
@@ -62,7 +62,7 @@ public class Facet implements Serializable {
 
   public Facet() {
     this.uri = IdentifierUtil.newURI(Facet.class);
-    this.dbUri = this.uri.toString();
+    this.dbId = this.uri.toString();
   }
   /**
    * @return the name
@@ -119,7 +119,7 @@ public class Facet implements Serializable {
   public void setUri(URI uri) {
 
     this.uri = uri;
-    this.dbUri = this.uri.toString();
+    this.dbId = this.uri.toString();
   }
 
   public String getIdString() {

@@ -292,8 +292,13 @@ public class UserGroupService {
    * @return
    */
   public Collection<UserGroup> searchByUser(User member, User user) {
-    return member.getGroups();
-    //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupOfUser(member), Imeji.adminUser);
+      try {
+          return userGroupDbRepository.retrieveUserGroupsForUser(member.getId().toString());
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
+      //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupOfUser(member), Imeji.adminUser);
   }
 
   /**
