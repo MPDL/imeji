@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.db.repositories.ContentDbRepository;
 import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
+import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -68,7 +69,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
   public static final String NO_THUMBNAIL_URL = "NO_THUMBNAIL_URL";
   private final Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
   private final ItemController itemController = new ItemController();
-
+  private ItemsDbRepository itemsDbRepository = new ItemsDbRepository();
   /**
    * Controller constructor
    */
@@ -861,8 +862,18 @@ public class ItemService extends SearchServiceAbstract<Item> {
 
 
   public int getNumberOfCollectionsItemsWithoutLicense(URI collectionUri) {
-    String directJenaQuery = JenaCustomQueries.getItemsWithoutLicenseInCollectionAndSubCollections(collectionUri);
-    return ImejiSPARQL.execCount(directJenaQuery, null);
+      try {
+          List<String> allColls = new HierarchyService().addAllSubcollections(collectionUri.toString());
+          List<Item> itemsWithoutLicense = new ArrayList<>();
+          for(String collId : allColls) {
+              itemsWithoutLicense.addAll(itemsDbRepository.retrieveAllItemsForCollectionWithoutLicense(collId));
+          }
+          return itemsWithoutLicense.size();
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+      //String directJenaQuery = JenaCustomQueries.getItemsWithoutLicenseInCollectionAndSubCollections(collectionUri);
+    //return ImejiSPARQL.execCount(directJenaQuery, null);
   }
 
 }

@@ -44,7 +44,7 @@ public class DbReader implements Reader {
    */
   public DbReader(String modelURI) {
     this.modelURI = modelURI;
-    LOGGER.info("Creating Reader for " + modelURI);
+    //LOGGER.info("Creating Reader for " + modelURI);
     ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
     this.dbRepository = DbRepository.getRepositoryForModel(type);
   }
@@ -127,18 +127,19 @@ public class DbReader implements Reader {
    */
   private List<Object> read(List<Object> objects, User user, boolean lazy) throws ImejiException {
 
-    LOGGER.info("Reading " + objects.size() + " objects from " + modelURI);
+    //LOGGER.info("Reading " + objects.size() + " objects from " + modelURI);
 
     AuthService as = new AuthService(user, objects, OperationType.READ);
     as.checkLogin();
     as.checkSecurityForWriteOperations();
-    List<String> readObjectIds = new ArrayList<>();
+    List<Object> readObjects = new ArrayList<>();
     for (Object o : objects) {
       as.checkObjectStatus(dbRepository, o, OperationType.READ);
       String id = J2JHelper.getId(o).toString();
-      readObjectIds.add(id);
+      Object res = dbRepository.read(id);
+      readObjects.add(res);
     }
-    List<Object> readObjects = dbRepository.retrieveByID(readObjectIds);
+    //List<Object> readObjects = dbRepository.retrieveByID(readObjectIds);
     //objects.clear();
     //objects.addAll(readObjects);
     as.setReadAndWriteOperations(readObjects, OperationType.READ);

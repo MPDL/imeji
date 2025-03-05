@@ -65,7 +65,7 @@ public class DbWriter implements Writer {
   public DbWriter(String modelURI) {
 
     this.modelURI = modelURI;
-    LOGGER.info("Creating Writer for " + modelURI);
+    //LOGGER.info("Creating Writer for " + modelURI);
     ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
     this.dbRepository = DbRepository.getRepositoryForModel(type);
   }

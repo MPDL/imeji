@@ -154,10 +154,10 @@ public abstract class DbRepository<ModelType> {
                 return new UserGroupDbRepository();
             }
             case STATEMENT: {
-                return new UserGroupDbRepository();
+                return new StatementDbRepository();
             }
             case SUBSCRIPTION: {
-                return new UserGroupDbRepository();
+                return new SubscriptionDbRepository();
             }
         }
         return null;

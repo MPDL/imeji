@@ -236,7 +236,6 @@ public class AuthService {
 
             Authorization authorization = new DbAuthorization();
             for (Object dataObject : this.readObjects) {
-                LOGGER.info("Checking " + J2JHelper.getId(dataObject).toString() + " for auth with user " + this.issuingUser.getId().toString());
                 if (!authorization.read(this.issuingUser, dataObject)) {
 
                     final String id = J2JHelper.getId(dataObject).toString();
@@ -244,7 +243,6 @@ public class AuthService {
                     if (this.issuingUser != null) {
                         message = this.issuingUser.getEmail() + " not allowed to read " + id;
                     }
-                    LOGGER.warn(message);
                     throw new NotAllowedError(message);
                 }
             }

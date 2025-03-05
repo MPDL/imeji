@@ -2,12 +2,14 @@ package de.mpg.imeji.logic.model;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.util.DateHelper;
 import jakarta.persistence.Convert;
@@ -36,7 +38,7 @@ public class License implements Serializable {
   private long end = -1;
 
   public License() {
-
+    this.id = IdentifierUtil.newURI(License.class);
   }
 
   @Override
@@ -51,6 +53,26 @@ public class License implements Serializable {
     return clone;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+
+    License license = (License) o;
+    return start == license.start && end == license.end && Objects.equals(id, license.id) && Objects.equals(label, license.label) && Objects.equals(name, license.name) && Objects.equals(url, license.url);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hashCode(id);
+    result = 31 * result + Objects.hashCode(label);
+    result = 31 * result + Objects.hashCode(name);
+    result = 31 * result + Objects.hashCode(url);
+    result = 31 * result + Long.hashCode(start);
+    result = 31 * result + Long.hashCode(end);
+    return result;
+  }
+
+  /*
   @Override
   public boolean equals(Object obj) {
     if (!(obj.getClass().equals(this.getClass()))) {
@@ -77,6 +99,8 @@ public class License implements Serializable {
     }
     return true;
   }
+
+   */
 
   public License(ImejiLicenses lic) {
     this.name = lic.name();
