@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 
@@ -58,10 +60,15 @@ public class Hierarchy {
    * Load the complete Hierarchy
    */
   public void init() {
-    final List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectAllSubcollections(), Imeji.collectionModel);
-    final List<Node> nodeList = l.stream().map(s -> new Node(s.split("\\|")[0], s.split("\\|")[1])).collect(Collectors.toList());
-    nodes = nodeList.stream().collect(Collectors.toMap(Node::getChild, Function.identity()));
-    tree = nodeList.stream().collect(Collectors.groupingBy(Node::getParent, Collectors.mapping(Node::getChild, Collectors.toList())));
+      try {
+          final List<String> l = new CollectionsDbRepository().retrieveAllSubCollectionIds();
+          //final List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectAllSubcollections(), Imeji.collectionModel);
+          final List<Node> nodeList = l.stream().map(s -> new Node(s.split("\\|")[0], s.split("\\|")[1])).collect(Collectors.toList());
+          nodes = nodeList.stream().collect(Collectors.toMap(Node::getChild, Function.identity()));
+          tree = nodeList.stream().collect(Collectors.groupingBy(Node::getParent, Collectors.mapping(Node::getChild, Collectors.toList())));
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
   }
 
   /**

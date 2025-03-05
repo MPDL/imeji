@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
+import de.mpg.imeji.util.JenaToDbMigration;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +42,10 @@ public class InitializerServlet extends HttpServlet {
       super.init();
       Imeji.locksSurveyor.start();
       initModel();
+      if(Imeji.STARTUP.doMigrationToDb()) {
+        new JenaToDbMigration().migrate();
+      }
+
       reindex();
       Imeji.getEXECUTOR().submit(new ReadMaxPlanckIPMappingJob());
     } catch (final Exception e) {

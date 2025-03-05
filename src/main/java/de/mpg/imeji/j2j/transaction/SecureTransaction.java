@@ -122,7 +122,7 @@ public abstract class SecureTransaction extends Transaction {
         throw new AuthenticationError(AuthenticationError.USER_MUST_BE_LOGGED_IN);
       }
       this.issuingUser = (User) userInDatabase;
-      loadUsersUserGroups(userResourceController, dataset, userModelURI);
+      //loadUsersUserGroups(userResourceController, dataset, userModelURI);
     }
 
     // (1b) check access rights of user
@@ -178,10 +178,13 @@ public abstract class SecureTransaction extends Transaction {
    * @param user
    * @throws NotFoundException
    */
+
+  /*
   private void loadUsersUserGroups(ResourceController resourceController, Dataset dataset, String userModelName) throws NotFoundException {
 
     String getUserGroupsOfUserQuery = JenaCustomQueries.selectUserGroupOfUser(this.issuingUser);
     List<String> groupURIs = Queries.executeSPARQLQueryAndGetResults(getUserGroupsOfUserQuery, dataset, userModelName);
+    //List<UserGroup> groups = this.issuingUser.getGroups();
     if (groupURIs.size() > 0) {
       List<UserGroup> userGroupsWithUserInThem = new ArrayList<UserGroup>(groupURIs.size());
       for (String groupURI : groupURIs) {
@@ -197,6 +200,8 @@ public abstract class SecureTransaction extends Transaction {
     }
 
   }
+
+   */
 
   /**
    * Given a data object that has been manipulated by a client, read the corresponding data object

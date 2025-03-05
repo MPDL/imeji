@@ -14,6 +14,8 @@ import de.mpg.imeji.j2j.annotations.j2jModel;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import de.mpg.imeji.logic.model.util.StatementUtil;
+import de.mpg.imeji.logic.search.facet.model.Facet;
+import de.mpg.imeji.logic.util.IdentifierUtil;
 import de.mpg.imeji.logic.util.ObjectHelper;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -37,6 +39,8 @@ import org.hibernate.type.SqlTypes;
 @j2jId(getMethod = "getUri", setMethod = "setUri")
 public class Statement implements Serializable, Cloneable {
   private static final long serialVersionUID = -7950561563075491540L;
+
+  @Enumerated(EnumType.STRING)
   private StatementType type = StatementType.TEXT;
 
   //@Convert(converter = HibernateURIConverter.class)
@@ -59,6 +63,7 @@ public class Statement implements Serializable, Cloneable {
   private String dbId;
 
   public Statement() {
+    this.setUri(IdentifierUtil.newURI(Statement.class));
 
   }
 

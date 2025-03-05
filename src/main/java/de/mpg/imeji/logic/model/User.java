@@ -71,7 +71,7 @@ public class User implements Serializable, ResourceLastModified, CloneURI, Acces
   //@Convert(converter = HibernateURIConverter.class)
   private URI id;
 
-  @OneToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
   private List<UserGroup> groups = new ArrayList<>();
 
   // User properties for registration

@@ -1,10 +1,14 @@
 package de.mpg.imeji.logic.validation.impl;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.db.repositories.UserGroupDbRepository;
 import de.mpg.imeji.logic.model.UserGroup;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
 import de.mpg.imeji.logic.util.StringHelper;
+
+import java.util.List;
 
 /**
  * Validator for UserGroup
@@ -31,11 +35,23 @@ public class UserGroupValidator extends ObjectValidator implements Validator<Use
    * @return
    */
   public boolean groupNameAlreadyExists(UserGroup g) {
-    for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupByName(g.getName()), null)) {
+      try {
+          UserGroup ugList = new UserGroupDbRepository().readByName(g.getName());
+          if(ugList != null && ugList.getName().equals(g.getName())) {
+            return true;
+          }
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+      /*
+
+      for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupByName(g.getName()), null)) {
       if (!id.equals(g.getId().toString())) {
         return true;
       }
     }
+
+       */
     return false;
   }
 

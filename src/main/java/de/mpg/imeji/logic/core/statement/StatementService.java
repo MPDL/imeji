@@ -241,8 +241,14 @@ public class StatementService extends SearchServiceAbstract<Statement> {
 
   @Override
   public SearchResult search(SearchQuery searchQuery, SortCriterion sortCri, User user, int size, int offset) {
-    final SearchResult result = new SearchResult(ImejiSPARQL.exec(JenaCustomQueries.selectStatementAll(), Imeji.statementModel));
-    return result;
+    //return new StatementDbRepository().retrieveAllIds();
+      try {
+          final SearchResult result = new SearchResult(new StatementDbRepository().retrieveAllIds());
+          return result;
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
   }
 
   @Override

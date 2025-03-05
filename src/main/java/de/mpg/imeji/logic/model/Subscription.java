@@ -12,8 +12,8 @@ import de.mpg.imeji.logic.util.IdentifierUtil;
 import jakarta.persistence.*;
 
 
-//@Entity
-@Table(name = "item")
+@Entity
+@Table(name = "subscription")
 @Access(AccessType.FIELD)
 
 @j2jResource("http://imeji.org/terms/subscription")
@@ -44,6 +44,10 @@ public class Subscription implements Serializable {
   @Id
   private String dbId;
 
+  public Subscription() {
+    id = IdentifierUtil.newURI(Subscription.class, "universal");
+    this.dbId = id.toString();
+  }
   /**
    * @return the type
    */

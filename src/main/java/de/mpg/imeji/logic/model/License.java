@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.model;
 import java.io.Serializable;
 import java.net.URI;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
@@ -88,16 +89,19 @@ public class License implements Serializable {
    *
    * @return
    */
+  @JsonIgnore
   public String getTimestamp() {
     final String s = start > 0 ? DateHelper.printDate(DateHelper.getDate(start)) : "...";
     final String e = end > 0 ? DateHelper.printDate(DateHelper.getDate(end)) : "...";
     return s + " - " + e;
   }
 
+  @JsonIgnore
   public String getStartTime() {
     return start > 0 ? DateHelper.printDate(DateHelper.getDate(start)) : null;
   }
 
+  @JsonIgnore
   public String getEndTime() {
     return end > 0 ? DateHelper.printDate(DateHelper.getDate(end)) : null;
   }
@@ -107,6 +111,7 @@ public class License implements Serializable {
    *
    * @return
    */
+  @JsonIgnore
   public boolean isEmtpy() {
     return StringHelper.isNullOrEmptyTrim(name) && StringHelper.isNullOrEmptyTrim(url);
   }

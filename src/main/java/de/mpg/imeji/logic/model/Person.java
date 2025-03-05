@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jList;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
@@ -101,6 +102,7 @@ public class Person implements Cloneable, Serializable {
     return id;
   }
 
+  @JsonIgnore
   public String getOrganizationString() {
     String s = "";
     for (final Organization o : organizations) {
@@ -117,6 +119,7 @@ public class Person implements Cloneable, Serializable {
    *
    * @return
    */
+  @JsonIgnore
   public String AsFullText() {
     String str = givenName + " " + familyName + " ";
     for (final Organization org : organizations) {
@@ -143,14 +146,17 @@ public class Person implements Cloneable, Serializable {
     return clone;
   }
 
+  @JsonIgnore
   public String getCompleteName() {
     return familyName + ", " + givenName;
   }
 
+  @JsonIgnore
   public String getCompleteNameWithOrga() {
     return getCompleteName() + (organizations.isEmpty() ? "" : "(" + getOrganizationString() + ")");
   }
 
+  @JsonIgnore
   public String getFirstnameLastname() {
     return (givenName + " " + familyName).trim();
   }

@@ -36,7 +36,7 @@ public class DbReader implements Reader {
   private final String modelURI;
   private final boolean lazy = false;
   private final DbRepository dbRepository;
-  protected static Logger LOGGER = LogManager.getLogger(DbWriter.class);
+  protected static Logger LOGGER = LogManager.getLogger(DbReader.class);
   /**
    * imeji object loader for one {@link Model}
    *

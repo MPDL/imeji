@@ -43,6 +43,7 @@ public class ContentVO implements Serializable {
   private String fulltext;
 
 
+  //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jLazyList(ImejiNamespaces.TECHNICAL_METADATA)
   private List<TechnicalMetadata> technicalMetadata = new ArrayList<>();

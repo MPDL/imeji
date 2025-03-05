@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.repositories.SubscriptionDbRepository;
 import de.mpg.imeji.logic.model.Subscription;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
@@ -21,6 +22,7 @@ public class SubscriptionService implements Serializable {
   private static final long serialVersionUID = 8078709382388541728L;
   private final SubscriptionController controller = new SubscriptionController();
 
+  private final SubscriptionDbRepository subscriptionDbRepository = new SubscriptionDbRepository();
   /**
    * Add the subscription
    * 
@@ -52,7 +54,9 @@ public class SubscriptionService implements Serializable {
    * @throws ImejiException
    */
   public List<Subscription> retrieveByObjectId(String objectId, User user) throws ImejiException {
-    return controller.retrieveBatch(ImejiSPARQL.exec(JenaCustomQueries.selectSubscriptionByObjectId(objectId), Imeji.userModel), user);
+    List<String> subIds = subscriptionDbRepository.readByObjectId(objectId).stream().map(s -> s.getId().toString()).toList();
+
+    return controller.retrieveBatch(subIds, user);
   }
 
   /**
@@ -64,7 +68,8 @@ public class SubscriptionService implements Serializable {
    * @throws ImejiException
    */
   public List<Subscription> retrieveByUserId(String userId, User user) throws ImejiException {
-    return controller.retrieveBatch(ImejiSPARQL.exec(JenaCustomQueries.selectSubscriptionByUserId(userId), Imeji.userModel), user);
+    List<String> subIds = subscriptionDbRepository.readByUserId(userId).stream().map(s -> s.getId().toString()).toList();
+    return controller.retrieveBatch(subIds, user);
   }
 
   public void sendEmails(Subscription.Type type) {
@@ -91,6 +96,7 @@ public class SubscriptionService implements Serializable {
    * @throws ImejiException
    */
   public List<Subscription> retrieveAll(User user) throws ImejiException {
-    return controller.retrieveBatch(ImejiSPARQL.exec(JenaCustomQueries.selectSubscriptionAll(), Imeji.userModel), user);
+    List<String> ls = subscriptionDbRepository.retrieveAll().stream().map(s -> s.getId().toString()).toList();
+    return controller.retrieveBatch(ls, user);
   }
 }

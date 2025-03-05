@@ -44,8 +44,12 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   private static final long serialVersionUID = -4689209760815149573L;
   @j2jResource("http://imeji.org/terms/collection")
   private URI collection;
+
+  @Column(columnDefinition = "TEXT")
   @j2jLiteral("http://purl.org/dc/elements/1.1/title")
   private String title;
+
+  @Column(columnDefinition = "TEXT")
   @j2jLiteral("http://purl.org/dc/elements/1.1/description")
   private String description;
 

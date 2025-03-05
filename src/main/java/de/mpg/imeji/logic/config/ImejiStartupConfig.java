@@ -20,7 +20,8 @@ import de.mpg.imeji.logic.config.util.PropertyReader;
  */
 public class ImejiStartupConfig {
   private enum ENTRIES {
-    REINDEX;
+    REINDEX,
+    MIGRATE_TO_DB;
   }
 
   private static final Logger LOGGER = LogManager.getLogger(ImejiStartupConfig.class);
@@ -62,6 +63,7 @@ public class ImejiStartupConfig {
   private synchronized void setDefaultConfig() {
     config = new Properties();
     config.setProperty(ENTRIES.REINDEX.name(), "false");
+    config.setProperty(ENTRIES.MIGRATE_TO_DB.name(), "false");
     saveConfig();
   }
 
@@ -88,6 +90,10 @@ public class ImejiStartupConfig {
 
   public void setReindex(boolean b) {
     config.setProperty(ENTRIES.REINDEX.name(), Boolean.toString(b));
+  }
+
+  public boolean doMigrationToDb() {
+    return Boolean.parseBoolean(config.getProperty(ENTRIES.MIGRATE_TO_DB.name()));
   }
 
 }

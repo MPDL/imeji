@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -74,9 +76,16 @@ public class StorageStatisticsBean {
    * @return
    */
   public int getAllCollectionsSize() {
-    final Search search = SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
-    return search.searchString(JenaCustomQueries.selectCollectionAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
-        .getNumberOfRecords();
+
+      try {
+          return Math.toIntExact(new CollectionsDbRepository().countAll());
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
+      //final Search search = SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
+    //return search.searchString(JenaCustomQueries.selectCollectionAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
+     //   .getNumberOfRecords();
   }
 
   /**

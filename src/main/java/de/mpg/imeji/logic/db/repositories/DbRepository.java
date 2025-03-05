@@ -69,11 +69,29 @@ public abstract class DbRepository<ModelType> {
         });
     }
 
+    public List<ModelType> readByCreator(String creatorId) throws ImejiException {
+        return inSession(em -> {
+            String className = classType.getSimpleName();
+            return em.createQuery("select u from " + className + " u WHERE u.createdBy = :creatorId", classType)
+                    .setParameter("creatorId", creatorId)
+                    .getResultList();
+        });
+    }
+
     public List<String> retrieveAllIds() throws ImejiException {
         return inSession(em -> {
             String className = classType.getSimpleName();
             return em.createQuery("select u.dbId from " + className + " u", String.class)
                     .getResultList();
+        });
+    }
+
+    public long countAll() throws ImejiException {
+        return inSession(em -> {
+            String className = classType.getSimpleName();
+            Object res = em.createNativeQuery("select count(*) from " + className + " u")
+                    .getSingleResult();
+            return ((Number) res).longValue();
         });
     }
 
@@ -122,6 +140,12 @@ public abstract class DbRepository<ModelType> {
                 return new UserDbRepository();
             }
             case USERGROUP: {
+                return new UserGroupDbRepository();
+            }
+            case STATEMENT: {
+                return new UserGroupDbRepository();
+            }
+            case SUBSCRIPTION: {
                 return new UserGroupDbRepository();
             }
         }

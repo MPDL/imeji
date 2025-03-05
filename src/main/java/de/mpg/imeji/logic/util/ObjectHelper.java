@@ -41,7 +41,8 @@ public class ObjectHelper {
     USERGROUP,
     STATEMENT,
     FACET,
-    SYSTEM;
+    SYSTEM,
+    SUBSCRIPTION;
   }
 
   /**

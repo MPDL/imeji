@@ -39,6 +39,8 @@ public class UserGroupService {
   private final Search search = SearchFactory.create(SearchObjectTypes.USERGROUPS, SEARCH_IMPLEMENTATIONS.ELASTIC);
   private static final Logger LOGGER = LogManager.getLogger(UserGroupService.class);
 
+  private final UserGroupDbRepository userGroupDbRepository = new UserGroupDbRepository();
+
   /**
    * Create a {@link UserGroup}
    *
@@ -264,7 +266,13 @@ public class UserGroupService {
    * @return
    */
   public Collection<UserGroup> searchByName(String q, User user) {
-    return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupAll(q), user);
+      try {
+          return userGroupDbRepository.searchByName(q);
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
+      //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupAll(q), user);
   }
 
   /**
@@ -284,7 +292,8 @@ public class UserGroupService {
    * @return
    */
   public Collection<UserGroup> searchByUser(User member, User user) {
-    return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupOfUser(member), Imeji.adminUser);
+    return member.getGroups();
+    //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupOfUser(member), Imeji.adminUser);
   }
 
   /**

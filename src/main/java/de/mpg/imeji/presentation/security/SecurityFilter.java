@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response.Status;
 
 import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
+import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
 import de.mpg.imeji.presentation.rewrite.RequestHelper;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -190,12 +191,27 @@ public class SecurityFilter implements Filter {
    * @throws BadRequestException
    */
   private URI getCollectionOfItem(URI uri) throws NotFoundException {
+      try {
+          Item i = new ItemsDbRepository().read(uri.toString());
+        if (i ==null || i.getCollection() == null) {
+          throw new NotFoundException(uri + " hasn't a collection");
+        } else {
+          return i.getCollection();
+        }
+      } catch (Exception e) {
+          throw new RuntimeException(e);
+      }
+
+      /*
+
     SearchResult result = JENA_SEARCH.searchString(JenaCustomQueries.selectCollectionIdOfItem(uri.toString()), null, null, 0, 1);
     if (result.getNumberOfRecords() < 1) {
       throw new NotFoundException(uri + " hasn't a collection");
     } else {
       return URI.create(result.getResults().get(0));
     }
+
+       */
   }
 
   /**

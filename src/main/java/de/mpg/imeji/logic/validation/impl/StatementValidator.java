@@ -1,8 +1,11 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import java.util.HashSet;
+import java.util.List;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.db.repositories.StatementDbRepository;
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.search.Search;
 import de.mpg.imeji.logic.search.Search.SearchObjectTypes;
@@ -40,13 +43,25 @@ public class StatementValidator extends ObjectValidator implements Validator<Sta
    * @return
    */
   private boolean indexAlreadyUsed(Statement statement) {
+
+      try {
+        List<Statement> result = new StatementDbRepository().readByIndex(statement.getIndex());
+        if (result.size() > 0) {
+          return !result.get(0).equals(statement.getType().name());
+        }
+        return false;
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
+    /*
     final Search search = SearchFactory.create(SearchObjectTypes.STATEMENT, SEARCH_IMPLEMENTATIONS.JENA);
     final SearchResult result = search.searchString(JenaCustomQueries.selectStatementTypeByIndex(statement.getIndex()), null, null,
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
-    if (result.getNumberOfRecords() > 0) {
-      return !result.getResults().get(0).equals(statement.getType().name());
-    }
-    return false;
+    */
+
+
+
   }
 
 }

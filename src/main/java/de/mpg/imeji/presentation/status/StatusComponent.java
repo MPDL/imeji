@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UINamingContainer;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
@@ -121,7 +123,12 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private URI findOwner(String collectionUri) {
-    return URI.create(ImejiSPARQL.exec(JenaCustomQueries.selectCreatedBy(collectionUri), null).get(0));
+      try {
+          return new CollectionsDbRepository().read(collectionUri).getCreatedBy();
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+      //return URI.create(ImejiSPARQL.exec(JenaCustomQueries.selectCreatedBy(collectionUri), null).get(0));
   }
 
   /**

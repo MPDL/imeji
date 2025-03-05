@@ -1,10 +1,12 @@
 package de.mpg.imeji.logic.validation.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.exceptions.UnprocessableError;
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.User;
@@ -96,27 +98,38 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
    * @throws ImejiException
    */
   private boolean existsUserWitheMail(String email, String userUri, boolean newUser) {
+
+      try {
+          List<User> result = new UserDbRepository().readByEmail(email);
+
+    /*
     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
     final SearchResult result =
         search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
-    if (result.getNumberOfRecords() == 0) {
-      return false;
-    } else {
-      // New users always have assigned Id, thus we do not check if it is existing
-      // user here
-      if (newUser && result.getNumberOfRecords() > 0) {
-        return true;
-      }
+     */
 
-      // Check if it is existing user here who has same email
-      boolean thereIsOtherUser = false;
-      for (final String userId : result.getResults()) {
-        if (!userUri.equals(userId)) {
-          thereIsOtherUser = true;
+
+        if (result.size() == 0) {
+          return false;
+        } else {
+          // New users always have assigned Id, thus we do not check if it is existing
+          // user here
+          if (newUser && result.size() > 0) {
+            return true;
+          }
+
+          // Check if it is existing user here who has same email
+          boolean thereIsOtherUser = false;
+          for (final User u : result) {
+            if (!userUri.equals(u.getId().toString())) {
+              thereIsOtherUser = true;
+            }
+          }
+          return thereIsOtherUser;
         }
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
       }
-      return thereIsOtherUser;
-    }
   }
 
 }

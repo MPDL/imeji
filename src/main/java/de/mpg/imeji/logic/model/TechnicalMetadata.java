@@ -3,12 +3,14 @@ package de.mpg.imeji.logic.model;
 import java.io.Serializable;
 import java.net.URI;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;
 import de.mpg.imeji.j2j.annotations.j2jResource;
 import de.mpg.imeji.logic.ImejiNamespaces;
 import de.mpg.imeji.logic.model.util.HibernateTechnicalMetadataConverter;
 import de.mpg.imeji.logic.model.util.HibernateURIConverter;
+import de.mpg.imeji.logic.model.util.JacksonTechicalMetadataConverter;
 import jakarta.persistence.*;
 
 /**
@@ -34,6 +36,9 @@ public class TechnicalMetadata implements Serializable {
   @j2jLiteral("http://imeji.org/terms/value")
   private String value;
 
+  //@Id
+  //private String dbId;
+
   public TechnicalMetadata() {
     // Default Constructor
   }
@@ -47,6 +52,7 @@ public class TechnicalMetadata implements Serializable {
     return name;
   }
 
+  @JsonSerialize(converter = JacksonTechicalMetadataConverter.class)
   public String getValue() {
     return value;
   }
@@ -57,6 +63,7 @@ public class TechnicalMetadata implements Serializable {
 
   public void setId(URI id) {
     this.id = id;
+    //this.dbId = id.toString();
   }
 
 }

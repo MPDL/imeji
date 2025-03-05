@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
 import de.mpg.imeji.logic.hierarchy.Hierarchy.Node;
 import de.mpg.imeji.logic.model.CollectionImeji;
 import de.mpg.imeji.logic.model.Item;
@@ -227,8 +229,16 @@ public class HierarchyService implements Serializable {
      * @return
      */
     private String findCollectionName(String uri) {
-      List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectCollectionName(uri), Imeji.collectionModel);
-      return l.isEmpty() ? "" : l.get(0);
+
+        try {
+            return new CollectionsDbRepository().read(uri).getName();
+        } catch (Exception e) {
+          return "";
+
+        }
+
+        //List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectCollectionName(uri), Imeji.collectionModel);
+      //return l.isEmpty() ? "" : l.get(0);
     }
 
     public String getName() {

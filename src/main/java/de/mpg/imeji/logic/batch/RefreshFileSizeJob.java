@@ -5,6 +5,9 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import de.mpg.imeji.logic.db.repositories.ContentDbRepository;
+import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
+import de.mpg.imeji.logic.model.ContentVO;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -31,10 +34,12 @@ public class RefreshFileSizeJob implements Callable<Integer> {
   @Override
   public Integer call() throws ImejiException {
     LOGGER.info("Starting refreshing the file size of all Items");
-    LOGGER.info("Deleting all sizes...");
-    ImejiSPARQL.execUpdate(JenaCustomQueries.deleteAllFileSize());
-    LOGGER.info("...done!");
+    //LOGGER.info("Deleting all sizes...");
+    //ImejiSPARQL.execUpdate(JenaCustomQueries.deleteAllFileSize());
+    //LOGGER.info("...done!");
     LOGGER.info("Retrieving all items...");
+    final ItemsDbRepository itemsDbRepository = new ItemsDbRepository();
+    final ContentDbRepository contentDbRepository = new ContentDbRepository();
     final ItemService itemController = new ItemService();
     final ContentService contentService = new ContentService();
     final InternalStorageManager storageManager = new InternalStorageManager();
@@ -53,12 +58,19 @@ public class RefreshFileSizeJob implements Callable<Integer> {
           path = storageManager.transformUrlToPath(contentService.retrieveLazy(contentId).getOriginal());
           f = new File(path);
           final Dimension d = ImageUtils.getImageDimension(f);
+          item.setFileSize(f.length());
+          itemsDbRepository.update(item);
           if (d != null && d.width > 0 && d.height > 0) {
-            ImejiSPARQL.execUpdate(JenaCustomQueries.insertFileSizeAndDimension(item.getId().toString(), Long.toString(f.length()),
-                Long.toString(d.width), Long.toString(d.height)));
-          } else {
-            ImejiSPARQL.execUpdate(JenaCustomQueries.insertFileSize(item.getId().toString(), Long.toString(f.length())));
-          }
+            ContentVO contentVO = contentDbRepository.read(item.getId().toString());
+            contentVO.setHeight(d.height);
+            contentVO.setWidth(d.width);
+            contentDbRepository.update(contentVO);
+
+            //ImejiSPARQL.execUpdate(JenaCustomQueries.insertFileSizeAndDimension(item.getId().toString(), Long.toString(f.length()),
+             //   Long.toString(d.width), Long.toString(d.height)));
+          } //else {
+            //ImejiSPARQL.execUpdate(JenaCustomQueries.insertFileSize(item.getId().toString(), Long.toString(f.length())));
+          //}
 
         } catch (final Exception e) {
           LOGGER.error("Error updating file size and dimension of item " + item.getIdString() + " : " + e.getMessage());
