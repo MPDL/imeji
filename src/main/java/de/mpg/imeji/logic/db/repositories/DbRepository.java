@@ -100,7 +100,7 @@ public abstract class DbRepository<ModelType> {
     public long countAll() throws ImejiException {
         return inSession(em -> {
             String className = classType.getSimpleName();
-            Object res = em.createNativeQuery("select count(*) from " + className + " u")
+            Object res = em.createQuery("select count(*) from " + className + " u")
                     .getSingleResult();
             return ((Number) res).longValue();
         });

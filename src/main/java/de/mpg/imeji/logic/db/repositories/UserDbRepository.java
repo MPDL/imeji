@@ -25,7 +25,7 @@ public class UserDbRepository extends DbRepository<User> {
     public List<User> retrieveAllAdmins() throws ImejiException {
         return inSession(em -> {
             String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
-            return em.createNativeQuery("select * from Users where jsonb_exists(grants, :adminGrant);", User.class)
+            return em.createNativeQuery("select * from users where jsonb_exists(grants, :adminGrant);", User.class)
                     .setParameter("adminGrant", adminRule)
                     .getResultList();
         });
@@ -41,10 +41,18 @@ public class UserDbRepository extends DbRepository<User> {
         });
     }
 
+    public List<String> retrieveAllDomains() throws ImejiException {
+        return inSession(em -> {
+            //String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
+            return em.createNativeQuery("SELECT DISTINCT substring(email FROM '@(.*)$') AS domain FROM users;", String.class)
+                    .getResultList();
+        });
+    }
+
     public int countObjectsModifiedOrCreated(String id) throws ImejiException {
         return inSession(em -> {
             String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
-            Object result = em.createNativeQuery("select count(*) from collection c, item i, statement s , facet f, user u where " +
+            Object result = em.createNativeQuery("select count(*) from collection c, item i, statement s , facet f, users u where " +
                             "c.modifiedBy = :userId OR c.createdBy :userId OR" +
                             "i.modifiedBy = :userId OR i.createdBy :userId OR" +
                             "s.modifiedBy = :userId OR s.createdBy :userId OR" +
@@ -58,11 +66,42 @@ public class UserDbRepository extends DbRepository<User> {
 
     public long getFileSize(String userId) throws ImejiException {
         return inSession(em -> {
-            String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
             Object result = em.createNativeQuery("select sum(filesize) from item where createdBy=:creatorId AND status='http://imeji.org/terms/status#WITHDRAWN';")
                     .setParameter("creatorId", userId)
                     .getSingleResult();
-            return ((Number) result).longValue();
+            if(result == null) {
+                return 0L;
+            }
+            else  {
+                return ((Number) result).longValue();
+            }
+        });
+    }
+
+    public long getFileSizeForDomain(String mailDomain) throws ImejiException {
+        return inSession(em -> {
+            Object result = em.createNativeQuery("SELECT sum(filesize) FROM content INNER JOIN item ON content.itemid = item.id INNER JOIN users on item.createdby = users.id WHERE users.email ilike :mailDomain")
+                    .setParameter("mailDomain", "%@" + mailDomain)
+                    .getSingleResult();
+            if(result == null) {
+                return 0L;
+            }
+            else  {
+                return ((Number) result).longValue();
+            }
+        });
+    }
+
+    public long getFileSizeForAll() throws ImejiException {
+        return inSession(em -> {
+            Object result = em.createNativeQuery("SELECT sum(filesize) FROM item")
+                    .getSingleResult();
+            if(result == null) {
+                return 0L;
+            }
+            else  {
+                return ((Number) result).longValue();
+            }
         });
     }
 

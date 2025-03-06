@@ -66,8 +66,11 @@ public class DbWriter implements Writer {
 
     this.modelURI = modelURI;
     //LOGGER.info("Creating Writer for " + modelURI);
-    ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
-    this.dbRepository = DbRepository.getRepositoryForModel(type);
+    if(modelURI!=null) {
+      ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
+      this.dbRepository = DbRepository.getRepositoryForModel(type);
+    }
+
   }
 
   /**
@@ -112,6 +115,7 @@ public class DbWriter implements Writer {
       Object objFromDb = dbRepository.read(J2JHelper.getId(o).toString());
       AuthService.checkObjectStatus(dbRepository, objFromDb, OperationType.DELETE);
       dbRepository.delete(J2JHelper.getId(objFromDb).toString());
+      //TODO delete grants
       //createdObjects.add(o);
     }
     as.checkSecurityForReadOperations();

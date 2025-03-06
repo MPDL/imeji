@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import de.mpg.imeji.logic.db.repositories.ContentDbRepository;
 import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.*;
 import org.apache.commons.io.FileUtils;
@@ -842,9 +843,13 @@ public class ItemService extends SearchServiceAbstract<Item> {
     final User targetCollectionUser =
         col == null || user.getId().equals(col.getCreatedBy()) ? user : new UserService().retrieve(col.getCreatedBy(), Imeji.adminUser);
 
+    /*
     final Search search = SearchFactory.create(); // default is JENA
     final List<String> results = search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null, null,
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
+    */
+    long currentDiskUsage = new UserDbRepository().getFileSize(user.getId().toString());
+    /*
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = Long.parseLong(results.get(0).toString());
@@ -852,6 +857,8 @@ public class ItemService extends SearchServiceAbstract<Item> {
       throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + results.get(0).toString() + "; requested by user: "
           + user.getEmail() + "; targetCollectionUser: " + targetCollectionUser.getEmail(), e);
     }
+
+     */
     final long needed = currentDiskUsage + file.length();
     if (needed > targetCollectionUser.getQuota()) {
       throw new QuotaExceededException("Data quota (" + QuotaUtil.getQuotaHumanReadable(targetCollectionUser.getQuota(), Locale.ENGLISH)

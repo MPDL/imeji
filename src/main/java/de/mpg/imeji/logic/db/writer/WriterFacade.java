@@ -65,7 +65,7 @@ public class WriterFacade {
    * one transaction
    */
   public WriterFacade() {
-    this.writer = new JenaWriter(null);
+    this.writer = WriterFactory.create(null);
     this.indexer = null;
   }
 

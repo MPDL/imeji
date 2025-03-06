@@ -2,6 +2,8 @@ package de.mpg.imeji.logic.statistic;
 
 import java.util.List;
 
+import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import de.mpg.imeji.logic.export.ZIPExport;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.search.Search;
@@ -28,9 +30,17 @@ public class StatisticsService {
    * @return
    */
   public List<String> getAllInstitute() {
-    final Search s = new JenaSearch(SearchObjectTypes.USER, null);
+      try {
+          return  new UserDbRepository().retrieveAllDomains();
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+/*
+      final Search s = new JenaSearch(SearchObjectTypes.USER, null);
     return s.searchString(JenaCustomQueries.selectAllInstitutes(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
         .getResults();
+
+ */
   }
 
   /**
@@ -41,6 +51,13 @@ public class StatisticsService {
    * @return
    */
   public long getUsedStorageSizeForInstitute(String instituteName) {
+    try {
+      return  new UserDbRepository().getFileSizeForDomain(instituteName);
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+    /*
+
     final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
     final List<String> result = s.searchString(JenaCustomQueries.selectInstituteFileSize(instituteName), null, null,
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
@@ -50,18 +67,17 @@ public class StatisticsService {
       return Long.parseLong(size);
     }
     return 0;
+
+     */
   }
 
   public long getAllFileSize() {
-    final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
-    final List<String> result =
-        s.searchString(JenaCustomQueries.selectFileSizeForAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
-            .getResults();
-    if (result.size() == 1 && result.get(0) != null) {
-      final String size = result.get(0).replace("^^xsd:integer", "").replace("\"", "");;
-      return Long.parseLong(size);
+
+    try {
+      return  new UserDbRepository().getFileSizeForAll();
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
     }
-    return 0;
   }
 
   /**

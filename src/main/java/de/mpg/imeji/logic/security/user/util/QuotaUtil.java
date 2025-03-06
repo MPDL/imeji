@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -124,10 +125,20 @@ public class QuotaUtil {
    * @return
    */
   public static long getUsedQuota(User user) {
-    final Search search = SearchFactory.create(); // default: Jena
+
+      try {
+          return new UserDbRepository().getFileSize(user.getId().toString());
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
+      /*
+      final Search search = SearchFactory.create(); // default: Jena
     final List<String> results = search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null, null,
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     return Long.parseLong(results.get(0).toString());
+
+       */
   }
 
 }
