@@ -56,6 +56,7 @@ public class DbWriter implements Writer {
   private static final ExecutorService WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
   protected static Logger LOGGER = LogManager.getLogger(DbWriter.class);
 
+  private UserDbRepository userDbRepository = new UserDbRepository();
   private DbRepository dbRepository;
   /**
    * Construct one {@link DbWriter} for one {@link Model}
@@ -112,11 +113,11 @@ public class DbWriter implements Writer {
     as.checkSecurityForWriteOperations();
     List<Object> createdObjects = new ArrayList<>();
     for (Object o : objects) {
-      Object objFromDb = dbRepository.read(J2JHelper.getId(o).toString());
+      String id = J2JHelper.getId(o).toString();
+      Object objFromDb = dbRepository.read(id);
       AuthService.checkObjectStatus(dbRepository, objFromDb, OperationType.DELETE);
-      dbRepository.delete(J2JHelper.getId(objFromDb).toString());
-      //TODO delete grants
-      //createdObjects.add(o);
+      dbRepository.delete(id);
+      //userDbRepository.removeGrantsForObject(id);
     }
     as.checkSecurityForReadOperations();
   }

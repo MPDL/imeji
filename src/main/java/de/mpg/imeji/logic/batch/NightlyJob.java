@@ -27,8 +27,8 @@ public class NightlyJob implements Runnable {
     }
     Imeji.getEXECUTOR().submit(new CleanInactiveUsersJob());
     Imeji.getEXECUTOR().submit(new ReadMaxPlanckIPMappingJob());
-    //Imeji.getEXECUTOR().submit(new CleanGrantsJob());
-    //Imeji.getEXECUTOR().submit(new CleanUserGroupsJob());
+    Imeji.getEXECUTOR().submit(new CleanGrantsJob());
+    Imeji.getEXECUTOR().submit(new CleanUserGroupsJob());
     //Imeji.getEXECUTOR().submit(new CleanContentVOsJob());
     Imeji.getEXECUTOR().submit(new CleanPasswordResetsJob());
     Imeji.getEXECUTOR().submit(new AggregateMessages());

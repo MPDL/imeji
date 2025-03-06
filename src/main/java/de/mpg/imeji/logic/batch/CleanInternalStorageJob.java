@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
+import de.mpg.imeji.logic.model.CollectionImeji;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger;
@@ -44,8 +46,12 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     LOGGER.info("Cleaning internal storage.");
-    removeUnusedFiles();
-    repairImages();
+      try {
+          removeUnusedFiles();
+      }catch (Exception e) {
+          LOGGER.error("Error cleaning internal storage", e);
+      }
+      repairImages();
     removeEmptyDirectories();
     LOGGER.info("Internal storage cleaned.");
     return null;
@@ -64,6 +70,7 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     int count = 0;
     for (Iterator<File> iterator = FileUtils.iterateFiles(new File(path), null, true); iterator.hasNext();) {
       final File file = (File) iterator.next();
+      LOGGER.info("Checking file: " + file.getAbsolutePath());
       if (!isUsed(file)) {
         LOGGER.info("Deleting unused file: " + file.getAbsolutePath());
         boolean deleted = FileUtils.deleteQuietly(file);
@@ -149,7 +156,15 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @return
    */
   private boolean isLogo(String url) {
-    final List<String> r =
+      try {
+          List< CollectionImeji> collWithLogoUrl = new CollectionsDbRepository().retrieveCollectionsByLogoUrl(new InternalStorageManager().getStorageId(url));
+          return (collWithLogoUrl!=null && collWithLogoUrl.size()>0);
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+
+      /*
+      final List<String> r =
         search.searchString(JenaCustomQueries.selectCollectionByLogoStorageId(new InternalStorageManager().getStorageId(url)), null, null,
             Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     if (!r.isEmpty() && r.get(0) != null) {
@@ -157,6 +172,8 @@ public class CleanInternalStorageJob implements Callable<Integer> {
     } else {
       return false;
     }
+
+       */
   }
 
   /**

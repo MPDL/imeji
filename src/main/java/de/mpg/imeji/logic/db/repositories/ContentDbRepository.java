@@ -22,4 +22,12 @@ public class ContentDbRepository extends DbRepository<ContentVO> {
                     .getResultList();
         });
     }
+
+    public List<ContentVO> retrieveUnusedContent() throws ImejiException {
+        return inSession(em -> {
+            return em.createNativeQuery("SELECT * FROM content WHERE itemid NOT IN (SELECT dbId FROM item)", ContentVO.class)
+                    .getResultList();
+        });
+    }
+
 }

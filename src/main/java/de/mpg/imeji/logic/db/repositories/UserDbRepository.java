@@ -2,12 +2,17 @@ package de.mpg.imeji.logic.db.repositories;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
+import de.mpg.imeji.logic.db.writer.DbWriter;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class UserDbRepository extends DbRepository<User> {
+
+    private static Logger LOGGER = LogManager.getLogger(UserDbRepository.class);
 
     public UserDbRepository() {
         super(User.class);
@@ -104,6 +109,42 @@ public class UserDbRepository extends DbRepository<User> {
             }
         });
     }
+
+    public void removeGrantsForObject(String objectId) throws ImejiException {
+        inSession(em -> {
+            List<User> result = em.createNativeQuery("SELECT * FROM users u WHERE u.grants::text ILIKE :objectId", User.class)
+                    .setParameter("objectId", "%," + objectId + "%")
+                    .getResultList();
+            for (User user : result) {
+                LOGGER.info("Removing grant for object " + objectId + " from user " + user.getEmail());
+                user.getGrants().removeIf(g -> g.contains("," + objectId));
+                em.merge(user);
+            }
+            return null;
+        });
+    }
+
+    public void removeZombieGrants() throws ImejiException {
+        inSession(em -> {
+
+            String query = """
+                    SELECT DISTINCT grantForId, u.dbId AS userId FROM users u JOIN LATERAL (SELECT substring(jsonb_array_elements_text(grants) FROM ',(.*)$') AS grantForId) AS x ON true
+                                                        WHERE grantForId LIKE 'http://imeji.org/collection/%'
+                                                        AND grantForId NOT IN (SELECT dbid FROM collection);
+                    """;
+            List<Object[]> result = em.createNativeQuery(query).getResultList();
+            for (Object[] res : result) {
+                User user = em.find(User.class, (String)res[1]);
+                String grantForId = (String)res[0];
+                LOGGER.info("Removing grant for object " + grantForId + " from user " + user.getEmail());
+                user.getGrants().removeIf(g -> g.contains("," + grantForId));
+                em.merge(user);
+            }
+            return null;
+        });
+    }
+
+
 
 
 }

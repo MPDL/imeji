@@ -7,6 +7,7 @@ import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.config.emailcontent.ImejiExternalEmailContent;
 import de.mpg.imeji.logic.config.util.PropertyReader;
 import de.mpg.imeji.logic.core.collection.CollectionService;
+import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import de.mpg.imeji.logic.events.listener.ListenerService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -146,8 +147,13 @@ public class AdminBean extends SuperBean {
    */
   private void cleanGrants() {
     LOGGER.info("Cleaning grants...");
-    System.out.println(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
-    ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
+      try {
+          new UserDbRepository().removeZombieGrants();
+      } catch (ImejiException e) {
+          throw new RuntimeException(e);
+      }
+      //System.out.println(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
+    //ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
     LOGGER.info("...done!");
   }
 
