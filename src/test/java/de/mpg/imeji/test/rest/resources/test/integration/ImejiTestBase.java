@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.Application;
 
+import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
 import de.mpg.imeji.logic.security.user.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,6 +96,7 @@ public class ImejiTestBase extends JerseyTest {
 
   @BeforeClass
   public static void setup() throws IOException, URISyntaxException {
+    EntityManagerHelper.newEntityManagerFactory();
     ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
     //Start a server for the static content
@@ -112,6 +114,7 @@ public class ImejiTestBase extends JerseyTest {
     JenaUtil.closeJena();
     staticServer.shutdownNow();
     app = null;
+    EntityManagerHelper.close();
   }
 
   @Rule

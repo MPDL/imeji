@@ -63,7 +63,7 @@ public class Statement implements Serializable, Cloneable {
   private String dbId;
 
   public Statement() {
-    this.setUri(IdentifierUtil.newURI(Statement.class));
+    //this.setUri(IdentifierUtil.newURI(Statement.class));
 
   }
 
@@ -128,7 +128,8 @@ public class Statement implements Serializable, Cloneable {
    */
   public void setIndex(String index) {
     this.index = index.trim();
-    this.uri = ObjectHelper.getURI(Statement.class, StatementUtil.formatIndex(index));
+    this.setUri(ObjectHelper.getURI(Statement.class, StatementUtil.formatIndex(index)));
+
   }
 
   public URI getVocabulary() {
@@ -189,6 +190,7 @@ public class Statement implements Serializable, Cloneable {
     clone.uri = uri;
     clone.typeString = typeString;
     clone.namespace = namespace;
+    clone.dbId = dbId;
     return clone;
   }
 

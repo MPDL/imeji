@@ -84,7 +84,7 @@ public class ImejiInitializer {
    */
   public static void init() {
     try {
-      //EntityManagerHelper.factory.createEntityManager();
+      EntityManagerHelper.newEntityManagerFactory();
       Imeji.tdbPath = PropertyReader.getProperty("imeji.tdb.path");
       ElasticInitializer.start();
       ImejiInitializer.init(Imeji.tdbPath);

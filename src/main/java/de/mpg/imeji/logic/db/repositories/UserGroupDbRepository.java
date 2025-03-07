@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.db.repositories;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
+import jakarta.persistence.NoResultException;
 
 import java.util.List;
 
@@ -14,7 +15,12 @@ public class UserGroupDbRepository extends DbRepository<UserGroup> {
 
   public UserGroup readByName(String name) throws ImejiException {
     return inSession(em -> {
-      return em.createQuery("SELECT u FROM UserGroup u WHERE u.name = :name", UserGroup.class).setParameter("name", name).getSingleResult();
+      try {
+        return em.createQuery("SELECT u FROM UserGroup u WHERE u.name = :name", UserGroup.class).setParameter("name", name)
+            .getSingleResult();
+      } catch (NoResultException e) {
+        return null;
+      }
     });
   }
 

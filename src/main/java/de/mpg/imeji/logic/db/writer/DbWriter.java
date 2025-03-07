@@ -34,9 +34,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
 import java.security.Security;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -168,6 +166,7 @@ public class DbWriter implements Writer {
 
     // check if all operations specified in ChangeMembers are valid
     List<Object> objectsToChangeInDatabase = ChangeMember.getChangeObjects(changeElements);
+    Map<URI, Object> resultMap = new HashMap<URI, Object>();
 
     AuthService as = new AuthService(issuingUser, objectsToChangeInDatabase, OperationType.UPDATE);
     as.checkLogin();
@@ -201,9 +200,16 @@ public class DbWriter implements Writer {
             ((AccessMember) dataObjectInStore).accessMember(changeMember);
 
 
-            checkModified(changeMember.getImejiDataObject(), dataObjectInStore);
-            Object newObject = em.merge(dataObjectInStore);
-            updatedList.add(newObject);
+            checkModified(dataObjectInStore, dataObjectInStore);
+            setTimestamp(dataObjectInStore);
+
+            Object result = em.merge(dataObjectInStore);
+            if (result != null) {
+              URI id = J2JHelper.getId(result);
+              if (id != null) {
+                resultMap.put(id, result);
+              }
+            }
           }
         } else {
           throw new UnprocessableError(
@@ -223,7 +229,7 @@ public class DbWriter implements Writer {
 
 
     as.checkSecurityForReadOperations();
-    return updatedList;
+    return resultMap.values().stream().toList();
 
   }
 

@@ -18,7 +18,9 @@ public class EntityManagerHelper {
 
   private static final Logger LOGGER = LogManager.getLogger(EntityManagerHelper.class);
 
-  static {
+
+
+  public static void newEntityManagerFactory() {
     try {
       factory = createEntityManagerFactory("imeji-persistence-unit", PropertyReader.loadProperties("imeji-db.properties"));
     } catch (IOException e) {
@@ -28,7 +30,10 @@ public class EntityManagerHelper {
   }
 
   public static void inSession(Consumer<EntityManager> work) throws ImejiException {
+    if (factory == null || !factory.isOpen()) {
+    }
     var entityManager = factory.createEntityManager();
+
     var transaction = entityManager.getTransaction();
     try {
       transaction.begin();
@@ -41,5 +46,9 @@ public class EntityManagerHelper {
     } finally {
       entityManager.close();
     }
+  }
+
+  public static void close() {
+    factory.close();
   }
 }

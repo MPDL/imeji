@@ -2,6 +2,8 @@ package de.mpg.imeji.test.logic.service;
 
 import java.io.File;
 
+import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
+import jakarta.persistence.EntityManagerFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
@@ -45,8 +47,10 @@ public class SuperServiceTest {
 
   @BeforeClass
   public static void setup() {
+    EntityManagerHelper.newEntityManagerFactory();
     ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
+
   }
 
   @AfterClass
@@ -54,6 +58,7 @@ public class SuperServiceTest {
     ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
+    EntityManagerHelper.close();
   }
 
   /**

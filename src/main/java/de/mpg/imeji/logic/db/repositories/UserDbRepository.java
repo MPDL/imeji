@@ -52,10 +52,10 @@ public class UserDbRepository extends DbRepository<User> {
   public int countObjectsModifiedOrCreated(String id) throws ImejiException {
     return inSession(em -> {
       String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
-      Object result = em.createNativeQuery("select count(*) from collection c, item i, statement s , facet f, users u where "
-          + "c.modifiedBy = :userId OR c.createdBy :userId OR" + "i.modifiedBy = :userId OR i.createdBy :userId OR"
-          + "s.modifiedBy = :userId OR s.createdBy :userId OR" + "f.modifiedBy = :userId OR f.createdBy :userId OR"
-          + "u.modifiedBy = :userId OR u.createdBy :userId").setParameter("userId", id).getSingleResult();
+      Object result = em
+          .createNativeQuery("select count(*) from collection c, item i WHERE "
+              + "c.modifiedBy = :userId OR c.createdBy = :userId OR i.modifiedBy = :userId OR i.createdBy = :userId")
+          .setParameter("userId", id).getSingleResult();
       return ((Number) result).intValue();
     });
   }

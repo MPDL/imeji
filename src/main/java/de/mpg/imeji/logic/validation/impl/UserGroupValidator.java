@@ -37,7 +37,7 @@ public class UserGroupValidator extends ObjectValidator implements Validator<Use
   public boolean groupNameAlreadyExists(UserGroup g) {
     try {
       UserGroup ugList = new UserGroupDbRepository().readByName(g.getName());
-      if (ugList != null && ugList.getName().equals(g.getName())) {
+      if (ugList != null && !g.getId().equals(ugList.getId())) {
         return true;
       }
     } catch (ImejiException e) {
