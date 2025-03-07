@@ -53,6 +53,7 @@ public class ElasticsearchTestUtil {
 
   private static void initializeElasticsearch() {
     String url = elasticSearchContainer.getHttpHostAddress();
+    LOGGER.info("Elasticsearch Container running at " + url);
     RestClientBuilder builder = RestClient.builder(HttpHost.create(url));
 
     /*

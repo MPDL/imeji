@@ -271,7 +271,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    * @throws ImejiException
    */
   public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
-    List<ContentVO> cl = new ContentDbRepository().retrieveAllContentWithFile(fileUrl);
+    List<ContentVO> cl = new ContentDbRepository().retrieveContentForFile(fileUrl);
     if (cl != null && !cl.isEmpty() && cl.get(0) != null) {
       return retrieveLazy(URI.create(cl.get(0).getItemId()), user);
     } else {

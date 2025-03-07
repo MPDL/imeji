@@ -1,6 +1,7 @@
 package de.mpg.imeji.logic.db.repositories;
 
 import de.mpg.imeji.exceptions.ImejiException;
+import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
 import de.mpg.imeji.logic.model.Item;
 import de.mpg.imeji.logic.model.User;
@@ -40,9 +41,13 @@ public abstract class DbRepository<ModelType> {
   }
 
   public ModelType read(String id) throws ImejiException {
-    return inSession(em -> {
+    ModelType m = inSession(em -> {
       return em.find(classType, id);
     });
+    if (m == null) {
+      throw new NotFoundException("Object with id " + id + " not found");
+    }
+    return m;
   }
 
 

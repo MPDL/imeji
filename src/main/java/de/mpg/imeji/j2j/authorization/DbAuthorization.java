@@ -115,12 +115,12 @@ public class DbAuthorization extends Authorization {
     //List<String> itemsParent = Queries.executeSPARQLQueryAndGetResults(sparqlQuery, this.dataset, itemModelName);
 
     //if the item object is just an id object, try to get the full item first
-   Item item = null;
-      try {
-        item = itemsDbRepository.read(itemId);
-      } catch (ImejiException e) {
-        throw new NotFoundException(e);
-      }
+    Item item = null;
+    try {
+      item = itemsDbRepository.read(itemId);
+    } catch (ImejiException e) {
+      throw new NotFoundException(e);
+    }
 
 
     URI itemParent = item.getCollection();
@@ -128,9 +128,9 @@ public class DbAuthorization extends Authorization {
       //String parentURI = itemsParent.get(0);
       // check if item's collection is subcollection and has a top-level parent itself
 
-        //CollectionImeji coll = collectionsDbRepository.read(itemParent.toString());
-        String topLevelParentURI = queryCollectionsTopLevelParent(itemParent.toString());
-        return topLevelParentURI;
+      //CollectionImeji coll = collectionsDbRepository.read(itemParent.toString());
+      String topLevelParentURI = queryCollectionsTopLevelParent(itemParent.toString());
+      return topLevelParentURI;
 
     } else {
       // throw error: item must have parent, item not found or other problem, abort
@@ -157,8 +157,7 @@ public class DbAuthorization extends Authorization {
       CollectionImeji collection = collectionsDbRepository.read(collId);
       if (collection.getCollection() != null) {
         return queryCollectionsTopLevelParent(collection.getCollection().toString());
-      }
-      else {
+      } else {
         return collection.getId().toString();
       }
 

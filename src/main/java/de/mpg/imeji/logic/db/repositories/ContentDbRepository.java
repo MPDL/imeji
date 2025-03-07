@@ -17,10 +17,17 @@ public class ContentDbRepository extends DbRepository<ContentVO> {
 
   public List<ContentVO> retrieveAllContentWithFile(String filePath) throws ImejiException {
     return inSession(em -> {
-      return em
-          .createQuery("SELECT c FROM ContentVO c WHERE c.thumbnail ILIKE :filePath OR c.preview ILIKE :filePath OR c.full ILIKE :filePath",
-              ContentVO.class)
-          .setParameter("filePath", "%" + filePath + "%").getResultList();
+      return em.createQuery(
+          "SELECT c FROM ContentVO c WHERE c.thumbnail ILIKE :filePath OR c.preview ILIKE :filePath OR c.full  ILIKE :filePath",
+          ContentVO.class).setParameter("filePath", "%" + filePath + "%").getResultList();
+    });
+  }
+
+  public List<ContentVO> retrieveContentForFile(String filePath) throws ImejiException {
+    return inSession(em -> {
+      return em.createQuery(
+          "SELECT c FROM ContentVO c WHERE c.original = :filePath OR c.full = :filePath OR c.preview = :filePath OR c.thumbnail = :filePath",
+          ContentVO.class).setParameter("filePath", filePath).getResultList();
     });
   }
 
