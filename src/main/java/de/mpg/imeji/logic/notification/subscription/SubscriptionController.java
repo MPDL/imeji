@@ -25,8 +25,8 @@ import de.mpg.imeji.logic.security.authorization.util.SecurityUtil;
  */
 public class SubscriptionController extends ImejiControllerAbstract<Subscription> implements Serializable {
   private static final long serialVersionUID = 4481379886807835574L;
-  private static final ReaderFacade READER = new ReaderFacade(Imeji.userModel);
-  private static final WriterFacade WRITER = new WriterFacade(Imeji.userModel);
+  private static final ReaderFacade READER = new ReaderFacade("http://imeji.org/terms/subscription");
+  private static final WriterFacade WRITER = new WriterFacade("http://imeji.org/terms/subscription");
 
   @Override
   public List<Subscription> createBatch(List<Subscription> l, User user) throws ImejiException {

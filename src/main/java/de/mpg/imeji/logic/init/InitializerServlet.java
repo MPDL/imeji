@@ -42,9 +42,7 @@ public class InitializerServlet extends HttpServlet {
       super.init();
       Imeji.locksSurveyor.start();
       initModel();
-      if(Imeji.STARTUP.doMigrationToDb()) {
-        new JenaToDbMigration().migrate();
-      }
+
 
       reindex();
       Imeji.getEXECUTOR().submit(new ReadMaxPlanckIPMappingJob());

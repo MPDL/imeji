@@ -11,15 +11,20 @@ import de.mpg.imeji.logic.db.reader.Reader;
 import de.mpg.imeji.logic.db.repositories.*;
 import de.mpg.imeji.logic.init.ImejiInitializer;
 import de.mpg.imeji.logic.model.*;
+import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.model.factory.UserFactory;
 import de.mpg.imeji.logic.search.facet.model.Facet;
 import de.mpg.imeji.logic.search.jenasearch.ImejiSPARQL;
 import de.mpg.imeji.logic.search.jenasearch.JenaCustomQueries;
+import de.mpg.imeji.logic.security.authentication.impl.APIKeyAuthentication;
+import de.mpg.imeji.logic.security.authorization.AuthorizationPredefinedRoles;
+import de.mpg.imeji.logic.util.StringHelper;
 import de.mpg.imeji.logic.util.TempFileUtil;
 import org.apache.jena.tdb1.base.block.FileMode;
 import org.apache.jena.tdb1.sys.SystemTDB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jose4j.lang.JoseException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,17 +35,34 @@ public class JenaToDbMigration {
 
     private static final Logger LOGGER = LogManager.getLogger(JenaToDbMigration.class);
 
+    private User admin;
 
     public void migrate() throws ImejiException{
 
+       List<String> admins = ImejiSPARQL.exec(JenaCustomQueries.selectUserSysAdmin(), Imeji.userModel);
 
-        migrate(Imeji.collectionModel, JenaCustomQueries.selectCollectionAll(), new CollectionsDbRepository(), CollectionImeji.class);
-        migrate(Imeji.imageModel, JenaCustomQueries.selectItemAll(), new ItemsDbRepository(), Item.class);
-        migrate(Imeji.contentModel, JenaCustomQueries.selectContentAll(), new ContentDbRepository(), ContentVO.class);
-        migrate(Imeji.statementModel, JenaCustomQueries.selectStatementAll(), new StatementDbRepository(), Statement.class);
-        migrate(Imeji.facetModel, JenaCustomQueries.selectFacetAll(), new FacetDbRepository(), Facet.class);
-        migrate("http://imeji.org/terms/subscription", JenaCustomQueries.selectSubscriptionAll(), new SubscriptionDbRepository(), Subscription.class);
-        migrateUsers();
+
+        try {
+            admin = new User();
+            admin.setId(URI.create(admins.get(0)));
+            admin.setPerson(ImejiFactory.newPerson("Admin", "imeji", "Max Planck Digital Library"));
+            admin.setEmail(Imeji.ADMIN_EMAIL_INIT);
+            admin.setEncryptedPassword(StringHelper.md5(Imeji.ADMIN_PASSWORD_INIT));
+            admin.setApiKey(APIKeyAuthentication.generateKey(this.admin.getId(), Integer.MAX_VALUE));
+            admin.setGrants(AuthorizationPredefinedRoles.imejiAdministrator(Imeji.PROPERTIES.getBaseURI()));
+
+
+            migrate(Imeji.collectionModel, JenaCustomQueries.selectCollectionAll(), new CollectionsDbRepository(), CollectionImeji.class);
+            migrate(Imeji.imageModel, JenaCustomQueries.selectItemAll(), new ItemsDbRepository(), Item.class);
+            migrate(Imeji.contentModel, JenaCustomQueries.selectContentAll(), new ContentDbRepository(), ContentVO.class);
+            migrate(Imeji.statementModel, JenaCustomQueries.selectStatementAll(), new StatementDbRepository(), Statement.class);
+            migrate(Imeji.facetModel, JenaCustomQueries.selectFacetAll(), new FacetDbRepository(), Facet.class);
+            //Subscriptions are handled under the user Model in Jena
+            migrate(Imeji.userModel, JenaCustomQueries.selectSubscriptionAll(), new SubscriptionDbRepository(), Subscription.class);
+            migrateUsers();
+        } catch (JoseException e) {
+            throw new ImejiException("Error in migration",e);
+        }
 
 
     }
@@ -58,7 +80,7 @@ public class JenaToDbMigration {
             LOGGER.info(count + ": Loading object from Jena " + uri);
             //User emptyUser = new User();
             //emptyUser.setId(URI.create(uri));
-            User result = (User) reader.read(uri, Imeji.adminUser, new User());
+            User result = (User) reader.read(uri, this.admin, new User());
             //User result = (User) rc.read(emptyUser);
             LOGGER.info("User successfully loaded from Jena " + uri);
             loadUsersUserGroups(result, reader);
@@ -83,7 +105,7 @@ public class JenaToDbMigration {
             //emptyUser.setId(URI.create(uri));
             Object result = null;
             try {
-                result = reader.read(uri, Imeji.adminUser, objectClass.newInstance());
+                result = reader.read(uri, this.admin, objectClass.newInstance());
             } catch (InstantiationException|IllegalAccessException e) {
                 throw new ImejiException("Error creating instance of class " + objectClass.getName(), e);
             }
@@ -111,7 +133,7 @@ public class JenaToDbMigration {
       for (String groupURI : groupURIs) {
         //UserGroup groupToRead = new UserGroup();
         //groupToRead.setId(URI.create(groupURI));
-        Object readGroup = resourceController.read(groupURI, Imeji.adminUser, new UserGroup());
+        Object readGroup = resourceController.read(groupURI, this.admin, new UserGroup());
         if (readGroup instanceof UserGroup) {
           UserGroup groupToRead = (UserGroup) readGroup;
           UserGroup ugFromDb = userGroupDbRepository.read(groupToRead.getId().toString());

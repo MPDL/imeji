@@ -10,6 +10,7 @@ import java.util.List;
 
 import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
 import de.mpg.imeji.logic.util.StorageUtils;
+import de.mpg.imeji.util.JenaToDbMigration;
 import org.apache.jena.atlas.lib.AlarmClock;
 
 import org.apache.jena.tdb1.base.file.Location;
@@ -132,6 +133,11 @@ public class ImejiInitializer {
     Imeji.EMAIL_CONFIG = new ImejiEmailContentConfiguration(Imeji.CONFIG);
     KeyValueStoreService.startAllStores();
     initRsaKeys();
+
+    if(Imeji.STARTUP.doMigrationToDb()) {
+      new JenaToDbMigration().migrate();
+    }
+
     initadminUser();
     initDefaultStatements();
     new ListenerService().init();
@@ -223,7 +229,10 @@ public class ImejiInitializer {
     } catch (final Exception e) {
       LOGGER.error("Error initializing Admin user! ", e);
     }
+
   }
+
+
 
   /**
    * Initialize the default Statements of the instance

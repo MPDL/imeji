@@ -23,7 +23,9 @@
             <property name="hibernate.agroal.maxSize"
                       value="20"/>
 
-            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+           <!-- <property name="jakarta.persistence.schema-generation.database.action" value="update"/>-->
             <!-- display SQL in console -->
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>
