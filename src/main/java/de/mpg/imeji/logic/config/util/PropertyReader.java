@@ -103,6 +103,10 @@ public class PropertyReader {
    * @throws IOException If the properties file could not be read.
    */
   private static Properties loadImejiProperties() throws IOException {
+    return loadProperties(IMEJI_PROPERTY_FILE);
+  }
+
+  public static Properties loadProperties(String propertyFileName) throws IOException {
     String serverConfDirectory = null;
     if (System.getProperty("jboss.server.config.dir") != null) {
       serverConfDirectory = System.getProperty("jboss.server.config.dir");
@@ -114,7 +118,7 @@ public class PropertyReader {
 
     InputStream inputStream = null;
     if (serverConfDirectory != null) {
-      String propertiesFilePath = serverConfDirectory + "/" + IMEJI_PROPERTY_FILE;
+      String propertiesFilePath = serverConfDirectory + "/" + propertyFileName;
       LOGGER.info("Loading properties from " + propertiesFilePath);
       //Throws a FileNotFoundException if the properties file is not found in the server-conf directory.
       inputStream = new FileInputStream(propertiesFilePath);
@@ -122,12 +126,12 @@ public class PropertyReader {
       //Load imeji.properties from classpath. Used in the context of testing, in which no server is running.
       //Warning: If no properties file exists in the test directory the default imeji.properties is loaded,
       //which may cause the deletion of the data of the local imeji instance by the tests.
-      LOGGER.warn("No server directory found. Loading " + IMEJI_PROPERTY_FILE + " from classpath."
+      LOGGER.warn("No server directory found. Loading " + propertyFileName + " from classpath."
           + " In case of testing this will load the properties file from the test directory."
-          + " If no properties file exists in the test directory the default " + IMEJI_PROPERTY_FILE + " is loaded.");
-      inputStream = PropertyReader.class.getClassLoader().getResourceAsStream(IMEJI_PROPERTY_FILE);
+          + " If no properties file exists in the test directory the default " + propertyFileName + " is loaded.");
+      inputStream = PropertyReader.class.getClassLoader().getResourceAsStream(propertyFileName);
       if (inputStream == null) {
-        throw new FileNotFoundException(IMEJI_PROPERTY_FILE);
+        throw new FileNotFoundException(propertyFileName);
       }
     }
 

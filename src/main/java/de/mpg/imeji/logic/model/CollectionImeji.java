@@ -53,12 +53,12 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   @j2jLiteral("http://purl.org/dc/elements/1.1/description")
   private String description;
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://xmlns.com/foaf/0.1/person")
   protected Collection<Person> persons = new ArrayList<Person>();
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/AdditionalInfo")
   private List<ContainerAdditionalInfo> additionalInformations = new ArrayList<>();
@@ -68,14 +68,14 @@ public class CollectionImeji extends Properties implements Serializable, Collect
   @j2jResource("http://imeji.org/terms/logoUrl")
   private URI logoUrl;
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://purl.org/dc/terms/type")
   private List<String> types = new ArrayList<>();
 
   //private Collection<URI> images = new ArrayList<URI>();
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/linkedCollection")
   private List<LinkedCollection> linkedCollections = new ArrayList<LinkedCollection>();

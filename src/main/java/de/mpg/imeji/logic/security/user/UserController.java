@@ -127,7 +127,7 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
       users.add(retrieve(URI.create(uri), Imeji.adminUser));
     }
     return users;
-
+    
      */
   }
 
@@ -140,26 +140,26 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
    */
   public List<User> retrieveBatchLazy(List<String> uris, int limit) {
     try {
-      List<User> users =  userDbRepository.retrieveByID(uris);
+      List<User> users = userDbRepository.retrieveByID(uris);
       Collections.sort(users, USER_COMPARATOR_BY_NAME);
       return users;
     } catch (ImejiException e) {
       throw new RuntimeException(e);
     }
 
-      /*
-      final int max = limit < uris.size() && limit > 0 ? limit : uris.size();
+    /*
+    final int max = limit < uris.size() && limit > 0 ? limit : uris.size();
     for (int i = 0; i < max; i++) {
-      try {
-        users.add((User) READER.readLazy(uris.get(i), Imeji.adminUser, new User()));
-      } catch (final ImejiException e) {
-        LOGGER.error("Error reading user", e);
-      }
+    try {
+      users.add((User) READER.readLazy(uris.get(i), Imeji.adminUser, new User()));
+    } catch (final ImejiException e) {
+      LOGGER.error("Error reading user", e);
+    }
     }
     Collections.sort(users, USER_COMPARATOR_BY_NAME);
     return users;
-
-       */
+    
+     */
   }
 
   /**
@@ -171,7 +171,7 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
    */
   public Collection<User> retrieveBatch(List<String> uris, int limit) {
     try {
-      List<User> users =  userDbRepository.retrieveByID(uris);
+      List<User> users = userDbRepository.retrieveByID(uris);
       Collections.sort(users, USER_COMPARATOR_BY_NAME);
       return users;
     } catch (ImejiException e) {
@@ -190,7 +190,7 @@ class UserController extends ImejiControllerAbstract<User> implements AccessElem
     }
     Collections.sort(users, USER_COMPARATOR_BY_NAME);
     return users;
-
+    
      */
   }
 

@@ -60,18 +60,14 @@ class ContentController extends ImejiControllerAbstract<ContentVO> {
   public List<ContentVO> retrieveBatch(List<String> ids, User user) throws ImejiException {
     List<ContentVO> contents = initializeEmptyList(ids);
     List<Object> res = READER.read(toObjectList(contents), Imeji.adminUser);
-    return res.stream()
-            .map(e -> (ContentVO) e)
-            .collect(Collectors.toList());
+    return res.stream().map(e -> (ContentVO) e).collect(Collectors.toList());
   }
 
   @Override
   public List<ContentVO> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
     List<ContentVO> contents = initializeEmptyList(ids);
     List<Object> res = READER.readLazy(toObjectList(contents), Imeji.adminUser);
-    return res.stream()
-            .map(e -> (ContentVO) e)
-            .collect(Collectors.toList());
+    return res.stream().map(e -> (ContentVO) e).collect(Collectors.toList());
   }
 
   @Override

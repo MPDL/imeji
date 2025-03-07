@@ -58,6 +58,7 @@ public class DbWriter implements Writer {
 
   private UserDbRepository userDbRepository = new UserDbRepository();
   private DbRepository dbRepository;
+
   /**
    * Construct one {@link DbWriter} for one {@link Model}
    *
@@ -67,7 +68,7 @@ public class DbWriter implements Writer {
 
     this.modelURI = modelURI;
     //LOGGER.info("Creating Writer for " + modelURI);
-    if(modelURI!=null) {
+    if (modelURI != null) {
       ObjectHelper.ObjectType type = ObjectHelper.getObjectType(URI.create(modelURI));
       this.dbRepository = DbRepository.getRepositoryForModel(type);
     }
@@ -193,9 +194,9 @@ public class DbWriter implements Writer {
           //String model = J2JHelper.getModel(objectId);
           //DbRepository dbRepository = DbRepository.getRepositoryForModel(model)
 
-          Object dataObjectInStore = em.find(changeMember.getImejiDataObject().getClass(),objectId.toString());
+          Object dataObjectInStore = em.find(changeMember.getImejiDataObject().getClass(), objectId.toString());
           if (dataObjectInStore instanceof UserGroup) {
-            for(URI uri : ((UserGroup) dataObjectInStore).getUsers()) {
+            for (URI uri : ((UserGroup) dataObjectInStore).getUsers()) {
               LOGGER.info("Member " + uri);
             }
 
@@ -208,12 +209,10 @@ public class DbWriter implements Writer {
             Object newObject = em.merge(dataObjectInStore);
             updatedList.add(newObject);
           }
-        }
-        else
-        {
+        } else {
           throw new UnprocessableError(
-                  "Could not update member of " + J2JHelper.getId(changeMember.getImejiDataObject()).getPath().replace("imeji/", "")
-                          + ". Reason: Required interfaces not implemented.");
+              "Could not update member of " + J2JHelper.getId(changeMember.getImejiDataObject()).getPath().replace("imeji/", "")
+                  + ". Reason: Required interfaces not implemented.");
         }
       }
       //work.accept(entityManager);
@@ -221,7 +220,7 @@ public class DbWriter implements Writer {
     } catch (Exception e) {
       if (transaction.isActive())
         transaction.rollback();
-      throw new ImejiException("Error with database",e);
+      throw new ImejiException("Error with database", e);
     } finally {
       em.close();
     }
@@ -249,42 +248,36 @@ public class DbWriter implements Writer {
   }
 
 
-protected void setTimestamp(Object imejiDataObject) {
-  if (imejiDataObject instanceof ResourceLastModified) {
-    Calendar now = Calendar.getInstance();
-    ((ResourceLastModified) imejiDataObject).setModified(now);
-  }
-}
-
-
-private void checkModified(Object imejiDataObject, Object currentDbObject) throws ReloadBeforeSaveException, NotFoundException {
-  // Throw ReloadBeforeSaveException in case that object in Jena has been modified since we last read it.
-  if (imejiDataObject instanceof ResourceLastModified) {
-    if (imejiDataObject instanceof CloneURI) {
-
-      //Object currentObjectInJena = this.read(((CloneURI) imejiDataObject).cloneURI());
-      Calendar lastModifiedInDatabase = ((ResourceLastModified) currentDbObject).getModified();
-      Calendar imejiDataObjectLastModified = ((ResourceLastModified) imejiDataObject).getModified();
-      if (lastModifiedInDatabase != null && imejiDataObjectLastModified != null) {
-        if (lastModifiedInDatabase.getTimeInMillis() != imejiDataObjectLastModified.getTimeInMillis()) {
-          throw new ReloadBeforeSaveException(currentDbObject);
-        }
-      } else {
-        throw new NotImplementedException("Could not process update request, no timestamp for data synchronization available");
-      }
-    } else {
-      throw new NotImplementedException(
-              "Could not process update request, interface CloneURI not implemented (but needs to be) for class "
-                      + imejiDataObject.getClass());
+  protected void setTimestamp(Object imejiDataObject) {
+    if (imejiDataObject instanceof ResourceLastModified) {
+      Calendar now = Calendar.getInstance();
+      ((ResourceLastModified) imejiDataObject).setModified(now);
     }
   }
-}
 
 
+  private void checkModified(Object imejiDataObject, Object currentDbObject) throws ReloadBeforeSaveException, NotFoundException {
+    // Throw ReloadBeforeSaveException in case that object in Jena has been modified since we last read it.
+    if (imejiDataObject instanceof ResourceLastModified) {
+      if (imejiDataObject instanceof CloneURI) {
 
-
-
-
+        //Object currentObjectInJena = this.read(((CloneURI) imejiDataObject).cloneURI());
+        Calendar lastModifiedInDatabase = ((ResourceLastModified) currentDbObject).getModified();
+        Calendar imejiDataObjectLastModified = ((ResourceLastModified) imejiDataObject).getModified();
+        if (lastModifiedInDatabase != null && imejiDataObjectLastModified != null) {
+          if (lastModifiedInDatabase.getTimeInMillis() != imejiDataObjectLastModified.getTimeInMillis()) {
+            throw new ReloadBeforeSaveException(currentDbObject);
+          }
+        } else {
+          throw new NotImplementedException("Could not process update request, no timestamp for data synchronization available");
+        }
+      } else {
+        throw new NotImplementedException(
+            "Could not process update request, interface CloneURI not implemented (but needs to be) for class "
+                + imejiDataObject.getClass());
+      }
+    }
+  }
 
 
 

@@ -44,15 +44,15 @@ public class StatementValidator extends ObjectValidator implements Validator<Sta
    */
   private boolean indexAlreadyUsed(Statement statement) {
 
-      try {
-        List<Statement> result = new StatementDbRepository().readByIndex(statement.getIndex());
-        if (result.size() > 0) {
-          return !result.get(0).equals(statement.getType().name());
-        }
-        return false;
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
+    try {
+      List<Statement> result = new StatementDbRepository().readByIndex(statement.getIndex());
+      if (result.size() > 0) {
+        return !result.get(0).equals(statement.getType().name());
       }
+      return false;
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
 
     /*
     final Search search = SearchFactory.create(SearchObjectTypes.STATEMENT, SEARCH_IMPLEMENTATIONS.JENA);

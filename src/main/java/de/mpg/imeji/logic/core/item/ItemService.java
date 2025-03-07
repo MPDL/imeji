@@ -71,6 +71,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
   private final Search search = SearchFactory.create(SearchObjectTypes.ITEM, SEARCH_IMPLEMENTATIONS.ELASTIC);
   private final ItemController itemController = new ItemController();
   private ItemsDbRepository itemsDbRepository = new ItemsDbRepository();
+
   /**
    * Controller constructor
    */
@@ -271,7 +272,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
    */
   public Item retrieveLazyForFile(String fileUrl, User user) throws ImejiException {
     List<ContentVO> cl = new ContentDbRepository().retrieveAllContentWithFile(fileUrl);
-    if (cl!=null && !cl.isEmpty() && cl.get(0) != null) {
+    if (cl != null && !cl.isEmpty() && cl.get(0) != null) {
       return retrieveLazy(URI.create(cl.get(0).getItemId()), user);
     } else {
       throw new NotFoundException("Can not find the resource requested");
@@ -287,7 +288,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
     } else {
       throw new NotFoundException("Can not find the resource requested");
     }
-
+    
      */
   }
 
@@ -857,7 +858,7 @@ public class ItemService extends SearchServiceAbstract<Item> {
       throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + results.get(0).toString() + "; requested by user: "
           + user.getEmail() + "; targetCollectionUser: " + targetCollectionUser.getEmail(), e);
     }
-
+    
      */
     final long needed = currentDiskUsage + file.length();
     if (needed > targetCollectionUser.getQuota()) {
@@ -869,17 +870,17 @@ public class ItemService extends SearchServiceAbstract<Item> {
 
 
   public int getNumberOfCollectionsItemsWithoutLicense(URI collectionUri) {
-      try {
-          List<String> allColls = new HierarchyService().addAllSubcollections(collectionUri.toString());
-          List<Item> itemsWithoutLicense = new ArrayList<>();
-          for(String collId : allColls) {
-              itemsWithoutLicense.addAll(itemsDbRepository.retrieveAllItemsForCollectionWithoutLicense(collId));
-          }
-          return itemsWithoutLicense.size();
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
+    try {
+      List<String> allColls = new HierarchyService().addAllSubcollections(collectionUri.toString());
+      List<Item> itemsWithoutLicense = new ArrayList<>();
+      for (String collId : allColls) {
+        itemsWithoutLicense.addAll(itemsDbRepository.retrieveAllItemsForCollectionWithoutLicense(collId));
       }
-      //String directJenaQuery = JenaCustomQueries.getItemsWithoutLicenseInCollectionAndSubCollections(collectionUri);
+      return itemsWithoutLicense.size();
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+    //String directJenaQuery = JenaCustomQueries.getItemsWithoutLicenseInCollectionAndSubCollections(collectionUri);
     //return ImejiSPARQL.execCount(directJenaQuery, null);
   }
 

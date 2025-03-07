@@ -64,16 +64,16 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
 
   private static final Logger LOGGER = LogManager.getLogger(Properties.class);
 
-    public String getDbId() {
-        return dbId;
-    }
+  public String getDbId() {
+    return dbId;
+  }
 
-    public void setDbId(String dbId) {
-        this.dbId = dbId;
-    }
+  public void setDbId(String dbId) {
+    this.dbId = dbId;
+  }
 
 
-    @XmlEnum(String.class)
+  @XmlEnum(String.class)
   public enum Status {
     PENDING(new String(ImejiNamespaces.STATUS + "#PENDING")),
     RELEASED(new String(ImejiNamespaces.STATUS + "#RELEASED")),
@@ -196,8 +196,8 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
   }
 
   public void setId(URI id) {
-      this.id = id;
-      this.dbId = id.toString();
+    this.id = id;
+    this.dbId = id.toString();
   }
 
   public URI getId() {
@@ -248,9 +248,6 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
     }
     return ret;
   }
-
-
-
 
 
 

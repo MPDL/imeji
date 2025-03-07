@@ -67,10 +67,10 @@ public class RefreshFileSizeJob implements Callable<Integer> {
             contentDbRepository.update(contentVO);
 
             //ImejiSPARQL.execUpdate(JenaCustomQueries.insertFileSizeAndDimension(item.getId().toString(), Long.toString(f.length()),
-             //   Long.toString(d.width), Long.toString(d.height)));
+            //   Long.toString(d.width), Long.toString(d.height)));
           } //else {
             //ImejiSPARQL.execUpdate(JenaCustomQueries.insertFileSize(item.getId().toString(), Long.toString(f.length())));
-          //}
+            //}
 
         } catch (final Exception e) {
           LOGGER.error("Error updating file size and dimension of item " + item.getIdString() + " : " + e.getMessage());

@@ -30,17 +30,17 @@ public class StatisticsService {
    * @return
    */
   public List<String> getAllInstitute() {
-      try {
-          return  new UserDbRepository().retrieveAllDomains();
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
-/*
+    try {
+      return new UserDbRepository().retrieveAllDomains();
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+    /*
       final Search s = new JenaSearch(SearchObjectTypes.USER, null);
     return s.searchString(JenaCustomQueries.selectAllInstitutes(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
         .getResults();
-
- */
+    
+     */
   }
 
   /**
@@ -52,12 +52,12 @@ public class StatisticsService {
    */
   public long getUsedStorageSizeForInstitute(String instituteName) {
     try {
-      return  new UserDbRepository().getFileSizeForDomain(instituteName);
+      return new UserDbRepository().getFileSizeForDomain(instituteName);
     } catch (ImejiException e) {
       throw new RuntimeException(e);
     }
     /*
-
+    
     final Search s = new JenaSearch(SearchObjectTypes.ALL, null);
     final List<String> result = s.searchString(JenaCustomQueries.selectInstituteFileSize(instituteName), null, null,
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
@@ -67,14 +67,14 @@ public class StatisticsService {
       return Long.parseLong(size);
     }
     return 0;
-
+    
      */
   }
 
   public long getAllFileSize() {
 
     try {
-      return  new UserDbRepository().getFileSizeForAll();
+      return new UserDbRepository().getFileSizeForAll();
     } catch (ImejiException e) {
       throw new RuntimeException(e);
     }

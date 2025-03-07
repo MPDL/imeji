@@ -55,10 +55,12 @@ public class License implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) return false;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
     License license = (License) o;
-    return start == license.start && end == license.end && Objects.equals(id, license.id) && Objects.equals(label, license.label) && Objects.equals(name, license.name) && Objects.equals(url, license.url);
+    return start == license.start && end == license.end && Objects.equals(id, license.id) && Objects.equals(label, license.label)
+        && Objects.equals(name, license.name) && Objects.equals(url, license.url);
   }
 
   @Override
@@ -99,7 +101,7 @@ public class License implements Serializable {
     }
     return true;
   }
-
+  
    */
 
   public License(ImejiLicenses lic) {

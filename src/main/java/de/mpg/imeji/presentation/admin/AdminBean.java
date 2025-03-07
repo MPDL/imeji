@@ -147,12 +147,12 @@ public class AdminBean extends SuperBean {
    */
   private void cleanGrants() {
     LOGGER.info("Cleaning grants...");
-      try {
-          new UserDbRepository().removeZombieGrants();
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
-      //System.out.println(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
+    try {
+      new UserDbRepository().removeZombieGrants();
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+    //System.out.println(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
     //ImejiSPARQL.execUpdate(JenaCustomQueries.removeGrantWithoutObject(Imeji.PROPERTIES.getBaseURI()));
     LOGGER.info("...done!");
   }

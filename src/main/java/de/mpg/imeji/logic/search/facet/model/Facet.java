@@ -64,6 +64,7 @@ public class Facet implements Serializable {
     this.uri = IdentifierUtil.newURI(Facet.class);
     this.dbId = this.uri.toString();
   }
+
   /**
    * @return the name
    */

@@ -134,7 +134,7 @@ public class ImejiInitializer {
     KeyValueStoreService.startAllStores();
     initRsaKeys();
 
-    if(Imeji.STARTUP.doMigrationToDb()) {
+    if (Imeji.STARTUP.doMigrationToDb()) {
       new JenaToDbMigration().migrate();
     }
 

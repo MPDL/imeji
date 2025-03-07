@@ -112,17 +112,17 @@ public class UserGroupBean extends SuperBean implements Serializable {
    * @return
    */
   public Collection<User> loadUsers(UserGroup group) {
-      try {
-          return new UserDbRepository().retrieveAllUsersForGroup(group.getId().toString());
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
+    try {
+      return new UserDbRepository().retrieveAllUsersForGroup(group.getId().toString());
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
 
     /*
     final UserService c = new UserService();
     List<String> uris = group.getUsers().stream().map(i -> i.toString()).collect(Collectors.toList());
     return c.retrieveBatch(uris, 0);
-
+    
      */
   }
 
@@ -289,7 +289,6 @@ public class UserGroupBean extends SuperBean implements Serializable {
   public void setRoles(List<ShareListItem> roles) {
     this.roles = roles;
   }
-
 
 
 

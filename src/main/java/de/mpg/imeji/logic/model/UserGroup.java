@@ -52,13 +52,13 @@ public class UserGroup implements Serializable, ResourceLastModified, CloneURI, 
   private String name;
 
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/terms/grant")
   private Collection<String> grants = new ArrayList<String>();
 
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://xmlns.com/foaf/0.1/member")
   private Collection<URI> users = new ArrayList<URI>();

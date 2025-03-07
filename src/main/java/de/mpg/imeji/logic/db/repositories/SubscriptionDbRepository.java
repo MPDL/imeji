@@ -9,31 +9,28 @@ import java.util.List;
 
 public class SubscriptionDbRepository extends DbRepository<Subscription> {
 
-    public SubscriptionDbRepository() {
-        super(Subscription.class);
-    }
+  public SubscriptionDbRepository() {
+    super(Subscription.class);
+  }
 
-    public List<Subscription> readByObjectId(String objectId) throws ImejiException {
-        return inSession(em -> {
-            return em.createQuery("SELECT u FROM Subscription u WHERE u.objectId = :objectId", Subscription.class)
-                    .setParameter("objectId", objectId)
-                    .getResultList();
-        });
-    }
+  public List<Subscription> readByObjectId(String objectId) throws ImejiException {
+    return inSession(em -> {
+      return em.createQuery("SELECT u FROM Subscription u WHERE u.objectId = :objectId", Subscription.class)
+          .setParameter("objectId", objectId).getResultList();
+    });
+  }
 
-    public List<Subscription> readByUserId(String objectId) throws ImejiException {
-        return inSession(em -> {
-            return em.createQuery("SELECT u FROM Subscription u WHERE u.userId = :objectId", Subscription.class)
-                    .setParameter("objectId", objectId)
-                    .getResultList();
-        });
-    }
+  public List<Subscription> readByUserId(String objectId) throws ImejiException {
+    return inSession(em -> {
+      return em.createQuery("SELECT u FROM Subscription u WHERE u.userId = :objectId", Subscription.class)
+          .setParameter("objectId", objectId).getResultList();
+    });
+  }
 
-    public List<Subscription> readByType(Subscription.Type type) throws ImejiException {
-        return inSession(em -> {
-            return em.createQuery("SELECT u FROM Subscription u WHERE u.type = :type", Subscription.class)
-                    .setParameter("type", type.name())
-                    .getResultList();
-        });
-    }
+  public List<Subscription> readByType(Subscription.Type type) throws ImejiException {
+    return inSession(em -> {
+      return em.createQuery("SELECT u FROM Subscription u WHERE u.type = :type", Subscription.class).setParameter("type", type.name())
+          .getResultList();
+    });
+  }
 }

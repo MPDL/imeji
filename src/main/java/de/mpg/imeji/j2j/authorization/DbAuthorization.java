@@ -61,14 +61,14 @@ public class DbAuthorization extends Authorization {
       if (item.getId() == null) {
         throw new NotFoundException("Could not find item, item has no id");
       }
-      return queryItemsTopLevelParent(item);
+      return queryItemsTopLevelParent(item.getId().toString());
 
     } else if (obj instanceof CollectionImeji) {
       CollectionImeji collection = (CollectionImeji) obj;
       if (collection.getId() == null) {
         throw new NotFoundException("Could not find collection, collection has no id");
       }
-      return queryCollectionsTopLevelParent(collection);
+      return queryCollectionsTopLevelParent(collection.getId().toString());
     }
 
     return null;
@@ -88,27 +88,10 @@ public class DbAuthorization extends Authorization {
     ObjectType type = ObjectHelper.getObjectType(URI.create(uriString));
     if (type == ObjectType.ITEM) {
 
-        try {
-          Item item = itemsDbRepository.read(uriString);
-          if(item == null) {
-            throw new NotFoundException("Could not find item " + uriString);
-          }
-          return queryItemsTopLevelParent(item);
-        } catch (ImejiException e) {
-            throw new NotFoundException(e);
-        }
+      return queryItemsTopLevelParent(uriString);
 
     } else if (type == ObjectType.COLLECTION) {
-      try {
-        CollectionImeji coll = collectionsDbRepository.read(uriString);
-        if(coll == null) {
-          throw new NotFoundException("Could not find collection " + uriString);
-        }
-        return queryCollectionsTopLevelParent(coll);
-        } catch (ImejiException e) {
-            throw new NotFoundException(e);
-        }
-
+      return queryCollectionsTopLevelParent(uriString);
     }
 
     return null;
@@ -123,7 +106,7 @@ public class DbAuthorization extends Authorization {
    * @return
    * @throws NotFoundException
    */
-  private String queryItemsTopLevelParent(Item item) throws NotFoundException {
+  private String queryItemsTopLevelParent(String itemId) throws NotFoundException {
 
 
     //String itemModelName = ImejiInitializer.getModelName(Item.class);
@@ -131,20 +114,27 @@ public class DbAuthorization extends Authorization {
 
     //List<String> itemsParent = Queries.executeSPARQLQueryAndGetResults(sparqlQuery, this.dataset, itemModelName);
 
+    //if the item object is just an id object, try to get the full item first
+   Item item = null;
+      try {
+        item = itemsDbRepository.read(itemId);
+      } catch (ImejiException e) {
+        throw new NotFoundException(e);
+      }
+
+
     URI itemParent = item.getCollection();
-    if (itemParent!=null) {
+    if (itemParent != null) {
       //String parentURI = itemsParent.get(0);
       // check if item's collection is subcollection and has a top-level parent itself
-        try {
-            CollectionImeji coll = collectionsDbRepository.read(itemParent.toString());
-            String topLevelParentURI = queryCollectionsTopLevelParent(coll);
-            return topLevelParentURI;
-        } catch (ImejiException e) {
-            throw new NotFoundException(e);
-        }
+
+        //CollectionImeji coll = collectionsDbRepository.read(itemParent.toString());
+        String topLevelParentURI = queryCollectionsTopLevelParent(itemParent.toString());
+        return topLevelParentURI;
+
     } else {
       // throw error: item must have parent, item not found or other problem, abort
-      throw new NotFoundException("Could not find " + item.getUri());
+      throw new NotFoundException("Could not find parent for " + item.getUri());
     }
   }
 
@@ -156,29 +146,25 @@ public class DbAuthorization extends Authorization {
    * @param collectionURI
    * @return top-level parent URI
    */
-  private String queryCollectionsTopLevelParent(CollectionImeji collection) {
+  private String queryCollectionsTopLevelParent(String collId) {
 
     //String sparqlQuery = X_PATH_FUNCTIONS_DECLARATION + "SELECT ?s WHERE {<" + collectionURI + "> <http://imeji.org/terms/collection>+ ?s}";
     //String collectionModelName = ImejiInitializer.getModelName(CollectionImeji.class);
 
     //LinkedList<String> parentURIs = Queries.executeSPARQLQueryAndGetResults(sparqlQuery, this.dataset, collectionModelName);
 
-    URI lastUri = collection.getId();
-    URI parentUri = collection.getCollection();
+    try {
+      CollectionImeji collection = collectionsDbRepository.read(collId);
+      if (collection.getCollection() != null) {
+        return queryCollectionsTopLevelParent(collection.getCollection().toString());
+      }
+      else {
+        return collection.getId().toString();
+      }
 
-    while (parentUri!=null) {
-        try {
-            CollectionImeji parentColl = collectionsDbRepository.read(parentUri.toString());
-            parentUri = parentColl.getCollection();
-            if(parentUri!=null) {
-              lastUri = parentUri;
-            }
-        } catch (ImejiException e) {
-            throw new RuntimeException(e);
-        }
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
     }
-
-    return lastUri.toString();
 
   }
 

@@ -266,13 +266,13 @@ public class UserGroupService {
    * @return
    */
   public Collection<UserGroup> searchByName(String q, User user) {
-      try {
-          return userGroupDbRepository.searchByName(q);
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
+    try {
+      return userGroupDbRepository.searchByName(q);
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
 
-      //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupAll(q), user);
+    //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupAll(q), user);
   }
 
   /**
@@ -292,13 +292,13 @@ public class UserGroupService {
    * @return
    */
   public Collection<UserGroup> searchByUser(User member, User user) {
-      try {
-          return userGroupDbRepository.retrieveUserGroupsForUser(member.getId().toString());
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
+    try {
+      return userGroupDbRepository.retrieveUserGroupsForUser(member.getId().toString());
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
 
-      //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupOfUser(member), Imeji.adminUser);
+    //return searchBySPARQLQuery(JenaCustomQueries.selectUserGroupOfUser(member), Imeji.adminUser);
   }
 
   /**

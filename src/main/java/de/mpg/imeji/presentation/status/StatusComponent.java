@@ -123,12 +123,12 @@ public class StatusComponent extends UINamingContainer {
    * @return
    */
   private URI findOwner(String collectionUri) {
-      try {
-          return new CollectionsDbRepository().read(collectionUri).getCreatedBy();
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
-      //return URI.create(ImejiSPARQL.exec(JenaCustomQueries.selectCreatedBy(collectionUri), null).get(0));
+    try {
+      return new CollectionsDbRepository().read(collectionUri).getCreatedBy();
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+    //return URI.create(ImejiSPARQL.exec(JenaCustomQueries.selectCreatedBy(collectionUri), null).get(0));
   }
 
   /**

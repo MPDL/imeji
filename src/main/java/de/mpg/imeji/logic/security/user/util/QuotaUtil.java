@@ -126,19 +126,19 @@ public class QuotaUtil {
    */
   public static long getUsedQuota(User user) {
 
-      try {
-          return new UserDbRepository().getFileSize(user.getId().toString());
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
+    try {
+      return new UserDbRepository().getFileSize(user.getId().toString());
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
 
-      /*
-      final Search search = SearchFactory.create(); // default: Jena
+    /*
+    final Search search = SearchFactory.create(); // default: Jena
     final List<String> results = search.searchString(JenaCustomQueries.selectUserFileSize(user.getId().toString()), null, null,
-        Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
+      Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     return Long.parseLong(results.get(0).toString());
-
-       */
+    
+     */
   }
 
 }

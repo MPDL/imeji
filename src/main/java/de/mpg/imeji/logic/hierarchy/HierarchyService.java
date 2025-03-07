@@ -230,14 +230,14 @@ public class HierarchyService implements Serializable {
      */
     private String findCollectionName(String uri) {
 
-        try {
-            return new CollectionsDbRepository().read(uri).getName();
-        } catch (Exception e) {
-          return "";
+      try {
+        return new CollectionsDbRepository().read(uri).getName();
+      } catch (Exception e) {
+        return "";
 
-        }
+      }
 
-        //List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectCollectionName(uri), Imeji.collectionModel);
+      //List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectCollectionName(uri), Imeji.collectionModel);
       //return l.isEmpty() ? "" : l.get(0);
     }
 

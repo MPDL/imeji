@@ -52,12 +52,12 @@ public class User implements Serializable, ResourceLastModified, CloneURI, Acces
   @j2jLiteral("http://xmlns.com/foaf/0.1/password")
   private String encryptedPassword;
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jLiteral("http://xmlns.com/foaf/0.1/person")
   private Person person = new Person();
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/terms/grant")
   private List<String> grants = new ArrayList<String>();

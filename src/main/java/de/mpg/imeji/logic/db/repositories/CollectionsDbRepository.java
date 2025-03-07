@@ -9,23 +9,21 @@ import java.util.List;
 
 public class CollectionsDbRepository extends DbRepository<CollectionImeji> {
 
-    public CollectionsDbRepository() {
-        super(CollectionImeji.class);
-    }
+  public CollectionsDbRepository() {
+    super(CollectionImeji.class);
+  }
 
 
-    public List<CollectionImeji> retrieveAllSubCollections() throws ImejiException {
-        return inSession(em -> {
-            return em.createQuery("select i from CollectionImeji i WHERE i.collection IS NOT NULL", CollectionImeji.class)
-                    .getResultList();
-        });
-    }
+  public List<CollectionImeji> retrieveAllSubCollections() throws ImejiException {
+    return inSession(em -> {
+      return em.createQuery("select i from CollectionImeji i WHERE i.collection IS NOT NULL", CollectionImeji.class).getResultList();
+    });
+  }
 
-    public List<CollectionImeji> retrieveCollectionsByLogoUrl(String filePath) throws ImejiException {
-        return inSession(em -> {
-            return em.createNativeQuery("SELECT * FROM Collection c WHERE c.logoUrl ILIKE :filePath" , CollectionImeji.class)
-                    .setParameter("filePath", "%" + filePath + "%")
-                    .getResultList();
-        });
-    }
+  public List<CollectionImeji> retrieveCollectionsByLogoUrl(String filePath) throws ImejiException {
+    return inSession(em -> {
+      return em.createNativeQuery("SELECT * FROM Collection c WHERE c.logoUrl ILIKE :filePath", CollectionImeji.class)
+          .setParameter("filePath", "%" + filePath + "%").getResultList();
+    });
+  }
 }

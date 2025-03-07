@@ -23,6 +23,7 @@ public class SubscriptionService implements Serializable {
   private final SubscriptionController controller = new SubscriptionController();
 
   private final SubscriptionDbRepository subscriptionDbRepository = new SubscriptionDbRepository();
+
   /**
    * Add the subscription
    * 

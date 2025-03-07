@@ -5,34 +5,6 @@
 
     <persistence-unit name="imeji-persistence-unit">
 
-
-        <properties>
-
-            <!-- Postgres database -->
-            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver" />
-            <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:postgresql://localhost:5432/imeji"/>
-
-            <!-- Credentials -->
-            <property name="jakarta.persistence.jdbc.user"
-                      value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password"
-                      value="postgres"/>
-
-            <!-- Agroal connection pool -->
-            <property name="hibernate.agroal.maxSize"
-                      value="20"/>
-
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-
-           <!-- <property name="jakarta.persistence.schema-generation.database.action" value="update"/>-->
-            <!-- display SQL in console -->
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.highlight_sql" value="true"/>
-
-        </properties>
-
     </persistence-unit>
 </persistence>
 

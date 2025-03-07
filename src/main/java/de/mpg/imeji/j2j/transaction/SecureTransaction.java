@@ -186,24 +186,24 @@ public abstract class SecureTransaction extends Transaction {
 
     List<UserGroup> groups = userGroupDbRepository.retrieveUserGroupsForUser(this.issuingUser.getId().toString());
     this.issuingUser.setGroups(groups);
-       /*
-        String getUserGroupsOfUserQuery = JenaCustomQueries.selectUserGroupOfUser(this.issuingUser);
-        List<String> groupURIs = Queries.executeSPARQLQueryAndGetResults(getUserGroupsOfUserQuery, dataset, userModelName);
-        if (groupURIs.size() > 0) {
-            List<UserGroup> userGroupsWithUserInThem = new ArrayList<UserGroup>(groupURIs.size());
-            for (String groupURI : groupURIs) {
-                UserGroup groupToRead = new UserGroup();
-                groupToRead.setId(URI.create(groupURI));
-                Object readGroup = resourceController.read(groupToRead);
-                if (readGroup instanceof UserGroup) {
-                    groupToRead = (UserGroup) readGroup;
-                    userGroupsWithUserInThem.add(groupToRead);
-                }
-            }
-            this.issuingUser.setGroups(userGroupsWithUserInThem);
-        }
-
-        */
+    /*
+     String getUserGroupsOfUserQuery = JenaCustomQueries.selectUserGroupOfUser(this.issuingUser);
+     List<String> groupURIs = Queries.executeSPARQLQueryAndGetResults(getUserGroupsOfUserQuery, dataset, userModelName);
+     if (groupURIs.size() > 0) {
+         List<UserGroup> userGroupsWithUserInThem = new ArrayList<UserGroup>(groupURIs.size());
+         for (String groupURI : groupURIs) {
+             UserGroup groupToRead = new UserGroup();
+             groupToRead.setId(URI.create(groupURI));
+             Object readGroup = resourceController.read(groupToRead);
+             if (readGroup instanceof UserGroup) {
+                 groupToRead = (UserGroup) readGroup;
+                 userGroupsWithUserInThem.add(groupToRead);
+             }
+         }
+         this.issuingUser.setGroups(userGroupsWithUserInThem);
+     }
+    
+     */
 
   }
 

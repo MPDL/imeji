@@ -176,12 +176,12 @@ public class UserBean extends SuperBean {
   }
 
   public boolean isUniqueAdmin() {
-      try {
-          return new UserDbRepository().retrieveAllAdmins().size() == 1;
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
-      //return ImejiSPARQL.exec(JenaCustomQueries.selectUserSysAdmin(), Imeji.userModel).size() == 1;
+    try {
+      return new UserDbRepository().retrieveAllAdmins().size() == 1;
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
+    //return ImejiSPARQL.exec(JenaCustomQueries.selectUserSysAdmin(), Imeji.userModel).size() == 1;
   }
 
   /**

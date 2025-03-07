@@ -61,17 +61,17 @@ public class Hierarchy {
    * Load the complete Hierarchy
    */
   public void init() {
-      try {
-          final List<CollectionImeji> l = new CollectionsDbRepository().retrieveAllSubCollections();
-          //List<String> combinedIds = l.stream().map(c -> c.getId().toString() + "|" + c.getCollection().toString()).toList();
-          List<Node> nodeList = l.stream().map(c -> new Node(c.getId().toString(), c.getCollection().toString())).toList();
-          //final List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectAllSubcollections(), Imeji.collectionModel);
-          //final List<Node> nodeList = combinedIds.stream().map(s -> new Node(s.split("\\|")[0], s.split("\\|")[1])).collect(Collectors.toList());
-          nodes = nodeList.stream().collect(Collectors.toMap(Node::getChild, Function.identity()));
-          tree = nodeList.stream().collect(Collectors.groupingBy(Node::getParent, Collectors.mapping(Node::getChild, Collectors.toList())));
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
+    try {
+      final List<CollectionImeji> l = new CollectionsDbRepository().retrieveAllSubCollections();
+      //List<String> combinedIds = l.stream().map(c -> c.getId().toString() + "|" + c.getCollection().toString()).toList();
+      List<Node> nodeList = l.stream().map(c -> new Node(c.getId().toString(), c.getCollection().toString())).toList();
+      //final List<String> l = ImejiSPARQL.exec(JenaCustomQueries.selectAllSubcollections(), Imeji.collectionModel);
+      //final List<Node> nodeList = combinedIds.stream().map(s -> new Node(s.split("\\|")[0], s.split("\\|")[1])).collect(Collectors.toList());
+      nodes = nodeList.stream().collect(Collectors.toMap(Node::getChild, Function.identity()));
+      tree = nodeList.stream().collect(Collectors.groupingBy(Node::getParent, Collectors.mapping(Node::getChild, Collectors.toList())));
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

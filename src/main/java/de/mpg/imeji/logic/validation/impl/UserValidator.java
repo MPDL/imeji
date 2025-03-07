@@ -99,37 +99,37 @@ public class UserValidator extends ObjectValidator implements Validator<User> {
    */
   private boolean existsUserWitheMail(String email, String userUri, boolean newUser) {
 
-      try {
-          List<User> result = new UserDbRepository().readByEmail(email);
+    try {
+      List<User> result = new UserDbRepository().readByEmail(email);
 
-    /*
-    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
-    final SearchResult result =
+      /*
+      final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+      final SearchResult result =
         search.searchString(JenaCustomQueries.selectUserByEmail(email), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS);
-     */
+       */
 
 
-        if (result.size() == 0) {
-          return false;
-        } else {
-          // New users always have assigned Id, thus we do not check if it is existing
-          // user here
-          if (newUser && result.size() > 0) {
-            return true;
-          }
-
-          // Check if it is existing user here who has same email
-          boolean thereIsOtherUser = false;
-          for (final User u : result) {
-            if (!userUri.equals(u.getId().toString())) {
-              thereIsOtherUser = true;
-            }
-          }
-          return thereIsOtherUser;
+      if (result.size() == 0) {
+        return false;
+      } else {
+        // New users always have assigned Id, thus we do not check if it is existing
+        // user here
+        if (newUser && result.size() > 0) {
+          return true;
         }
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
+
+        // Check if it is existing user here who has same email
+        boolean thereIsOtherUser = false;
+        for (final User u : result) {
+          if (!userUri.equals(u.getId().toString())) {
+            thereIsOtherUser = true;
+          }
+        }
+        return thereIsOtherUser;
       }
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

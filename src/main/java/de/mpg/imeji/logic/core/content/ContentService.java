@@ -359,7 +359,7 @@ public class ContentService extends SearchServiceAbstract<ContentVO> implements 
   }
 
   @Override
-  public List<String> searchAll() throws ImejiException{
+  public List<String> searchAll() throws ImejiException {
     return new ContentDbRepository().retrieveAllIds();
     //return ImejiSPARQL.exec(JenaCustomQueries.selectContentAll(), Imeji.contentModel);
 

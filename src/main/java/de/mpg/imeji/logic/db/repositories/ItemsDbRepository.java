@@ -10,16 +10,16 @@ import java.util.List;
 
 public class ItemsDbRepository extends DbRepository<Item> {
 
-    public ItemsDbRepository() {
-        super(Item.class);
-    }
+  public ItemsDbRepository() {
+    super(Item.class);
+  }
 
-    public List<Item> retrieveAllItemsForCollectionWithoutLicense(String collectionId) throws ImejiException {
-        return inSession(em -> {
+  public List<Item> retrieveAllItemsForCollectionWithoutLicense(String collectionId) throws ImejiException {
+    return inSession(em -> {
 
-            return em.createNativeQuery("select * from item where collection = :collId  AND (licenses IS NULL OR jsonb_array_length( licenses::jsonb ) = 0)", Item.class)
-                    .setParameter("collId", collectionId)
-                    .getResultList();
-        });
-    }
+      return em.createNativeQuery(
+          "select * from item where collection = :collId  AND (licenses IS NULL OR jsonb_array_length( licenses::jsonb ) = 0)", Item.class)
+          .setParameter("collId", collectionId).getResultList();
+    });
+  }
 }

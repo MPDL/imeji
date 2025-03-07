@@ -48,6 +48,7 @@ public class Subscription implements Serializable {
     id = IdentifierUtil.newURI(Subscription.class, "universal");
     this.dbId = id.toString();
   }
+
   /**
    * @return the type
    */

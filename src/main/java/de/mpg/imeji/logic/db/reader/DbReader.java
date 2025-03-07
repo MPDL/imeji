@@ -37,6 +37,7 @@ public class DbReader implements Reader {
   private final boolean lazy = false;
   private final DbRepository dbRepository;
   protected static Logger LOGGER = LogManager.getLogger(DbReader.class);
+
   /**
    * imeji object loader for one {@link Model}
    *
@@ -151,7 +152,7 @@ public class DbReader implements Reader {
     crudTransaction.start(Imeji.dataset);
     crudTransaction.rethrowException();
     return objects;
-
+    
      */
   }
 }

@@ -303,7 +303,7 @@ public class CollectionItemsBean extends ItemsBean {
    * @return
    */
   public String getDoiUrl() {
-    return (collection.getDoi()==null || collection.getDoi().isEmpty()) ? "" : DoiService.DOI_URL_RESOLVER + collection.getDoi();
+    return (collection.getDoi() == null || collection.getDoi().isEmpty()) ? "" : DoiService.DOI_URL_RESOLVER + collection.getDoi();
   }
 
   public String getPageUrl() {

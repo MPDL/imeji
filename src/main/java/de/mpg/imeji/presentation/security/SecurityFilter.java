@@ -152,17 +152,17 @@ public class SecurityFilter implements Filter {
    * @throws NotFoundException
    */
   private boolean isPublic(URI uri) throws NotFoundException {
-      try {
-          CollectionImeji coll  = new CollectionsDbRepository().read(uri.toString());
-          //List<String> result = ImejiSPARQL.exec(JenaCustomQueries.selectStatus(uri.toString()), Imeji.collectionModel);
-          if (coll==null) {
-            throw new NotFoundException(uri.getPath() + " not found");
-          } else {
-            return coll.getStatus() != PENDING;
-          }
-      } catch (ImejiException e) {
-          throw new NotFoundException(e);
+    try {
+      CollectionImeji coll = new CollectionsDbRepository().read(uri.toString());
+      //List<String> result = ImejiSPARQL.exec(JenaCustomQueries.selectStatus(uri.toString()), Imeji.collectionModel);
+      if (coll == null) {
+        throw new NotFoundException(uri.getPath() + " not found");
+      } else {
+        return coll.getStatus() != PENDING;
       }
+    } catch (ImejiException e) {
+      throw new NotFoundException(e);
+    }
   }
 
   /**
@@ -191,27 +191,27 @@ public class SecurityFilter implements Filter {
    * @throws BadRequestException
    */
   private URI getCollectionOfItem(URI uri) throws NotFoundException {
-      try {
-          Item i = new ItemsDbRepository().read(uri.toString());
-        if (i ==null || i.getCollection() == null) {
-          throw new NotFoundException(uri + " hasn't a collection");
-        } else {
-          return i.getCollection();
-        }
-      } catch (Exception e) {
-          throw new RuntimeException(e);
+    try {
+      Item i = new ItemsDbRepository().read(uri.toString());
+      if (i == null || i.getCollection() == null) {
+        throw new NotFoundException(uri + " hasn't a collection");
+      } else {
+        return i.getCollection();
       }
-
-      /*
-
-    SearchResult result = JENA_SEARCH.searchString(JenaCustomQueries.selectCollectionIdOfItem(uri.toString()), null, null, 0, 1);
-    if (result.getNumberOfRecords() < 1) {
-      throw new NotFoundException(uri + " hasn't a collection");
-    } else {
-      return URI.create(result.getResults().get(0));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
 
-       */
+    /*
+    
+    SearchResult result = JENA_SEARCH.searchString(JenaCustomQueries.selectCollectionIdOfItem(uri.toString()), null, null, 0, 1);
+    if (result.getNumberOfRecords() < 1) {
+    throw new NotFoundException(uri + " hasn't a collection");
+    } else {
+    return URI.create(result.getResults().get(0));
+    }
+    
+     */
   }
 
   /**

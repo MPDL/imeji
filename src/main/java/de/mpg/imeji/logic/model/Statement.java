@@ -55,7 +55,7 @@ public class Statement implements Serializable, Cloneable {
   @j2jResource("http://purl.org/dc/dcam/VocabularyEncodingScheme")
   private URI vocabulary;
 
-  
+
   @JdbcTypeCode(SqlTypes.JSON)
   @j2jList("http://imeji.org/terms/literalConstraint")
   private Collection<String> literalConstraints = new ArrayList<String>();

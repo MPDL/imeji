@@ -77,15 +77,15 @@ public class StorageStatisticsBean {
    */
   public int getAllCollectionsSize() {
 
-      try {
-          return Math.toIntExact(new CollectionsDbRepository().countAll());
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
+    try {
+      return Math.toIntExact(new CollectionsDbRepository().countAll());
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
+    }
 
-      //final Search search = SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
+    //final Search search = SearchFactory.create(SearchObjectTypes.COLLECTION, SEARCH_IMPLEMENTATIONS.JENA);
     //return search.searchString(JenaCustomQueries.selectCollectionAll(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
-     //   .getNumberOfRecords();
+    //   .getNumberOfRecords();
   }
 
   /**

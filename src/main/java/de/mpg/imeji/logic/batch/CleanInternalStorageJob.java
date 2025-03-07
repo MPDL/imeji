@@ -46,12 +46,12 @@ public class CleanInternalStorageJob implements Callable<Integer> {
   @Override
   public Integer call() throws Exception {
     LOGGER.info("Cleaning internal storage.");
-      try {
-          removeUnusedFiles();
-      }catch (Exception e) {
-          LOGGER.error("Error cleaning internal storage", e);
-      }
-      repairImages();
+    try {
+      removeUnusedFiles();
+    } catch (Exception e) {
+      LOGGER.error("Error cleaning internal storage", e);
+    }
+    repairImages();
     removeEmptyDirectories();
     LOGGER.info("Internal storage cleaned.");
     return null;
@@ -156,24 +156,25 @@ public class CleanInternalStorageJob implements Callable<Integer> {
    * @return
    */
   private boolean isLogo(String url) {
-      try {
-          List< CollectionImeji> collWithLogoUrl = new CollectionsDbRepository().retrieveCollectionsByLogoUrl(new InternalStorageManager().getStorageId(url));
-          return (collWithLogoUrl!=null && collWithLogoUrl.size()>0);
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
-
-      /*
-      final List<String> r =
-        search.searchString(JenaCustomQueries.selectCollectionByLogoStorageId(new InternalStorageManager().getStorageId(url)), null, null,
-            Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
-    if (!r.isEmpty() && r.get(0) != null) {
-      return true;
-    } else {
-      return false;
+    try {
+      List<CollectionImeji> collWithLogoUrl =
+          new CollectionsDbRepository().retrieveCollectionsByLogoUrl(new InternalStorageManager().getStorageId(url));
+      return (collWithLogoUrl != null && collWithLogoUrl.size() > 0);
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
     }
 
-       */
+    /*
+    final List<String> r =
+      search.searchString(JenaCustomQueries.selectCollectionByLogoStorageId(new InternalStorageManager().getStorageId(url)), null, null,
+          Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
+    if (!r.isEmpty() && r.get(0) != null) {
+    return true;
+    } else {
+    return false;
+    }
+    
+     */
   }
 
   /**

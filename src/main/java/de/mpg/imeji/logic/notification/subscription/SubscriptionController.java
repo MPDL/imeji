@@ -39,7 +39,7 @@ public class SubscriptionController extends ImejiControllerAbstract<Subscription
     List<Subscription> subscriptions = emtyListFactory(ids);
     List<Object> res = READER.read(J2JHelper.cast2ObjectList(subscriptions), Imeji.adminUser);
 
-    return res.stream().map(o -> (Subscription)o).filter(s -> SecurityUtil.authorization().read(user, s)).collect(Collectors.toList());
+    return res.stream().map(o -> (Subscription) o).filter(s -> SecurityUtil.authorization().read(user, s)).collect(Collectors.toList());
   }
 
   @Override

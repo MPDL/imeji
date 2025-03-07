@@ -36,9 +36,7 @@ class StatementController extends ImejiControllerAbstract<Statement> {
   public List<Statement> retrieveBatch(List<String> ids, User user) throws ImejiException {
     final List<Statement> statements = initializeEmtpyList(ids);
     List<Object> res = READER.read(toObjectList(statements), user);
-    return res.stream()
-            .map(e -> (Statement) e)
-            .collect(Collectors.toList());
+    return res.stream().map(e -> (Statement) e).collect(Collectors.toList());
   }
 
   @Override

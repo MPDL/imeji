@@ -110,18 +110,18 @@ public class InternalStorageAdministrator implements StorageAdministrator {
       if (f.isFile()) {
         final InternalStorageManager m = new InternalStorageManager();
         final String url = m.transformPathToUrl(f.getPath());
-          try {
-              final List<ContentVO> contentList = new ContentDbRepository().retrieveAllContentWithFile(url);
+        try {
+          final List<ContentVO> contentList = new ContentDbRepository().retrieveAllContentWithFile(url);
 
-              //if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0) {
-              if (contentList.size() == 0) {
-                // file doesn't exist, remove it
-                m.removeFile(url);
-                deleted++;
-              }
-          } catch (ImejiException e) {
-              throw new RuntimeException(e);
+          //if (ImejiSPARQL.exec(JenaCustomQueries.selectItemIdOfFileUrl(url), null).size() == 0) {
+          if (contentList.size() == 0) {
+            // file doesn't exist, remove it
+            m.removeFile(url);
+            deleted++;
           }
+        } catch (ImejiException e) {
+          throw new RuntimeException(e);
+        }
       }
     }
     LOGGER.info("...done: " + deleted + " files deleted");

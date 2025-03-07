@@ -35,23 +35,23 @@ public class UserGroupValidator extends ObjectValidator implements Validator<Use
    * @return
    */
   public boolean groupNameAlreadyExists(UserGroup g) {
-      try {
-          UserGroup ugList = new UserGroupDbRepository().readByName(g.getName());
-          if(ugList != null && ugList.getName().equals(g.getName())) {
-            return true;
-          }
-      } catch (ImejiException e) {
-          throw new RuntimeException(e);
-      }
-      /*
-
-      for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupByName(g.getName()), null)) {
-      if (!id.equals(g.getId().toString())) {
+    try {
+      UserGroup ugList = new UserGroupDbRepository().readByName(g.getName());
+      if (ugList != null && ugList.getName().equals(g.getName())) {
         return true;
       }
+    } catch (ImejiException e) {
+      throw new RuntimeException(e);
     }
-
-       */
+    /*
+    
+    for (final String id : ImejiSPARQL.exec(JenaCustomQueries.selectUserGroupByName(g.getName()), null)) {
+    if (!id.equals(g.getId().toString())) {
+      return true;
+    }
+    }
+    
+     */
     return false;
   }
 

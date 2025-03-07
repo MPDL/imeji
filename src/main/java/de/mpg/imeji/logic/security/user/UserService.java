@@ -123,9 +123,9 @@ public class UserService {
    */
   public void delete(User user) throws ImejiException {
     int res = userDbRepository.countObjectsModifiedOrCreated(user.getId().toString());
-    if(res > 0) {
+    if (res > 0) {
       throw new WorkflowException("User cannot be deleted, as they own or modified collections",
-              "User cannot be deleted, as they own or modified collections");
+          "User cannot be deleted, as they own or modified collections");
     }
 
     /*
@@ -136,7 +136,7 @@ public class UserService {
       throw new WorkflowException("User cannot be deleted, as they own or modified collections",
           "User cannot be deleted, as they own or modified collections");
     }
-
+    
      */
     controller.delete(user);
   }
@@ -267,21 +267,21 @@ public class UserService {
    * @return
    */
   public boolean hasBeenModified(User currentUserSessionObject) {
-      try {
-          User result = userDbRepository.read(currentUserSessionObject.getId().toString());
-          return result != null && (currentUserSessionObject.getModified() == null
-                  || result.getModified().after(currentUserSessionObject.getModified()));
-      } catch (ImejiException e) {
-          LOGGER.error("Error checking if user has been modified", e);
-          throw new RuntimeException(e);
-      }
+    try {
+      User result = userDbRepository.read(currentUserSessionObject.getId().toString());
+      return result != null
+          && (currentUserSessionObject.getModified() == null || result.getModified().after(currentUserSessionObject.getModified()));
+    } catch (ImejiException e) {
+      LOGGER.error("Error checking if user has been modified", e);
+      throw new RuntimeException(e);
+    }
 
     /*
     final SearchResult result = SearchFactory.create()
         .searchString(JenaCustomQueries.selectLastModifiedDate(currentUserSessionObject.getId()), null, currentUserSessionObject, 0, 1);
     return result.getNumberOfRecords() > 0 && (currentUserSessionObject.getModified() == null
         || DateHelper.parseDate(result.getResults().get(0)).after(currentUserSessionObject.getModified()));
-
+    
      */
   }
 
@@ -296,19 +296,19 @@ public class UserService {
    */
   public void setRecentlyModified(URI recentlyModifiedUserId) {
 
-      try {
-          User u = userDbRepository.read(recentlyModifiedUserId.toString());
-          u.setModified(Calendar.getInstance());
-          userDbRepository.update(u);
-      } catch (ImejiException e) {
-          LOGGER.error("Error updating recently modified user", e);
-          throw new RuntimeException(e);
-      }
+    try {
+      User u = userDbRepository.read(recentlyModifiedUserId.toString());
+      u.setModified(Calendar.getInstance());
+      userDbRepository.update(u);
+    } catch (ImejiException e) {
+      LOGGER.error("Error updating recently modified user", e);
+      throw new RuntimeException(e);
+    }
 
     /*
     final String sparqlQuery = JenaCustomQueries.setUserLastModifiedToNow(recentlyModifiedUserId);
     ImejiSPARQL.execUpdate(sparqlQuery);
-
+    
      */
   }
 
@@ -334,15 +334,15 @@ public class UserService {
     /*
     final List<String> results = search.searchString(JenaCustomQueries.selectUserFileSize(col.getCreatedBy().toString()), null, null,
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
-
+    
      */
     long currentDiskUsage = 0L;
     try {
       currentDiskUsage = fileSize;
       //currentDiskUsage = Long.parseLong(results.get(0).toString());
     } catch (final NumberFormatException e) {
-      throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + fileSize + "; requested by user: "
-          + user.getEmail() + "; targetCollectionUser: " + targetCollectionUser.getEmail(), e);
+      throw new UnprocessableError("Cannot parse currentDiskSpaceUsage " + fileSize + "; requested by user: " + user.getEmail()
+          + "; targetCollectionUser: " + targetCollectionUser.getEmail(), e);
     }
     final long needed = currentDiskUsage + file.length();
     if (needed > targetCollectionUser.getQuota()) {
@@ -378,26 +378,26 @@ public class UserService {
    * @return
    */
   public String getCompleteName(URI uri, Locale locale) {
-      try {
-          User u = userDbRepository.read(uri.toString());
-          if (u != null) {
-            return u.getPerson().getCompleteName();
-          } else {
-            return Imeji.RESOURCE_BUNDLE.getLabel("unknown_user", locale);
-          }
-      } catch (ImejiException e) {
-          LOGGER.error("Error reading user", e);
+    try {
+      User u = userDbRepository.read(uri.toString());
+      if (u != null) {
+        return u.getPerson().getCompleteName();
+      } else {
+        return Imeji.RESOURCE_BUNDLE.getLabel("unknown_user", locale);
       }
-      /*
-      final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
+    } catch (ImejiException e) {
+      LOGGER.error("Error reading user", e);
+    }
+    /*
+    final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
     final List<String> users = search.searchString(JenaCustomQueries.selectUserCompleteName(uri), null, Imeji.adminUser, 0, 1).getResults();
     if (users != null && users.size() > 0) {
-      return users.get(0);
+    return users.get(0);
     } else {
-      return Imeji.RESOURCE_BUNDLE.getLabel("unknown_user", locale);
+    return Imeji.RESOURCE_BUNDLE.getLabel("unknown_user", locale);
     }
-
-       */
+    
+     */
     return null;
   }
 
@@ -573,7 +573,7 @@ public class UserService {
     return false;
 
     /*
-
+    
     boolean exist = false;
     final Search search = SearchFactory.create();
     final List<String> uris =
@@ -583,7 +583,7 @@ public class UserService {
       exist = true;
     }
     return exist;
-
+    
      */
   }
 
@@ -595,29 +595,29 @@ public class UserService {
    */
   public List<User> retrieveAllAdmins() {
 
-      try {
-          return this.userDbRepository.retrieveAllAdmins();
-      } catch (ImejiException e) {
-        LOGGER.info("Could not retrieve any admin in the list. Something is wrong!", e);
-      }
-      return new ArrayList<>();
+    try {
+      return this.userDbRepository.retrieveAllAdmins();
+    } catch (ImejiException e) {
+      LOGGER.info("Could not retrieve any admin in the list. Something is wrong!", e);
+    }
+    return new ArrayList<>();
 
-      /*
-      final Search search = SearchFactory.create();
+    /*
+    final Search search = SearchFactory.create();
     final List<String> uris =
-        search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
-            .getResults();
+      search.searchString(JenaCustomQueries.selectUserSysAdmin(), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
+          .getResults();
     final List<User> admins = new ArrayList<User>();
     for (final String uri : uris) {
-      try {
-        admins.add(retrieve(URI.create(uri), Imeji.adminUser));
-      } catch (final ImejiException e) {
-        LOGGER.info("Could not retrieve any admin in the list. Something is wrong!", e);
-      }
+    try {
+      admins.add(retrieve(URI.create(uri), Imeji.adminUser));
+    } catch (final ImejiException e) {
+      LOGGER.info("Could not retrieve any admin in the list. Something is wrong!", e);
+    }
     }
     return admins;
-
-       */
+    
+     */
   }
 
   /**
@@ -634,7 +634,7 @@ public class UserService {
         Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS).getResults();
     return retrieveBatchLazy(uris, Search.GET_ALL_RESULTS);
   }
-
+  
    */
 
   public void reindex(String index) throws Exception {

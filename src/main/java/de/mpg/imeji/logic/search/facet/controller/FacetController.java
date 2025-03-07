@@ -28,18 +28,14 @@ public class FacetController extends ImejiControllerAbstract<Facet> {
   public List<Facet> retrieveBatch(List<String> ids, User user) throws ImejiException {
     List<Facet> facets = initializeEmtpyList(ids);
     List<Object> res = READER.read(toObjectList(facets), user);
-    return res.stream()
-            .map(e -> (Facet) e)
-            .collect(Collectors.toList());
+    return res.stream().map(e -> (Facet) e).collect(Collectors.toList());
   }
 
   @Override
   public List<Facet> retrieveBatchLazy(List<String> ids, User user) throws ImejiException {
     List<Facet> facets = initializeEmtpyList(ids);
     List<Object> res = READER.readLazy(toObjectList(facets), user);
-    return res.stream()
-            .map(e -> (Facet) e)
-            .collect(Collectors.toList());
+    return res.stream().map(e -> (Facet) e).collect(Collectors.toList());
   }
 
   @Override
