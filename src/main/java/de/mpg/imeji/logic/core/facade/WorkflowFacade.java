@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,8 @@ import de.mpg.imeji.exceptions.NotFoundException;
 import de.mpg.imeji.exceptions.UnprocessableError;
 import de.mpg.imeji.logic.concurrency.Locks;
 import de.mpg.imeji.logic.core.item.ItemService;
+import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
+import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
 import de.mpg.imeji.logic.db.writer.WriterFacade;
 import de.mpg.imeji.logic.doi.DoiService;
 import de.mpg.imeji.logic.hierarchy.HierarchyService;
@@ -67,10 +70,14 @@ public class WorkflowFacade implements Serializable {
             Search.GET_ALL_RESULTS, Search.SEARCH_FROM_START_INDEX).getResults();
     preValidateCollectionItems(itemIds, user);
 
+    List<Item> items = new ItemsDbRepository().retrieveByID(itemIds);
+
     // 2) collection ids 
     // Create a list with the collectionId, all the sub collection ids and all itemIds
     List<String> collectionIds = new ArrayList<>(new HierarchyService().findAllSubcollections(collection.getId().toString()));
     collectionIds.add(collection.getId().toString());
+
+    List<CollectionImeji> collections = new CollectionsDbRepository().retrieveByID(itemIds);
 
     List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size() + collectionIds.size());
     try {
@@ -80,10 +87,10 @@ public class WorkflowFacade implements Serializable {
       Calendar releaseDate = DateHelper.getCurrentDate();
 
       // items
-      for (String itemId : itemIds) {
-        URI itemURI = URI.create(itemId);
-        Item item = new Item();
-        item.setId(itemURI);
+      for (Item item : items) {
+        //URI itemURI = URI.create(itemId);
+        //Item item = new Item();
+        //item.setId(itemURI);
         // status, status issued
         ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.RELEASED);
         ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.ADD, item, issuedField, releaseDate);
@@ -96,9 +103,9 @@ public class WorkflowFacade implements Serializable {
         changeParts.add(addItemsLicense);
       }
       // collection and sub collections
-      for (String collectionId : collectionIds) {
-        CollectionImeji collectionToChange = new CollectionImeji();
-        collectionToChange.setId(URI.create(collectionId));
+      for (CollectionImeji collectionToChange : collections) {
+        //CollectionImeji collectionToChange = new CollectionImeji();
+        //collectionToChange.setId(URI.create(collectionId));
         ChangeMember changeCollectionStatus =
             new ChangeMember(ActionType.EDIT, collectionToChange, statusField, Properties.Status.RELEASED);
         ChangeMember changeCollectionStatusIssued = new ChangeMember(ActionType.ADD, collectionToChange, issuedField, releaseDate);
@@ -129,18 +136,18 @@ public class WorkflowFacade implements Serializable {
    * @throws ImejiException
    */
   public void releaseItems(List<Item> items, User user, License defaultLicense) throws ImejiException {
-    final List<String> itemIds = items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
+    //final List<String> itemIds = items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
     preValidateReleaseItems(items, user, defaultLicense);
-    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size());
+    List<ChangeMember> changeParts = new ArrayList<ChangeMember>(items.size());
     try {
       Field statusField = Properties.class.getDeclaredField("status");
       Field issuedField = Properties.class.getDeclaredField("versionDate");
       Field licensesField = Item.class.getDeclaredField("licenses");
       Calendar releaseDate = DateHelper.getCurrentDate();
 
-      for (String itemId : itemIds) {
-        Item item = new Item();
-        item.setId(URI.create(itemId));
+      for (Item item : items) {
+        //Item item = new Item();
+        //item.setId(URI.create(itemId));
         ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.RELEASED);
         ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.ADD, item, issuedField, releaseDate);
         License itemsLicense = defaultLicense.clone();
