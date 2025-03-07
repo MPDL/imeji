@@ -140,9 +140,9 @@ public class DbWriter implements Writer {
       AuthService.checkObjectStatus(dbRepository, o, OperationType.UPDATE);
       Object current = dbRepository.read(J2JHelper.getId(o).toString());
       checkModified(o, current);
-      //setTimestamp(o);
-      dbRepository.update(o);
-      createdObjects.add(o);
+      setTimestamp(o);
+      Object updated = dbRepository.update(o);
+      createdObjects.add(updated);
     }
     as.checkSecurityForReadOperations();
     return createdObjects;

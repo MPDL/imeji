@@ -37,7 +37,7 @@ public final class ElasticItem extends ElasticProperties {
   public ElasticItem(Item item) {
     super(item);
     this.folder = item.getCollection() != null ? item.getCollection().toString() : null;
-    this.name = item.getFilename();
+    this.name = item.getFilename() == null ? "" : item.getFilename();
     this.license = getLicenseName(item);
     this.size = item.getFileSize();
     this.filetype = item.getFiletype();

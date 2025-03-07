@@ -127,7 +127,7 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
       }
       // (c) comment field
       else if (fieldToSet.equals(discardCommentField) && changeMember.getValue() instanceof String
-          && changeMember.getAction().equals(ActionType.ADD) && this.discardComment.isEmpty()) {
+          && changeMember.getAction().equals(ActionType.ADD) && (this.discardComment==null || this.discardComment.isEmpty())) {
         this.discardComment = (String) changeMember.getValue();
       } else {
         LOGGER.debug("Did not edit member in Properties.");

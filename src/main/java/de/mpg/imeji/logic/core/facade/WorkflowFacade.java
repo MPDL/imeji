@@ -77,7 +77,7 @@ public class WorkflowFacade implements Serializable {
     List<String> collectionIds = new ArrayList<>(new HierarchyService().findAllSubcollections(collection.getId().toString()));
     collectionIds.add(collection.getId().toString());
 
-    List<CollectionImeji> collections = new CollectionsDbRepository().retrieveByID(itemIds);
+    List<CollectionImeji> collections = new CollectionsDbRepository().retrieveByID(collectionIds);
 
     List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size() + collectionIds.size());
     try {
@@ -184,9 +184,13 @@ public class WorkflowFacade implements Serializable {
       preValidateCollectionItems(itemIds, user);
     }
 
+    List<Item> items = new ItemsDbRepository().retrieveByID(itemIds);
+
+
     // Create a list with the collectionId, all the subcollectionIds and all itemIds
     List<String> collectionIds = new ArrayList<>(new HierarchyService().findAllSubcollections(collection.getId().toString()));
     collectionIds.add(collection.getId().toString());
+    List<CollectionImeji> collections = new CollectionsDbRepository().retrieveByID(collectionIds);
 
     // set for items and collections: status, versionDate, discardComment
     List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size() + collectionIds.size());
@@ -197,9 +201,9 @@ public class WorkflowFacade implements Serializable {
       Calendar withdrawDate = DateHelper.getCurrentDate();
 
       // items
-      for (String itemId : itemIds) {
-        Item item = new Item();
-        item.setId(URI.create(itemId));
+      for (Item item : items) {
+        //Item item = new Item();
+        //item.setId(URI.create(itemId));
         ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.WITHDRAWN);
         ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.EDIT, item, issuedField, withdrawDate);
         ChangeMember changeItemDiscardComment = new ChangeMember(ActionType.ADD, item, discardCommentField, comment);
@@ -209,9 +213,9 @@ public class WorkflowFacade implements Serializable {
       }
 
       // collections
-      for (String collectionId : collectionIds) {
-        CollectionImeji collectionToUpdate = new CollectionImeji();
-        collectionToUpdate.setId(URI.create(collectionId));
+      for (CollectionImeji collectionToUpdate : collections) {
+        //CollectionImeji collectionToUpdate = new CollectionImeji();
+        //collectionToUpdate.setId(URI.create(collectionId));
         ChangeMember changeCollectionStatus =
             new ChangeMember(ActionType.EDIT, collectionToUpdate, statusField, Properties.Status.WITHDRAWN);
         ChangeMember changeCollectionStatusIssued = new ChangeMember(ActionType.EDIT, collectionToUpdate, issuedField, withdrawDate);
@@ -243,6 +247,7 @@ public class WorkflowFacade implements Serializable {
     List<String> itemIds = items.stream().map(item -> item.getId().toString()).collect(Collectors.toList());
     preValidateCollectionItems(itemIds, user);
 
+    items = new ItemsDbRepository().retrieveByID(itemIds);
     // set for items and collections: status, versionDate, discardComment
     List<ChangeMember> changeParts = new ArrayList<ChangeMember>(itemIds.size());
     try {
@@ -252,9 +257,9 @@ public class WorkflowFacade implements Serializable {
       Calendar withdrawDate = DateHelper.getCurrentDate();
 
       // items
-      for (String itemId : itemIds) {
-        Item item = new Item();
-        item.setId(URI.create(itemId));
+      for (Item item : items) {
+        //Item item = new Item();
+        //item.setId(URI.create(itemId));
         ChangeMember changeItemStatus = new ChangeMember(ActionType.EDIT, item, statusField, Properties.Status.WITHDRAWN);
         ChangeMember changeItemStatusIssued = new ChangeMember(ActionType.EDIT, item, issuedField, withdrawDate);
         ChangeMember changeItemDiscardComment = new ChangeMember(ActionType.ADD, item, discardCommentField, comment);
