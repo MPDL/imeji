@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,6 +59,8 @@ public class AutocompleterServlet extends HttpServlet {
   private final CloseableHttpClient client;
 
   private static final int SUGGEST_RESULTS_SIZE = 5;
+
+  private ObjectMapper objectMapper = new ObjectMapper();
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -124,7 +128,7 @@ public class AutocompleterServlet extends HttpServlet {
       final Collection<Person> persons = users.stream().map(u -> u.getPerson()).collect(Collectors.toList());
       for (final Person p : persons) {
         responseString = appendResponseForInternalSuggestion(responseString, p.getCompleteName() + "(" + p.getOrganizationString() + ")",
-            p.getId().toString());
+            p.getId().toString(), p);
       }
       return "[" + responseString + "]";
     } catch (UnprocessableError e) {
@@ -140,24 +144,57 @@ public class AutocompleterServlet extends HttpServlet {
    * @return
    */
   private String autoCompleteForInternalOrganisations(String suggest) {
+
+    final UserService userService = new UserService();
+    String responseString = "";
+    try {
+      Collection<User> users = userService.searchAndRetrieveLazy(
+              new SearchFactory().addElement(new SearchPair(SearchFields.organization, suggest + "*"), LOGICAL_RELATIONS.AND).build(), null,
+              Imeji.adminUser, Search.SEARCH_FROM_START_INDEX, SUGGEST_RESULTS_SIZE);
+      final Collection<Organization> orgs = users.stream().flatMap(u -> u.getPerson().getOrganizations().stream().filter(o -> o.getName().toLowerCase().contains(suggest.toLowerCase()))).collect(Collectors.toList());
+      for (final Organization o : orgs) {
+        String department = o.getDepartment() !=null && !o.getDepartment().isEmpty() ? " ("+o.getDepartment()+")" : "";
+        responseString = appendResponseForInternalSuggestion(responseString, o.getName() + department, o.getId().toString(), o);
+      }
+      return "[" + responseString + "]";
+    } catch (UnprocessableError e) {
+      LOGGER.error("Error doing autosuggest for imeji organizations");
+    }
+    return "[]";
+
+
+
+
+    /*
     final UserService uc = new UserService();
     final Collection<Organization> orgs = uc.searchOrganizationByName(suggest);
     String responseString = "";
     for (final Organization o : orgs) {
-      responseString = appendResponseForInternalSuggestion(responseString, o.getName(), o.getId().toString());
+      responseString = appendResponseForInternalSuggestion(responseString, o.getName(), o.getId().toString(), o);
     }
     return "[" + responseString + "]";
+
+     */
   }
 
-  private String appendResponseForInternalSuggestion(String response, String label, String value) {
+  private String appendResponseForInternalSuggestion(String response, String label, String value, Object fullObject) {
     if (!"".equals(response)) {
       response += ",";
     }
     response += "{";
-    response += "\"label\": \"" + label + "\",";
+    response += "\"label\" : \"" + label + "\",";
     response += "\"value\" : \"";
-    response += value;
-    response += "\"}";
+    response += value + "\"";
+    if(fullObject != null) {
+        try {
+            String fullObjectStringJson = this.objectMapper.writeValueAsString(fullObject);
+            response += ",\"object\" : ";
+            response += fullObjectStringJson;
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error serializing full object", e);
+        }
+    }
+    response += "}";
     return response;
   }
 

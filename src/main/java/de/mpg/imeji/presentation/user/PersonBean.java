@@ -13,6 +13,12 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.mpg.imeji.logic.config.ImejiConfiguration;
+import de.mpg.imeji.presentation.item.edit.AutocompleterServlet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -38,9 +44,14 @@ import de.mpg.imeji.presentation.user.registration.RegistrationBean;
 @ViewScoped
 public class PersonBean extends SuperBean implements Serializable {
   private static final long serialVersionUID = 2066560191381597873L;
-  private String personURI;
-  private String orgaURI;
+  private static final Logger LOGGER = LogManager.getLogger(PersonBean.class);
 
+  //private String personURI;
+  private String selectedPersonJson;
+  //private String orgaURI;
+  private String selectedOrgJson;
+
+  private ObjectMapper objectMapper = new ObjectMapper();
   public PersonBean() {}
 
   /**
@@ -49,6 +60,32 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   public String changePerson(Object bean, int position) {
+    if (selectedPersonJson == null || selectedPersonJson.isEmpty()) {
+      return ":";
+    }
+    try {
+          Person person = new Person();
+          if(Imeji.CONFIG.getAutoSuggestForUsers().equals("imeji_persons")) {
+            person = objectMapper.readValue(selectedPersonJson, Person.class);
+          }
+          else {
+            // is a cone person
+            person = parseConePersonJSON(selectedPersonJson);
+          }
+          if (bean instanceof UserCreationBean) {
+            ((UserCreationBean) bean).getUser().setPerson(person.clone());
+          } else if (bean instanceof CollectionBean) {
+            final List<Person> l = (List<Person>) ((CollectionBean) bean).getCollection().getPersons();
+            l.set(position, person.clone());
+          } else if (bean instanceof UserBean) {
+            ((UserBean) bean).getUser().setPerson(person.clone());
+          }
+      } catch (JsonProcessingException e) {
+          LOGGER.error("Could not convert string to Person object", e);
+      }
+      return ":";
+
+    /*
     if (personURI == null || personURI.isEmpty()) {
       return ":";
     }
@@ -62,6 +99,8 @@ public class PersonBean extends SuperBean implements Serializable {
       ((UserBean) bean).getUser().setPerson(person.clone());
     }
     return ":";
+
+     */
   }
 
   /**
@@ -73,22 +112,27 @@ public class PersonBean extends SuperBean implements Serializable {
    * @return
    */
   public String changeOrga(Object bean, int positionUser, int positionOrga) {
-    final Organization orga = loadOrga(orgaURI);
-    if (bean instanceof UserCreationBean) {
-      final List<Organization> l = (List<Organization>) ((UserCreationBean) bean).getUser().getPerson().getOrganizations();
-      l.set(positionOrga, orga);
-    } else if (bean instanceof CollectionBean) {
-      final List<Person> pl = (List<Person>) ((CollectionBean) bean).getCollection().getPersons();
-      final List<Organization> l = (List<Organization>) pl.get(positionUser).getOrganizations();
-      l.set(positionOrga, orga.clone());
-    } else if (bean instanceof UserBean) {
-      final List<Organization> l = (List<Organization>) ((UserBean) bean).getUser().getPerson().getOrganizations();
-      l.set(positionOrga, orga);
-    } else if (bean instanceof RegistrationBean) {
-      final List<Organization> l = (List<Organization>) ((RegistrationBean) bean).getUser().getPerson().getOrganizations();
-      l.set(positionOrga, orga);
-    }
-    return ":";
+    //final Organization orga = loadOrga(orgaURI);
+      try {
+          final Organization orga = objectMapper.readValue(selectedOrgJson, Organization.class);
+          if (bean instanceof UserCreationBean) {
+            final List<Organization> l = (List<Organization>) ((UserCreationBean) bean).getUser().getPerson().getOrganizations();
+            l.set(positionOrga, orga);
+          } else if (bean instanceof CollectionBean) {
+            final List<Person> pl = (List<Person>) ((CollectionBean) bean).getCollection().getPersons();
+            final List<Organization> l = (List<Organization>) pl.get(positionUser).getOrganizations();
+            l.set(positionOrga, orga.clone());
+          } else if (bean instanceof UserBean) {
+            final List<Organization> l = (List<Organization>) ((UserBean) bean).getUser().getPerson().getOrganizations();
+            l.set(positionOrga, orga);
+          } else if (bean instanceof RegistrationBean) {
+            final List<Organization> l = (List<Organization>) ((RegistrationBean) bean).getUser().getPerson().getOrganizations();
+            l.set(positionOrga, orga);
+          }
+      } catch (JsonProcessingException e) {
+        LOGGER.error("Could not convert string to Organization object", e);
+      }
+      return ":";
   }
 
   /**
@@ -97,6 +141,7 @@ public class PersonBean extends SuperBean implements Serializable {
    * @param uri
    * @return
    */
+  /*
   private Person loadPerson(String uri) {
     if (uri != null) {
       try {
@@ -111,6 +156,8 @@ public class PersonBean extends SuperBean implements Serializable {
     }
     return null;
   }
+
+   */
 
   /**
    * Parse a json from cone for a person
@@ -154,6 +201,7 @@ public class PersonBean extends SuperBean implements Serializable {
     return l;
   }
 
+  /*
   private Organization loadOrga(String uri) {
     if (uri != null) {
       try {
@@ -165,6 +213,8 @@ public class PersonBean extends SuperBean implements Serializable {
     }
     return null;
   }
+
+   */
 
   /**
    * Read a JSON Object as a String, whether it is an {@link JSONArray}, a {@link String} or a
@@ -238,8 +288,27 @@ public class PersonBean extends SuperBean implements Serializable {
    *
    * @param event
    */
+  /*
   public void orgaListener(ValueChangeEvent event) {
     this.orgaURI = event.getNewValue().toString();
+  }
+
+   */
+
+  /**
+   * Listener
+   *
+   * @param event
+   */
+  /*
+  public void personListener(ValueChangeEvent event) {
+    this.personURI = event.getNewValue().toString();
+  }
+
+   */
+
+  public void orgJsonListener(ValueChangeEvent event) {
+    this.selectedOrgJson = event.getNewValue().toString();
   }
 
   /**
@@ -247,34 +316,25 @@ public class PersonBean extends SuperBean implements Serializable {
    *
    * @param event
    */
-  public void personListener(ValueChangeEvent event) {
-    this.personURI = event.getNewValue().toString();
+  public void personJsonListener(ValueChangeEvent event) {
+    this.selectedPersonJson = event.getNewValue().toString();
   }
 
-  /**
-   * Getter
-   *
-   * @return
-   */
-  public String getPersonURI() {
-    return personURI;
+  public String getSelectedOrgJson() {
+    return selectedOrgJson;
   }
 
-  /**
-   * setter
-   *
-   * @param personURI
-   */
-  public void setPersonURI(String personURI) {
-    this.personURI = personURI;
+  public void setSelectedOrgJson(String selectedOrgJson) {
+    this.selectedOrgJson = selectedOrgJson;
   }
 
-  public String getOrgaURI() {
-    return orgaURI;
+  public String getSelectedPersonJson() {
+    return selectedPersonJson;
   }
 
-  public void setOrgaURI(String orgaURI) {
-    this.orgaURI = orgaURI;
+  public void setSelectedPersonJson(String selectedPersonJson) {
+    this.selectedPersonJson = selectedPersonJson;
   }
+
 
 }

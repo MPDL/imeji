@@ -3,6 +3,7 @@ package de.mpg.imeji.logic.db.repositories;
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.db.writer.DbWriter;
+import de.mpg.imeji.logic.model.Person;
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.UserGroup;
 import org.apache.logging.log4j.LogManager;
@@ -130,6 +131,16 @@ public class UserDbRepository extends DbRepository<User> {
             return null;
         });
     }
+
+  public List<Person> retrievePersonsbyId(String personId) throws ImejiException {
+    return inSession(em -> {
+      //String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
+      List<User> userWithPersons =  em.createNativeQuery("SELECT DISTINCT *  FROM users WHERE person ->> 'id' = personId;", User.class)
+              .setParameter("personId", "personId")
+              .getResultList();
+      return userWithPersons.stream().map(u -> u.getPerson()).toList();
+    });
+  }
 
 
 

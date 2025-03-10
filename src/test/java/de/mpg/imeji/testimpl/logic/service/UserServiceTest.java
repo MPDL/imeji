@@ -235,6 +235,7 @@ public class UserServiceTest extends SuperServiceTest {
     }
   }
 
+  /*
   @Test
   public void retrivePersonById() {
     Person ret = (new UserService()).retrievePersonById(defaultUser.getPerson().getId().toString());
@@ -242,6 +243,9 @@ public class UserServiceTest extends SuperServiceTest {
     Assert.assertEquals("family name", defaultUser.getPerson().getFamilyName(), ret.getFamilyName());
   }
 
+   */
+
+  /*
   @Test
   public void retriveOrganizationById_SearchOrganizationByName() {
     UserService service = new UserService();
@@ -257,6 +261,8 @@ public class UserServiceTest extends SuperServiceTest {
       Assert.fail(e.getMessage());
     }
   }
+
+   */
 
   @Test
   public void adminUserExists() {

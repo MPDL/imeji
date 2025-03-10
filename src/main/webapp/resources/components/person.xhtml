@@ -40,7 +40,15 @@
 						},
 						minLength : 1,
 						select : function(event, ui) {
-							$( ".input_hidden_person_uri" ).val(ui.item.value);
+							//$( ".input_hidden_person_uri" ).val(ui.item.value);
+							if(ui.item.object) {
+								$( ".input_hidden_person_json" ).val(JSON.stringify(ui.item.object));
+							}
+							else {
+								$( ".input_hidden_person_json" ).val(ui.item.value);
+							}
+
+
 							var ids = this.id.split(":");
 							var id = "";
 							for(i = 0; i &lt; ids.length; i++){
@@ -76,7 +84,13 @@
 							}, response );
 						},
 						select : function(event, ui) {
-							$( ".input_hidden_orga_uri" ).val(ui.item.value);
+							//$( ".input_hidden_orga_uri" ).val(ui.item.value);
+							if(ui.item.object) {
+								$( ".input_hidden_orga_json" ).val(JSON.stringify(ui.item.object));
+							}
+							else {
+								$( ".input_hidden_orga_json" ).val(ui.item.value);
+							}
 							var ids = this.id.split(":");
 							var id = "";
 							for(i = 0; i &lt; ids.length; i++){
@@ -99,10 +113,10 @@
 	</ui:fragment>
 
 	<!-- Person -->
-	<h:inputText id="inputPersonURI"
-		styleClass="input_hidden_person_uri imj_noDisplay"
-		value="#{PersonBean.personURI}"
-		valueChangeListener="#{PersonBean.personListener}" />
+	<h:inputText id="inputPersonJson"
+				 styleClass="input_hidden_person_json imj_noDisplay"
+				 value="#{PersonBean.selectedPersonJson}"
+				 valueChangeListener="#{PersonBean.personJsonListener}" />
 
 	<h:commandButton id="changePersonButton"
 		styleClass="button_change_person imj_noDisplay"
@@ -145,10 +159,11 @@
 		varStatus="index">
 		<div>
 			<h:panelGroup rendered="#{cc.attrs.orgsSource == 'imeji_orgs'}">
-				<h:inputText id="inputOrgaURI"
-					styleClass="input_hidden_orga_uri imj_noDisplay"
-					value="#{PersonBean.orgaURI}"
-					valueChangeListener="#{PersonBean.orgaListener}"/>
+
+				<h:inputText id="inputOrgJson"
+							 styleClass="input_hidden_orga_json imj_noDisplay"
+							 value="#{PersonBean.selectedOrgJson}"
+							 valueChangeListener="#{PersonBean.orgJsonListener}" />
 				<h:commandButton id="changeOrgaButton"
 					styleClass="button_change_button imj_noDisplay"
 					action="#{PersonBean.changeOrga(cc.attrs.bean, cc.attrs.position,  index.index)}">

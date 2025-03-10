@@ -458,6 +458,7 @@ public class UserService {
    * @param id
    * @return
    */
+  /*
   public Person retrievePersonById(String id) {
     final List<String> l = new ArrayList<String>();
     l.add(id);
@@ -469,6 +470,8 @@ public class UserService {
     }
     return c.iterator().next();
   }
+
+   */
 
   /**
    * Load an {@link Organization} by its uri
@@ -496,6 +499,7 @@ public class UserService {
    * @return
    * @throws UnprocessableError
    */
+  /*
   public Collection<Organization> searchOrganizationByName(String name) {
     final Collection<Organization> l = searchOrganizationByNameInUsers(name);
     final Map<String, Organization> map = new HashMap<>();
@@ -506,18 +510,23 @@ public class UserService {
     return map.values();
   }
 
+   */
+
   /**
    * Search all {@link Organization} which are defined in a {@link User}
    *
    * @param name
    * @return
    */
+  /*
   private Collection<Organization> searchOrganizationByNameInUsers(String name) {
     final Search search = SearchFactory.create(SearchObjectTypes.USER, SEARCH_IMPLEMENTATIONS.JENA);
     return loadOrganizations(search
         .searchString(JenaCustomQueries.selectOrganizationByName(name), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
         .getResults(), Imeji.userModel);
   }
+
+   */
 
   /**
    * Load Organizations
@@ -546,6 +555,7 @@ public class UserService {
    * @param model
    * @return
    */
+  /*
   private Collection<Person> loadPersons(List<String> uris, String model) {
     final Collection<Person> p = new ArrayList<Person>();
     for (final String uri : uris) {
@@ -558,6 +568,8 @@ public class UserService {
     }
     return p;
   }
+
+   */
 
   /**
    * This method checks if a admin user exists for this instance

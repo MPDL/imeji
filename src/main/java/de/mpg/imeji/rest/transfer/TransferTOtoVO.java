@@ -94,6 +94,7 @@ public class TransferTOtoVO implements Serializable {
     if (!isNullOrEmpty(to.getFilename())) {
       vo.setFilename(to.getFilename());
     }
+    vo.getLicenses().clear();
     vo.getLicenses().addAll(transferLicenses(to.getLicenses()));
     transferItemMetadata(to, vo, u, mode);
   }

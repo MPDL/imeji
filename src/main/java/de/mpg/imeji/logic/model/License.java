@@ -38,7 +38,7 @@ public class License implements Serializable {
   private long end = -1;
 
   public License() {
-    this.id = IdentifierUtil.newURI(License.class);
+    //this.id = IdentifierUtil.newURI(License.class);
   }
 
   @Override
