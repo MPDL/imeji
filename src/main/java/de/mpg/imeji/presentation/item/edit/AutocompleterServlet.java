@@ -149,11 +149,13 @@ public class AutocompleterServlet extends HttpServlet {
     String responseString = "";
     try {
       Collection<User> users = userService.searchAndRetrieveLazy(
-              new SearchFactory().addElement(new SearchPair(SearchFields.organization, suggest + "*"), LOGICAL_RELATIONS.AND).build(), null,
-              Imeji.adminUser, Search.SEARCH_FROM_START_INDEX, SUGGEST_RESULTS_SIZE);
-      final Collection<Organization> orgs = users.stream().flatMap(u -> u.getPerson().getOrganizations().stream().filter(o -> o.getName().toLowerCase().contains(suggest.toLowerCase()))).collect(Collectors.toList());
+          new SearchFactory().addElement(new SearchPair(SearchFields.organization, suggest + "*"), LOGICAL_RELATIONS.AND).build(), null,
+          Imeji.adminUser, Search.SEARCH_FROM_START_INDEX, SUGGEST_RESULTS_SIZE);
+      final Collection<Organization> orgs = users.stream()
+          .flatMap(u -> u.getPerson().getOrganizations().stream().filter(o -> o.getName().toLowerCase().contains(suggest.toLowerCase())))
+          .collect(Collectors.toList());
       for (final Organization o : orgs) {
-        String department = o.getDepartment() !=null && !o.getDepartment().isEmpty() ? " ("+o.getDepartment()+")" : "";
+        String department = o.getDepartment() != null && !o.getDepartment().isEmpty() ? " (" + o.getDepartment() + ")" : "";
         responseString = appendResponseForInternalSuggestion(responseString, o.getName() + department, o.getId().toString(), o);
       }
       return "[" + responseString + "]";
@@ -161,7 +163,6 @@ public class AutocompleterServlet extends HttpServlet {
       LOGGER.error("Error doing autosuggest for imeji organizations");
     }
     return "[]";
-
 
 
 
@@ -173,7 +174,7 @@ public class AutocompleterServlet extends HttpServlet {
       responseString = appendResponseForInternalSuggestion(responseString, o.getName(), o.getId().toString(), o);
     }
     return "[" + responseString + "]";
-
+    
      */
   }
 
@@ -185,14 +186,14 @@ public class AutocompleterServlet extends HttpServlet {
     response += "\"label\" : \"" + label + "\",";
     response += "\"value\" : \"";
     response += value + "\"";
-    if(fullObject != null) {
-        try {
-            String fullObjectStringJson = this.objectMapper.writeValueAsString(fullObject);
-            response += ",\"object\" : ";
-            response += fullObjectStringJson;
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Error serializing full object", e);
-        }
+    if (fullObject != null) {
+      try {
+        String fullObjectStringJson = this.objectMapper.writeValueAsString(fullObject);
+        response += ",\"object\" : ";
+        response += fullObjectStringJson;
+      } catch (JsonProcessingException e) {
+        LOGGER.error("Error serializing full object", e);
+      }
     }
     response += "}";
     return response;

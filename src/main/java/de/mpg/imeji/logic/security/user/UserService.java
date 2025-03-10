@@ -470,7 +470,7 @@ public class UserService {
     }
     return c.iterator().next();
   }
-
+  
    */
 
   /**
@@ -509,7 +509,7 @@ public class UserService {
     }
     return map.values();
   }
-
+  
    */
 
   /**
@@ -525,7 +525,7 @@ public class UserService {
         .searchString(JenaCustomQueries.selectOrganizationByName(name), null, null, Search.SEARCH_FROM_START_INDEX, Search.GET_ALL_RESULTS)
         .getResults(), Imeji.userModel);
   }
-
+  
    */
 
   /**
@@ -568,7 +568,7 @@ public class UserService {
     }
     return p;
   }
-
+  
    */
 
   /**

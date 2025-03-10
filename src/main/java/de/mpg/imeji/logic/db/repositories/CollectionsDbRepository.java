@@ -28,10 +28,10 @@ public class CollectionsDbRepository extends DbRepository<CollectionImeji> {
   public List<Person> retrievePersonsbyId(String personId) throws ImejiException {
     return inSession(em -> {
       //String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
-      List<CollectionImeji> userWithPersons =  em.createNativeQuery("SELECT DISTINCT collection.* FROM collection, jsonb_array_elements(persons) AS p WHERE p ->> 'id' = personId;", CollectionImeji.class)
-              .setParameter("personId", "personId")
-              .getResultList();
-      return userWithPersons.stream().flatMap(u -> u.getPersons().stream().filter(p-> personId.equals(p.getId().toString()))).toList();
+      List<CollectionImeji> userWithPersons = em.createNativeQuery(
+          "SELECT DISTINCT collection.* FROM collection, jsonb_array_elements(persons) AS p WHERE p ->> 'id' = personId;",
+          CollectionImeji.class).setParameter("personId", "personId").getResultList();
+      return userWithPersons.stream().flatMap(u -> u.getPersons().stream().filter(p -> personId.equals(p.getId().toString()))).toList();
     });
   }
 }

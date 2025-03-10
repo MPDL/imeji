@@ -242,7 +242,7 @@ public class UserServiceTest extends SuperServiceTest {
     Assert.assertEquals("given name", defaultUser.getPerson().getGivenName(), ret.getGivenName());
     Assert.assertEquals("family name", defaultUser.getPerson().getFamilyName(), ret.getFamilyName());
   }
-
+  
    */
 
   /*
@@ -261,7 +261,7 @@ public class UserServiceTest extends SuperServiceTest {
       Assert.fail(e.getMessage());
     }
   }
-
+  
    */
 
   @Test

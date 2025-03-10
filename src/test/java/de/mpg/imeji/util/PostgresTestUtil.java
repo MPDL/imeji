@@ -46,13 +46,13 @@ public class PostgresTestUtil {
     postgreSQLContainer.withDatabaseName("imeji-test").withPassword("postgres").withUsername("postgres").start();
     LOGGER.info("... Postgres Container started.");
 
-      try {
-          Properties p = PropertyReader.loadProperties("imeji-db.properties");
-          p.setProperty("jakarta.persistence.jdbc.url", postgreSQLContainer.getJdbcUrl());
-          EntityManagerHelper.factory = Persistence.createEntityManagerFactory(EntityManagerHelper.PERSISTENCE_UNIT_NAME, p);
-      } catch (IOException e) {
-          LOGGER.error("Error reading imeji-db.properties", e);
-      }
+    try {
+      Properties p = PropertyReader.loadProperties("imeji-db.properties");
+      p.setProperty("jakarta.persistence.jdbc.url", postgreSQLContainer.getJdbcUrl());
+      EntityManagerHelper.factory = Persistence.createEntityManagerFactory(EntityManagerHelper.PERSISTENCE_UNIT_NAME, p);
+    } catch (IOException e) {
+      LOGGER.error("Error reading imeji-db.properties", e);
+    }
 
 
   }
@@ -68,7 +68,6 @@ public class PostgresTestUtil {
   /**
    * Shutdown Elasticsearch and stop the ElasticsearchContainer.
    */
-  public static void stopPostgresqlContainer() {
-  }
+  public static void stopPostgresqlContainer() {}
 
 }

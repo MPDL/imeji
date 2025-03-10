@@ -135,9 +135,8 @@ public class UserDbRepository extends DbRepository<User> {
   public List<Person> retrievePersonsbyId(String personId) throws ImejiException {
     return inSession(em -> {
       //String adminRule = "ADMIN," + Imeji.PROPERTIES.getBaseURI();
-      List<User> userWithPersons =  em.createNativeQuery("SELECT DISTINCT *  FROM users WHERE person ->> 'id' = personId;", User.class)
-              .setParameter("personId", "personId")
-              .getResultList();
+      List<User> userWithPersons = em.createNativeQuery("SELECT DISTINCT *  FROM users WHERE person ->> 'id' = personId;", User.class)
+          .setParameter("personId", "personId").getResultList();
       return userWithPersons.stream().map(u -> u.getPerson()).toList();
     });
   }
