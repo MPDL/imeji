@@ -14,6 +14,7 @@ import static jakarta.persistence.Persistence.createEntityManagerFactory;
 
 public class EntityManagerHelper {
 
+  public final static String PERSISTENCE_UNIT_NAME = "imeji-persistence-unit";
   public static EntityManagerFactory factory;
 
   private static final Logger LOGGER = LogManager.getLogger(EntityManagerHelper.class);
@@ -22,7 +23,7 @@ public class EntityManagerHelper {
 
   public static void newEntityManagerFactory() {
     try {
-      factory = createEntityManagerFactory("imeji-persistence-unit", PropertyReader.loadProperties("imeji-db.properties"));
+      factory = createEntityManagerFactory(PERSISTENCE_UNIT_NAME, PropertyReader.loadProperties("imeji-db.properties"));
     } catch (IOException e) {
       LOGGER.error("Error reading imeji-db.properties", e);
       throw new RuntimeException(e);

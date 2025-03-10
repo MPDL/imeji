@@ -3,6 +3,7 @@ package de.mpg.imeji.test.logic.service;
 import java.io.File;
 
 import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
+import de.mpg.imeji.util.*;
 import jakarta.persistence.EntityManagerFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,10 +23,6 @@ import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.model.factory.CollectionFactory;
 import de.mpg.imeji.logic.model.factory.ImejiFactory;
 import de.mpg.imeji.logic.security.user.UserService;
-import de.mpg.imeji.util.ConcurrencyUtil;
-import de.mpg.imeji.util.ElasticsearchTestUtil;
-import de.mpg.imeji.util.ImejiTestResources;
-import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Created by vlad on 15.04.15.
@@ -47,7 +44,7 @@ public class SuperServiceTest {
 
   @BeforeClass
   public static void setup() {
-    EntityManagerHelper.newEntityManagerFactory();
+    PostgresTestUtil.startPostgres();;
     ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
 
@@ -56,9 +53,10 @@ public class SuperServiceTest {
   @AfterClass
   public static void tearDown() throws Exception {
     ConcurrencyUtil.waitForImejiThreadsToComplete();
+    PostgresTestUtil.stopPostgresqlContainer();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
-    EntityManagerHelper.close();
+
   }
 
   /**

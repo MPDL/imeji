@@ -1,6 +1,7 @@
 package de.mpg.imeji.testimpl.logic.auth;
 
 import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
+import de.mpg.imeji.util.PostgresTestUtil;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -29,7 +30,7 @@ public class DefaultAuthenticationTest {
 
   @BeforeClass
   public static void setup() {
-    EntityManagerHelper.newEntityManagerFactory();
+    PostgresTestUtil.startPostgres();
     ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
   }
@@ -37,9 +38,10 @@ public class DefaultAuthenticationTest {
   @AfterClass
   public static void tearDown() throws Exception {
     ConcurrencyUtil.waitForImejiThreadsToComplete();
+    PostgresTestUtil.stopPostgresqlContainer();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
-    EntityManagerHelper.close();
+
   }
 
   @Test

@@ -35,7 +35,6 @@ public class ElasticsearchTestUtil {
    */
   public static void startElasticsearch() {
     startElatsicSearchContainer();
-
     initializeElasticsearch();
   }
 

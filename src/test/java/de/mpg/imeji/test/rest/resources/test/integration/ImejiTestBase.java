@@ -11,6 +11,7 @@ import javax.ws.rs.core.Application;
 
 import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
 import de.mpg.imeji.logic.security.user.UserService;
+import de.mpg.imeji.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -40,10 +41,6 @@ import de.mpg.imeji.rest.to.CollectionTO;
 import de.mpg.imeji.rest.to.LicenseTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemTO;
 import de.mpg.imeji.rest.to.defaultItemTO.DefaultItemWithFileTO;
-import de.mpg.imeji.util.ConcurrencyUtil;
-import de.mpg.imeji.util.ElasticsearchTestUtil;
-import de.mpg.imeji.util.ImejiTestResources;
-import de.mpg.imeji.util.JenaUtil;
 
 /**
  * Created by vlad on 09.12.14.
@@ -96,7 +93,7 @@ public class ImejiTestBase extends JerseyTest {
 
   @BeforeClass
   public static void setup() throws IOException, URISyntaxException {
-    EntityManagerHelper.newEntityManagerFactory();
+    PostgresTestUtil.startPostgres();
     ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
     //Start a server for the static content
@@ -112,9 +109,10 @@ public class ImejiTestBase extends JerseyTest {
     ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
+    PostgresTestUtil.stopPostgresqlContainer();
     staticServer.shutdownNow();
     app = null;
-    EntityManagerHelper.close();
+
   }
 
   @Rule
