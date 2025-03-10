@@ -3,6 +3,7 @@ package de.mpg.imeji.testimpl.logic.auth;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+import de.mpg.imeji.logic.db.writer.EntityManagerHelper;
 import org.apache.commons.codec.binary.Base64;
 import org.jose4j.lang.JoseException;
 import org.junit.AfterClass;
@@ -33,6 +34,7 @@ public class HttpAuthenticationTest {
 
   @BeforeClass
   public static void setup() throws ImejiException, JoseException, NoSuchAlgorithmException, InvalidKeySpecException {
+    EntityManagerHelper.newEntityManagerFactory();
     ElasticsearchTestUtil.startElasticsearch();
     JenaUtil.initJena();
     ImejiRsaKeys.init(null, null);
@@ -47,6 +49,7 @@ public class HttpAuthenticationTest {
     ConcurrencyUtil.waitForImejiThreadsToComplete();
     ElasticsearchTestUtil.stopElasticsearch();
     JenaUtil.closeJena();
+    EntityManagerHelper.close();
   }
 
   /**

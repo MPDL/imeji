@@ -331,6 +331,7 @@ public class ImejiInitializer {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    EntityManagerHelper.close();
     LOGGER.info("...done!");
 
     // This is a bug of com.hp.hpl.jena.sparql.engine.QueryExecutionBase

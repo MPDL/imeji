@@ -197,7 +197,7 @@ public class Properties implements Serializable, ResourceLastModified, AccessMem
 
   public void setId(URI id) {
     this.id = id;
-    this.dbId = id.toString();
+    this.dbId = id != null ? id.toString() : null;
   }
 
   public URI getId() {
