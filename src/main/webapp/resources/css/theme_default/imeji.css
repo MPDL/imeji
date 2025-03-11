@@ -6040,7 +6040,6 @@ html body .imj_siteWrapper .imj_siteContentHeadline:empty {
 }
 html body .imj_siteWrapper .imj_siteContentHeadline .subHeadline {
   font-size: 0.9em;
-  text-transform: lowercase;
   color: rgb(176.25, 176.25, 176.25) !important;
 }
 html body .imj_siteWrapper .imj_siteContentHeadline .subHeadline .imj_sep {
@@ -8097,7 +8096,7 @@ small {
   right: 0;
   width: 100%;
   background: #F0F0F0;
-  z-index: 1000;
+  z-index: 10000;
   height: 100%;
   width: 100%;
   position: fixed;
