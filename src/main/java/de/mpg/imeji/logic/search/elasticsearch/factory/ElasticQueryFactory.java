@@ -508,17 +508,20 @@ public class ElasticQueryFactory {
         String from = parseFromValue(dateString);
         String to = parseToValue(dateString);
         if (!StringHelper.isNullOrEmptyTrim(from) || !StringHelper.isNullOrEmptyTrim(to)) {
-          RangeQuery.Builder rq = new RangeQuery.Builder().field(field);
-          if (!StringHelper.isNullOrEmptyTrim(from)) {
-            rq.gte(JsonData.of(DateFormatter.getTime(from)));
-          }
-          if (!StringHelper.isNullOrEmptyTrim(to)) {
-            rq.lte(JsonData.of(DateFormatter.getTime(to)));
-          }
-          q = rq.build()._toQuery();
+          q = Query.of(qb -> qb.range(rq -> rq.number(nr -> {
+            nr.field(field);
+            if (!StringHelper.isNullOrEmptyTrim(from)) {
+              nr.gte(Double.valueOf(DateFormatter.getTime(from)));
+            }
+            if (!StringHelper.isNullOrEmptyTrim(to)) {
+              nr.lte(Double.valueOf(DateFormatter.getTime(to)));
+            }
+            return nr;
+          })));
         } else {
-          q = RangeQuery.of(rq -> rq.field(field).gte(JsonData.of(Long.toString(DateFormatter.parseDate(dateString).getTime())))
-              .lte(JsonData.of(Long.toString(DateFormatter.parseDate2(dateString).getTime()))))._toQuery();
+          q = Query
+              .of(qb -> qb.range(rq -> rq.number(nr -> nr.field(field).gte(Double.valueOf(DateFormatter.parseDate(dateString).getTime()))
+                  .lte(Double.valueOf(DateFormatter.parseDate2(dateString).getTime())))));
           // q = QueryBuilders.termQuery(field, DateFormatter.getTime(dateString));
         }
         break;
@@ -553,14 +556,16 @@ public class ElasticQueryFactory {
         String from = parseFromValue(number);
         String to = parseToValue(number);
         if (!StringHelper.isNullOrEmptyTrim(from) || !StringHelper.isNullOrEmptyTrim(to)) {
-          RangeQuery.Builder rq = new RangeQuery.Builder().field(field);
-          if (!StringHelper.isNullOrEmptyTrim(from)) {
-            rq.gte(JsonData.of(from));
-          }
-          if (!StringHelper.isNullOrEmptyTrim(to)) {
-            rq.lte(JsonData.of(to));
-          }
-          q = rq.build()._toQuery();
+          q = Query.of(qb -> qb.range(rq -> rq.number(nr -> {
+            nr.field(field);
+            if (!StringHelper.isNullOrEmptyTrim(from)) {
+              nr.gte(Double.parseDouble(from));
+            }
+            if (!StringHelper.isNullOrEmptyTrim(to)) {
+              nr.lte(Double.parseDouble(to));
+            }
+            return nr;
+          })));
         } else {
           q = TermQuery.of(tq -> tq.field(field).value(number))._toQuery();
         }
@@ -682,7 +687,7 @@ public class ElasticQueryFactory {
    */
   private Query greaterThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
-      return RangeQuery.of(rq -> rq.field(fieldName).gte(JsonData.of(Double.parseDouble(value))))._toQuery();
+      return Query.of(qb -> qb.range(rq -> rq.number(nr -> nr.field(fieldName).gte(Double.parseDouble(value)))));
       //return QueryBuilders.rangeQuery(fieldName).gte(Double.parseDouble(value));
     }
     return matchNothing();
@@ -697,7 +702,7 @@ public class ElasticQueryFactory {
    */
   private Query lessThanQuery(String fieldName, String value) {
     if (NumberUtils.isNumber(value)) {
-      return RangeQuery.of(rq -> rq.field(fieldName).lte(JsonData.of(Double.parseDouble(value))))._toQuery();
+      return Query.of(qb -> qb.range(rq -> rq.number(nr -> nr.field(fieldName).lte(Double.parseDouble(value)))));
       //return QueryBuilders.rangeQuery(fieldName).lte(Double.parseDouble(value));
     }
     return matchNothing();

@@ -220,23 +220,24 @@ public class AdminBean extends SuperBean {
         LocalDate today = LocalDate.now();
         boolean isOlderThan1Month = modDate.isBefore(today.minusMonths(1));
         //LOGGER.info("User " + fullUser.getEmail() + " ("+ fullUser.getPerson().getCompleteName()+") " + fullUser.getGrants() + " " + fullUser.getGroups() + " "+ isOlderThan1Month);
-        if (fullUser.getGrants().size() == 2
-                && (fullUser.getGrants().stream().anyMatch(i -> i.equals("READ,http://imeji.org/")))
-                && (fullUser.getGrants().stream().anyMatch(i -> i.startsWith("ADMIN,http://imeji.org/user/")))
-                && (fullUser.getGroups() == null || fullUser.getGroups().isEmpty())
-                && isOlderThan1Month) {
+        if (fullUser.getGrants().size() == 2 && (fullUser.getGrants().stream().anyMatch(i -> i.equals("READ,http://imeji.org/")))
+            && (fullUser.getGrants().stream().anyMatch(i -> i.startsWith("ADMIN,http://imeji.org/user/")))
+            && (fullUser.getGroups() == null || fullUser.getGroups().isEmpty()) && isOlderThan1Month) {
 
           if (dryRunDeleteUsersWithoutGroups) {
-            LOGGER.info("DRY RUN DELETE USER: " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
+            LOGGER.info("DRY RUN DELETE USER: " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; "
+                + fullUser.getId() + "; " + fullUser.getGrants());
           } else {
             controller.delete(fullUser);
-            LOGGER.info("Successfully deleted user " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; " + fullUser.getId() + "; " + fullUser.getGrants());
+            LOGGER.info("Successfully deleted user " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; "
+                + fullUser.getId() + "; " + fullUser.getGrants());
           }
 
           count++;
         }
       } catch (Exception e) {
-        String userMessage = "Error deleting user: " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; " + fullUser.getId();
+        String userMessage =
+            "Error deleting user: " + fullUser.getEmail() + "; " + fullUser.getPerson().getCompleteName() + "; " + fullUser.getId();
         LOGGER.error(userMessage, e);
       }
 
@@ -264,7 +265,7 @@ public class AdminBean extends SuperBean {
       BeanHelper.error("Error deleting user");
       LOGGER.error("Error deleting user", e);
     }
-
+    
      */
     return "";
 
@@ -272,11 +273,11 @@ public class AdminBean extends SuperBean {
   }
 
 
-    public boolean isDryRunDeleteUsersWithoutGroups() {
-        return dryRunDeleteUsersWithoutGroups;
-    }
+  public boolean isDryRunDeleteUsersWithoutGroups() {
+    return dryRunDeleteUsersWithoutGroups;
+  }
 
-    public void setDryRunDeleteUsersWithoutGroups(boolean dryRunDeleteUsersWithoutGroups) {
-        this.dryRunDeleteUsersWithoutGroups = dryRunDeleteUsersWithoutGroups;
-    }
+  public void setDryRunDeleteUsersWithoutGroups(boolean dryRunDeleteUsersWithoutGroups) {
+    this.dryRunDeleteUsersWithoutGroups = dryRunDeleteUsersWithoutGroups;
+  }
 }
