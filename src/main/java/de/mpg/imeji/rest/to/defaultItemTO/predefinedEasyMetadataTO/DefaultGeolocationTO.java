@@ -2,7 +2,7 @@ package de.mpg.imeji.rest.to.defaultItemTO.predefinedEasyMetadataTO;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

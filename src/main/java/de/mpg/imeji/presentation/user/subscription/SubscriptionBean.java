@@ -11,9 +11,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ViewScoped;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

@@ -1,11 +1,11 @@
 package de.mpg.imeji.presentation.item.upload;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,17 +13,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +50,7 @@ import de.mpg.imeji.presentation.session.SessionBean;
  * @version $Revision$ $LastChangedDate$
  */
 @WebServlet(urlPatterns = "/uploadServlet", asyncSupported = true, loadOnStartup = 5)
+@MultipartConfig
 public class UploadServlet extends HttpServlet {
   private static final long serialVersionUID = -4879871986174193049L;
   private static final Logger LOGGER = LogManager.getLogger(UploadServlet.class);
@@ -170,20 +168,16 @@ public class UploadServlet extends HttpServlet {
    */
   private UploadItem doUpload(HttpServletRequest req) {
     try {
-      final ServletFileUpload upload = new ServletFileUpload();
-      final FileItemIterator iter = upload.getItemIterator(req);
       UploadItem uploadItem = new UploadItem();
-      while (iter.hasNext()) {
-        final FileItemStream fis = iter.next();
-        if (!fis.isFormField()) {
-          uploadItem.setFilename(fis.getName());
-          final File tmp = TempFileUtil.createTempFile("upload", "." + FilenameUtils.getExtension(uploadItem.getFilename()));
-          StorageUtils.writeInOut(fis.openStream(), new FileOutputStream(tmp), true);
+      for (Part part : req.getParts()) {
+        final String submittedFileName = part.getSubmittedFileName();
+        if (submittedFileName != null && !submittedFileName.isEmpty()) {
+          uploadItem.setFilename(submittedFileName);
+          final File tmp = TempFileUtil.createTempFile("upload", "." + FilenameUtils.getExtension(submittedFileName));
+          StorageUtils.writeInOut(part.getInputStream(), new FileOutputStream(tmp), true);
           uploadItem.setFile(tmp);
         } else {
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
-          StorageUtils.writeInOut(fis.openStream(), out, true);
-          uploadItem.getParams().put(fis.getFieldName(), out.toString("UTF-8"));
+          uploadItem.getParams().put(part.getName(), new String(StorageUtils.toBytes(part.getInputStream()), StandardCharsets.UTF_8));
         }
       }
       return uploadItem;

@@ -5,8 +5,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
+import jakarta.faces.event.ValueChangeEvent;
+import jakarta.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.model.Statement;

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.faces.component.FacesComponent;
-import javax.faces.component.UINamingContainer;
+import jakarta.faces.component.FacesComponent;
+import jakarta.faces.component.UINamingContainer;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.config.Imeji;

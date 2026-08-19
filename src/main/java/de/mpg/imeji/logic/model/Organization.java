@@ -3,7 +3,7 @@ package de.mpg.imeji.logic.model;
 import java.io.Serializable;
 import java.net.URI;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 import de.mpg.imeji.j2j.annotations.j2jId;
 import de.mpg.imeji.j2j.annotations.j2jLiteral;

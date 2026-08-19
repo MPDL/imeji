@@ -8,10 +8,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.servlet.http.Cookie;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ViewScoped;
+import jakarta.servlet.http.Cookie;
 
 import de.mpg.imeji.logic.db.repositories.UserDbRepository;
 import org.apache.logging.log4j.Logger;

@@ -1,10 +1,10 @@
 package de.mpg.imeji.presentation.item.edit.converter;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.validator.FacesValidator;
-import javax.faces.validator.Validator;
-import javax.faces.validator.ValidatorException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.validator.FacesValidator;
+import jakarta.faces.validator.Validator;
+import jakarta.faces.validator.ValidatorException;
 
 /***
  *
@@ -18,8 +18,8 @@ public class FakeValidator implements Validator {
    * (non-Javadoc)
    *
    * @see
-   * javax.faces.validator.Validator#validate(javax.faces.context.FacesContext,
-   * javax.faces.component.UIComponent, java.lang.Object)
+   * jakarta.faces.validator.Validator#validate(jakarta.faces.context.FacesContext,
+   * jakarta.faces.component.UIComponent, java.lang.Object)
    */
   @Override
   public void validate(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException {

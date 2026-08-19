@@ -2,8 +2,8 @@ package de.mpg.imeji.presentation.navigation;
 
 import java.io.Serializable;
 
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
+import jakarta.faces.bean.ApplicationScoped;
+import jakarta.faces.bean.ManagedBean;
 
 import de.mpg.imeji.logic.config.Imeji;
 

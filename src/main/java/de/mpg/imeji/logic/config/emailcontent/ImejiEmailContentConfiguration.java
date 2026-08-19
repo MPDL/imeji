@@ -13,7 +13,7 @@ import de.mpg.imeji.logic.config.ImejiConfiguration;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentListXML;
 import de.mpg.imeji.logic.config.emailcontent.contentxml.EmailContentXML;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

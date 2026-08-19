@@ -2,8 +2,8 @@ package de.mpg.imeji.presentation.beans;
 
 import java.io.Serializable;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.SessionScoped;
 
 /**
  * Session Bean for the container editor (create and edit collection/album)

@@ -3,10 +3,10 @@ package de.mpg.imeji.presentation.session;
 import java.util.Iterator;
 import java.util.Locale;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.application.FacesMessage.Severity;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

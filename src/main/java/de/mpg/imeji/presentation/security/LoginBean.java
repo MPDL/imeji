@@ -7,12 +7,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ManagedProperty;
+import jakarta.faces.bean.ViewScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.presentation.rewrite.RequestHelper;
 import org.apache.logging.log4j.Logger;
@@ -140,7 +140,7 @@ public class LoginBean extends SuperBean {
     //LOGGER.info(
     //    "HttpRequestUri: " + ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getRequestURI());
     //LOGGER.info("HttpRequestAttribute: " + ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest())
-    //    .getAttribute("javax.servlet.forward.request_uri"));
+    //    .getAttribute("jakarta.servlet.forward.request_uri"));
     //LOGGER.info("PrettyContext: " + PrettyContext.getCurrentInstance().getRequestQueryString().toQueryString());
     //LOGGER.info(((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getQueryString());
     //LOGGER.info("RequestHelper: " + RequestHelper.getCurrentInstance().getRequestQueryString());

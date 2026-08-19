@@ -1,7 +1,7 @@
 package de.mpg.imeji.rest.to.predefinedMetadataTO;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import de.mpg.imeji.rest.to.PersonTO;
 import de.mpg.imeji.rest.to.predefinedMetadataTO.annotations.MetadataTOType;

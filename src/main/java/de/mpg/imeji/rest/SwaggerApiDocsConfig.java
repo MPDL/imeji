@@ -1,6 +1,6 @@
 // package de.mpg.imeji.rest;
 //
-// import javax.servlet.ServletConfig;
+// import jakarta.servlet.ServletConfig;
 //
 // import io.swagger.config.ConfigFactory;
 // import io.swagger.jersey.config.JerseyJaxrsConfig;

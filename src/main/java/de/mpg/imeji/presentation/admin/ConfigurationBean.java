@@ -11,9 +11,9 @@ import de.mpg.imeji.presentation.beans.SuperBean;
 import de.mpg.imeji.presentation.navigation.Navigation;
 import de.mpg.imeji.presentation.session.BeanHelper;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.model.SelectItem;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ViewScoped;
+import jakarta.faces.model.SelectItem;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;

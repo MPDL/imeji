@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpEntity;

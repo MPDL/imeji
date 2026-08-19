@@ -3,10 +3,10 @@ package de.mpg.imeji.presentation.collection.share;
 import java.io.Serializable;
 import java.net.URI;
 
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ManagedProperty;
+import jakarta.faces.bean.ViewScoped;
 
 import de.mpg.imeji.presentation.rewrite.RequestHelper;
 import org.apache.logging.log4j.Logger;

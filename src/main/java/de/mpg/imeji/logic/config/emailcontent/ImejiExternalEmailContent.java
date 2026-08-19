@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

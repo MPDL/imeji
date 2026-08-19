@@ -8,8 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ViewScoped;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;

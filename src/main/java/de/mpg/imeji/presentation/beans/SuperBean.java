@@ -8,10 +8,10 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ManagedProperty;
+import jakarta.faces.bean.ViewScoped;
+import jakarta.faces.context.FacesContext;
 
 import de.mpg.imeji.logic.model.User;
 import de.mpg.imeji.logic.util.StringHelper;

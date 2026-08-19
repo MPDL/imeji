@@ -2,8 +2,8 @@ package de.mpg.imeji.rest.to;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlType(propOrder = {"language", "value"})

@@ -1,6 +1,6 @@
 package de.mpg.imeji.rest.process;
 
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.jose4j.lang.JoseException;
 

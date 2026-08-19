@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import de.mpg.imeji.logic.model.Statement;
 import de.mpg.imeji.logic.model.StatementType;

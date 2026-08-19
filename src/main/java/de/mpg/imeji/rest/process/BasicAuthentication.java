@@ -1,6 +1,6 @@
 package de.mpg.imeji.rest.process;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.logic.model.User;

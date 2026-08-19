@@ -74,7 +74,11 @@
 	<properties>
 		<!-- the jdk version to use -->
 		<jdk.version>17</jdk.version>
-		<jersey.version>2.42</jersey.version>
+		<jersey.version>3.1.12</jersey.version>
+		<jackson.version>2.22.1</jackson.version>
+		<jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+		<jakarta.faces.version>3.0.2</jakarta.faces.version>
+		<jakarta.cdi.version>4.0.1</jakarta.cdi.version>
 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Used by Tomcat to trip version Nr when deploy WAR package, e.g., imeji_1.0_screenshot->imeji -->
@@ -103,6 +107,10 @@
 			</snapshots>
 		</repository>
 		<repository>
+			<id>nexus</id>
+			<url>https://rd.mpdl.mpg.de/nexus3/content/groups/public/</url>
+		</repository>
+		<repository>
 			<id>prime-repo</id>
 			<name>Prime Technology Maven Repository</name>
 			<url>https://repository.prime.com.tr</url>
@@ -126,10 +134,7 @@
 			<id>xuggle repo</id>
 			<url>https://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
 		</repository>
-		<repository>
-			<id>nexus</id>
-			<url>https://rd.mpdl.mpg.de/nexus3/content/groups/public/</url>
-		</repository>
+
 		<repository>
 			<releases />
 			<snapshots>
@@ -163,6 +168,25 @@
 		</snapshotRepository>
 
 	</distributionManagement>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>${jackson.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>5.11.4</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<resources>
@@ -200,7 +224,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
-					<release>17</release>
+					<release>${jdk.version}</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -363,33 +387,28 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.14.0</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.5</version>
+			<version>2.22.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.13.0</version>
+			<version>3.20.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.16.0</version>
+			<version>1.22.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
-			<version>4.4</version>
+			<version>4.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena-libs</artifactId>
 			<type>pom</type>
-			<version>5.0.0</version>
+			<version>5.4.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -423,55 +442,49 @@
 		<dependency>
 			<groupId>org.ocpsoft.rewrite</groupId>
 			<artifactId>rewrite-servlet</artifactId>
-			<version>8.0.2.Final</version>
+			<version>10.0.2.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ocpsoft.rewrite</groupId>
 			<artifactId>rewrite-integration-faces</artifactId>
-			<version>8.0.2.Final</version>
+			<version>10.0.2.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
-			<version>2.23.1</version>
+			<version>2.26.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.23.1</version>
+			<version>2.26.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.23.1</version>
+			<version>2.26.1</version>
 		</dependency>
-		<!-- USED during compile, e.g. javax.mail -->
+		<!-- Add slf4j-Dependency to get the TestContainers Log (Solves: 'SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".') -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.18</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>2.26.1</version>
+		</dependency>
+		<!-- USED during compile, e.g. jakarta.mail -->
 		<dependency>
 			<groupId>com.sun.mail</groupId>
 			<artifactId>jakarta.mail</artifactId>
-			<version>1.6.7</version>
+			<version>2.0.1</version>
 			<scope>compile</scope>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
-			<scope>compile</scope>
-		</dependency>
-		-->
-		<!--
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-			<scope>test</scope>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
-			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -487,27 +500,20 @@
 	      <scope>test</scope>
 		</dependency>
 		<!-- START JSF 2 -->
-		<!--
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>2.2.13</version>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>jakarta.faces</artifactId>
-			<version>2.3.14</version>
+			<version>${jakarta.faces.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.enterprise</groupId>
 			<artifactId>jakarta.enterprise.cdi-api</artifactId>
-			<version>2.0.2</version>
+			<version>${jakarta.cdi.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>${jakarta.servlet.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- END JSF 2 -->
@@ -520,7 +526,7 @@
 		<dependency>
 		  <groupId>org.apache.commons</groupId>
 		  <artifactId>commons-imaging</artifactId>
-		  <version>1.0-alpha1</version>
+		  <version>1.0-alpha2</version>
 		</dependency>
 		<!-- JAVA API lib for imagemagick -->
 		<dependency>
@@ -531,29 +537,25 @@
 		<dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>
-			<version>2.9.2</version>
+			<version>3.3.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-parsers-standard-package</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-
-		<!--
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-parsers</artifactId>
-			<version>2.7.0</version>
+			<version>3.3.2</version>
 			<exclusions>
 				<exclusion>
-					 Conflict with jersey mulitpart client (used by integration tests)
-					<groupId>org.apache.cxf</groupId>
-					<artifactId>cxf-rt-rs-client</artifactId>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
--->
+
 		<!-- REST -->
 		<dependency>
 			<groupId>org.glassfish.jersey.inject</groupId>
@@ -600,57 +602,46 @@
 		<dependency>
 			<groupId>org.bitbucket.b_c</groupId>
 			<artifactId>jose4j</artifactId>
-			<version>0.9.4</version>
+			<version>0.9.6</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2</artifactId>
-			<version>2.2.21</version>
+			<artifactId>swagger-jaxrs2-jakarta</artifactId>
+			<version>2.2.53</version>
 		</dependency>
 
 		<dependency>
 			<groupId>co.elastic.clients</groupId>
 			<artifactId>elasticsearch-java</artifactId>
-			<version>8.13.2</version>
+			<version>8.19.20</version>
+			<exclusions>
+				<exclusion>
+					<groupId>tools.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>tools.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>tools.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
-
-		<!--
 		<dependency>
-			<groupId>jakarta.json.bind</groupId>
-			<artifactId>jakarta.json.bind-api</artifactId>
-			<version>2.0.0</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
 		</dependency>
-		-->
-		<!--
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.14.0</version>
 		</dependency>
-		-->
-
-		<!--<dependency>
-			<groupId>org.elasticsearch.client</groupId>
-			<artifactId>elasticsearch-rest-high-level-client</artifactId>
-			<version>7.17.9</version>
-			-->
-			<!--
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpcore</artifactId>
-				</exclusion>
-			</exclusions>
-			-->
-		<!--
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
 		</dependency>
-		-->
 		<!-- Elasticsearch Test Framework -->
 		<dependency>
 		    <groupId>org.testcontainers</groupId>
@@ -664,31 +655,21 @@
 			<version>1.20.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Add slf4j-Dependency to get the TestContainers Log (Solves: 'SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".') -->		
-		<dependency>
-	       <groupId>org.slf4j</groupId>
-	       <artifactId>slf4j-api</artifactId>
-	       <version>2.0.12</version>
-	   </dependency>
-	   	<dependency>
-	       <groupId>org.apache.logging.log4j</groupId>
-	       <artifactId>log4j-slf4j-impl</artifactId>
-	       <version>2.23.1</version>
-	   </dependency>
+
 		<dependency>
 			<groupId>org.mapdb</groupId>
 			<artifactId>mapdb</artifactId>
 			<version>1.0.9</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.0</version>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>4.0.2</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.jsoup</groupId>
 		    <artifactId>jsoup</artifactId>
-		    <version>1.17.2</version>
+		    <version>1.23.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
@@ -727,11 +708,11 @@
 								<id>install</id>
 								<phase>install</phase>
 								<configuration>
-									<tasks>
+									<target>
 										<delete quiet="true" file="${tomcat.webapps}/${project.warName}.war" />
 										<delete quiet="true" dir="${tomcat.webapps}/${project.warName}" />
 										<copy overwrite="true" file="${project.build.directory}/${project.warName}.war" tofile="${tomcat.webapps}/${project.warName}.war" />
-									</tasks>
+									</target>
 								</configuration>
 								<goals>
 									<goal>run</goal>

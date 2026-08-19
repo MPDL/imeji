@@ -1,6 +1,6 @@
 package de.mpg.imeji.logic.security.authentication.impl;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 

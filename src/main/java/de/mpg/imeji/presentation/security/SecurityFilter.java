@@ -12,16 +12,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Response.Status;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.ws.rs.core.Response.Status;
 
 import de.mpg.imeji.logic.db.repositories.CollectionsDbRepository;
 import de.mpg.imeji.logic.db.repositories.ItemsDbRepository;
@@ -69,7 +69,7 @@ public class SecurityFilter implements Filter {
   /*
    * (non-Javadoc)
    *
-   * @see javax.servlet.Filter#destroy()
+   * @see jakarta.servlet.Filter#destroy()
    */
   @Override
   public void destroy() {
@@ -79,8 +79,8 @@ public class SecurityFilter implements Filter {
   /*
    * (non-Javadoc)
    *
-   * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
-   * javax.servlet.ServletResponse, javax.servlet.FilterChain)
+   * @see jakarta.servlet.Filter#doFilter(jakarta.servlet.ServletRequest,
+   * jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)
    */
   @Override
   public void doFilter(ServletRequest serv, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
@@ -318,7 +318,7 @@ public class SecurityFilter implements Filter {
   /*
    * (non-Javadoc)
    *
-   * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+   * @see jakarta.servlet.Filter#init(jakarta.servlet.FilterConfig)
    */
   @Override
   public void init(FilterConfig arg0) throws ServletException {

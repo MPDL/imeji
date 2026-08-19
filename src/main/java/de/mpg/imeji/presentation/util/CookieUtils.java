@@ -2,9 +2,9 @@ package de.mpg.imeji.presentation.util;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.faces.context.FacesContext;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Utility Class for http cookies

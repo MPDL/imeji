@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Calendar;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 import de.mpg.imeji.logic.model.util.HibernateURIConverter;
 import jakarta.persistence.Convert;

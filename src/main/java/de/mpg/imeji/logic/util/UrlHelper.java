@@ -8,7 +8,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

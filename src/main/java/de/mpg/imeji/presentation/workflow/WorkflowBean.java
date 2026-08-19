@@ -2,7 +2,7 @@ package de.mpg.imeji.presentation.workflow;
 
 import java.io.Serializable;
 
-import javax.faces.bean.ManagedBean;
+import jakarta.faces.bean.ManagedBean;
 
 import de.mpg.imeji.logic.model.Properties;
 import de.mpg.imeji.logic.workflow.WorkflowValidator;

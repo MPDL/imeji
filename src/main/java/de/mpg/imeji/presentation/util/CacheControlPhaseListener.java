@@ -1,10 +1,10 @@
 package de.mpg.imeji.presentation.util;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseEvent;
-import javax.faces.event.PhaseId;
-import javax.faces.event.PhaseListener;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.PhaseEvent;
+import jakarta.faces.event.PhaseId;
+import jakarta.faces.event.PhaseListener;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class CacheControlPhaseListener implements PhaseListener {
   private static final long serialVersionUID = 4651265325754141047L;
