@@ -1,15 +1,15 @@
 package de.mpg.imeji.rest.process;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.OK;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response.Status;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

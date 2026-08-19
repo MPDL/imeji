@@ -11,7 +11,7 @@ import de.mpg.imeji.testimpl.rest.resources.VersionManagerTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     // Tests failing from time to time throwing: 
-    //"javax.ws.rs.ProcessingException: Failed to start Grizzly HTTP server: Address already in use: bind"
+    //"jakarta.ws.rs.ProcessingException: Failed to start Grizzly HTTP server: Address already in use: bind"
 
     ItemIntegration.class, CollectionIntegration.class, StorageIntegration.class, VersionManagerTest.class})
 

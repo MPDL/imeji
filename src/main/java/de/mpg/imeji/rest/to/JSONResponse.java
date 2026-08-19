@@ -1,6 +1,6 @@
 package de.mpg.imeji.rest.to;
 
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response.Status;
 
 public class JSONResponse {
   public Object object;

@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.Logger;

@@ -1,6 +1,6 @@
 package de.mpg.imeji.testimpl.rest.resources;
 
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -8,8 +8,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.slf4j.Logger;

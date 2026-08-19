@@ -5,7 +5,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.servlet.config.HttpConfigurationProvider;
 import org.ocpsoft.rewrite.servlet.config.rule.Join;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 @org.ocpsoft.rewrite.annotation.RewriteConfiguration
 public class RewriteConfiguration extends HttpConfigurationProvider {

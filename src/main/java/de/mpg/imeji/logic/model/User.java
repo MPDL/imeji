@@ -8,8 +8,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

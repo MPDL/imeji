@@ -2,7 +2,7 @@ package de.mpg.imeji.rest.api;
 
 import java.util.List;
 
-import javax.ws.rs.NotSupportedException;
+import jakarta.ws.rs.NotSupportedException;
 
 import de.mpg.imeji.exceptions.ImejiException;
 import de.mpg.imeji.logic.model.User;

@@ -2,10 +2,10 @@ package de.mpg.imeji.presentation.beans;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.context.FacesContext;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.context.FacesContext;
 
 @ManagedBean(name = "MessagesBean")
 @RequestScoped

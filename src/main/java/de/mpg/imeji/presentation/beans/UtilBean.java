@@ -2,8 +2,8 @@ package de.mpg.imeji.presentation.beans;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
-import javax.faces.bean.ManagedBean;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.bean.ManagedBean;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;

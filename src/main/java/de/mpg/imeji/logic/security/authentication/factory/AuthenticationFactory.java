@@ -1,6 +1,6 @@
 package de.mpg.imeji.logic.security.authentication.factory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import de.mpg.imeji.logic.security.authentication.Authentication;
 import de.mpg.imeji.logic.security.authentication.impl.DefaultAuthentication;

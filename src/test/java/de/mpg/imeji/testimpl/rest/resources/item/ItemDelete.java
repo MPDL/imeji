@@ -2,10 +2,10 @@ package de.mpg.imeji.testimpl.rest.resources.item;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;

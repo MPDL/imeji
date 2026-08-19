@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import de.mpg.imeji.logic.security.user.UserService;
 import org.apache.logging.log4j.LogManager;

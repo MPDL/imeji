@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Calendar;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

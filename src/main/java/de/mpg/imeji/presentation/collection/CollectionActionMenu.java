@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Locale;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ValueChangeEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

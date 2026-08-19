@@ -2,9 +2,9 @@ package de.mpg.imeji.logic.config.emailcontent.contentxml;
 
 import java.util.Locale;
 
-import javax.faces.event.ValueChangeEvent;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.faces.event.ValueChangeEvent;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 
 /**
  * Represents an email message that exists in different languages Class holds an email message and

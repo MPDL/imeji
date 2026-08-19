@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ocpsoft.common.util.Assert;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.faces.context.FacesContext;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,8 +44,8 @@ public class RequestHelper {
     String prettyRequestURL = requestUrl;
 
 
-    if (request.getAttribute("javax.servlet.forward.request_uri") != null) {
-      prettyRequestURL = request.getAttribute("javax.servlet.forward.request_uri").toString();
+    if (request.getAttribute("jakarta.servlet.forward.request_uri") != null) {
+      prettyRequestURL = request.getAttribute("jakarta.servlet.forward.request_uri").toString();
       prettyRequestURL = this.stripContextPath(prettyRequestURL);
       Matcher sessionIdMatcher2 = JSESSIONID_PATTERN.matcher(prettyRequestURL);
       if (sessionIdMatcher2.matches()) {

@@ -3,7 +3,7 @@ package de.mpg.imeji.presentation.collection.list;
 import java.io.Serializable;
 import java.net.URI;
 
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.event.ValueChangeEvent;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

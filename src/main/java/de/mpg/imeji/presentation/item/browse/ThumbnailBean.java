@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.faces.event.ValueChangeEvent;
+import jakarta.faces.event.ValueChangeEvent;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
