@@ -9,9 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.ServletException;
@@ -28,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 
 import de.mpg.imeji.exceptions.AuthenticationError;
 import de.mpg.imeji.exceptions.ImejiException;
-import de.mpg.imeji.logic.config.Imeji;
 import de.mpg.imeji.logic.core.collection.CollectionService;
 import de.mpg.imeji.logic.core.item.ItemService;
 import de.mpg.imeji.logic.model.CollectionImeji;
@@ -109,14 +105,12 @@ public class UploadServlet extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    // final UploadItem upload = doUpload(req);
-    final Future<UploadItem> uploadFuture = Imeji.getEXECUTOR().submit(new UploadInTempTask(req));
-    UploadItem upload = null;
+    // Parse multipart on the request thread before any executor hand-off
+    final UploadItem upload = doUpload(req);
     final SessionBean session = getSession(req);
     try {
       final User user = getUser(req, session);
       final CollectionImeji col = retrieveCollection(req, user);
-      upload = uploadFuture.get();
       Item item = ImejiFactory.newItem(col);
       item.setLicenses(Arrays.asList(getLicense(upload)));
       ITEM_SERVICE.createWithFile(item, upload.getFile(), upload.getFilename(), col, user);
@@ -124,14 +118,12 @@ public class UploadServlet extends HttpServlet {
     } catch (final AuthenticationError e) {
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-    } catch (final ImejiException | ExecutionException e) {
+    } catch (final ImejiException e) {
       LOGGER.error("Error uploading File", e);
       writeResponse(resp, e.getMessage());
       resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    } catch (InterruptedException e) {
-      LOGGER.error("Upload interrupted");
     } finally {
-      if (upload != null && upload.getFile().exists()) {
+      if (upload.getFile() != null && upload.getFile().exists()) {
         FileUtils.deleteQuietly(upload.getFile());
       }
     }
@@ -185,19 +177,6 @@ public class UploadServlet extends HttpServlet {
       LOGGER.error("Error file upload", e);
     }
     return new UploadItem();
-  }
-
-  private class UploadInTempTask implements Callable<UploadItem> {
-    private final HttpServletRequest req;
-
-    public UploadInTempTask(HttpServletRequest req) {
-      this.req = req;
-    }
-
-    @Override
-    public UploadItem call() {
-      return doUpload(req);
-    }
   }
 
   private CollectionImeji retrieveCollection(HttpServletRequest req, User user) {
