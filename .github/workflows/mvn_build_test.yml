@@ -1,7 +1,7 @@
 name: Build and test
 on: [push, workflow_dispatch]
 jobs:
-  buid_test:
+  build_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
