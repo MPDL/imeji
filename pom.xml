@@ -73,7 +73,7 @@
 	</mailingLists>
 	<properties>
 		<!-- the jdk version to use -->
-		<jdk.version>17</jdk.version>
+		<jdk.version>21</jdk.version>
 		<jersey.version>3.1.12</jersey.version>
 		<jackson.version>2.22.1</jackson.version>
 		<jakarta.servlet.version>6.0.0</jakarta.servlet.version>
