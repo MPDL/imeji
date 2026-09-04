@@ -1,6 +1,6 @@
 node {
-	env.JAVA_HOME = tool name: 'OpenJDK 17', type: 'jdk'
-	def  mvnHome = tool name: 'Maven35', type: 'maven'
+	env.JAVA_HOME = tool name: 'Java JDK 21', type: 'jdk'
+	def  mvnHome = tool name: 'Maven390', type: 'maven'
 
 
 	echo "We are currently working on branch: ${env.BRANCH_NAME}"
